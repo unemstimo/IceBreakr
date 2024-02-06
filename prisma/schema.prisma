@@ -13,6 +13,7 @@ datasource db {
     // Do not use foreign keys (PlanetScale does not support them)
     relationMode = "prisma"
 }
+  
 
 model Post {
     id        Int      @id @default(autoincrement())
