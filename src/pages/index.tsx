@@ -13,8 +13,8 @@ import { redirect } from "next/navigation";
 import { api } from "~/utils/api";
 
 export default function Home() {
-  const hello = api.post.hello.useQuery({ text: "from tRPC" });
-
+  const { data } = api.post.getAll.useQuery();
+  console.log(data);
   return (
     <>
       <Head>
@@ -33,10 +33,18 @@ export default function Home() {
 
         <SignedIn>
           <SignOutButton signOutCallback={() => redirect("/")} />
-          <p>
-            This content is private. Only signed in users can see the
-            SignOutButton above this text.
-          </p>
+          <div className="text-center">
+            <h3>Data fra databasen under</h3>
+            {data
+              ? data.map((post) => (
+                  <div key={post.id} className="flex gap-2">
+                    <p>{post.authorId}:</p>
+
+                    <p>{post.content}</p>
+                  </div>
+                ))
+              : "Loading..."}
+          </div>
         </SignedIn>
       </main>
     </>
