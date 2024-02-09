@@ -3,8 +3,10 @@ default:
 
 deploy_preview:
   stage: deploy
-  except:
-    - main
+  only:
+    - dev
+  # except:
+  #   - main
   script:
     - export VERCEL_TOKEN='XREzE5hfirZEaNYXzSJXdLO0'
     - npm install --global vercel
