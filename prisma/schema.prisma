@@ -1,3 +1,5 @@
+// make prisma schema from sql https://sql-to-prisma.vercel.app/
+
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["driverAdapters"]
@@ -5,7 +7,8 @@ generator client {
 }
 
 datasource db {
-  provider     = "mysql"
+  // provider     = "mysql"
+  provider     = "sqlite"
   url          = env("DATABASE_URL")
   relationMode = "prisma"
 }
