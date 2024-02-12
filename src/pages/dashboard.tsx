@@ -38,7 +38,7 @@ export default function Dashboard() {
                     <div><h1>Mid</h1></div>
                 </section>
                 <section className='rounded-2xl w-1/4 flex align-middle justify-center bg-rose-700 p-8 m-2'>
-                    Right
+                    Rightgh
                 </section>
             </div>
 
