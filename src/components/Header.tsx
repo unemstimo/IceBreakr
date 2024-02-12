@@ -3,15 +3,15 @@ import Link from 'next/link';
 
 const Header = () => {
   return (
-    <header className='flex w-full flex-row align-middle justify-center'>
-      <div>
+    <header className='flex w-full flex-row align-middle justify-center p-4 bg-violet-400 font-darker text-2xl font-bold'>
+      <div className='w-full'>
         <Link href="/">
-          <button>IceBreakr</button>
+          <button>FOR DEV ONLY</button>
         </Link>
       </div>
-      <nav className='flex w-full justify-center gap-3'>
+      <nav className='flex w-full justify-center align-middle items-center gap-3'>
         <Link href="/">
-              <button>Home</button>
+              <button>Sign In</button>
         </Link>
         <Link href="/browse">
               <button>Browse</button>
@@ -20,9 +20,10 @@ const Header = () => {
               <button>Dashboard</button>
         </Link>
       </nav>
-      <div>
+      <div className='w-full'>
         <UserButton />
       </div>
+      
     </header>
   );
 };

@@ -39,7 +39,7 @@ export default function Home() {
           <div className="text-center">
             <h3>Data fra databasen under</h3>
             {data
-              ? data.map((post: { id: Key | null | undefined; authorId: string | number | boolean | ReactElement<never, string | JSXElementConstructor<unknown>> | Iterable<ReactNode> | ReactPortal | PromiseLikeOfReactNode | null | undefined; content: string | number | boolean | ReactElement<unknown, string | JSXElementConstructor<unknown>> | Iterable<ReactNode> | ReactPortal | PromiseLikeOfReactNode | null | undefined; }) => (
+              ? data.map((post: { id: Key | null | undefined; authorId: string | number | boolean | ReactElement<never, string | JSXElementConstructor<unknown>> | Iterable<ReactNode> | ReactPortal | PromiseLikeOfReactNode | null | undefined; content: string | number | boolean | ReactElement<any, string | JSXElementConstructor<unknown>> | Iterable<ReactNode> | ReactPortal | PromiseLikeOfReactNode | null | undefined; }) => (
                   <div key={post.id} className="flex gap-2">
                     <p>{post.authorId}:</p>
 
