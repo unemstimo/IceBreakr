@@ -2,9 +2,8 @@ default:
   image: node:18.17.0
 deploy_preview:
   stage: deploy
-  # remove not to deply to preview
   only:
-    - devNOT
+    - dev
   # except:
   #   - main
   script:
@@ -17,8 +16,7 @@ deploy_preview:
 deploy_production:
   stage: deploy
   only:
-  # remove not to deply to production
-    - mainNOT
+    - main
   script:
     - npm install --global vercel
     - vercel pull --yes --environment=production --token='XREzE5hfirZEaNYXzSJXdLO0'
