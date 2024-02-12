@@ -9,12 +9,15 @@ import {
 import Head from "next/head";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { Key, ReactElement, JSXElementConstructor, ReactNode, ReactPortal, PromiseLikeOfReactNode } from "react";
 
 import { api } from "~/utils/api";
 
 export default function Home() {
   const { data } = api.post.getAll.useQuery();
   console.log(data);
+  const user = useUser()
+  
   return (
     <>
       <Head>
@@ -30,13 +33,13 @@ export default function Home() {
             SignInButton above this text.
           </p>
         </SignedOut>
-
         <SignedIn>
+
           <SignOutButton signOutCallback={() => redirect("/")} />
           <div className="text-center">
             <h3>Data fra databasen under</h3>
             {data
-              ? data.map((post) => (
+              ? data.map((post: { id: Key | null | undefined; authorId: string | number | boolean | ReactElement<never, string | JSXElementConstructor<unknown>> | Iterable<ReactNode> | ReactPortal | PromiseLikeOfReactNode | null | undefined; content: string | number | boolean | ReactElement<unknown, string | JSXElementConstructor<unknown>> | Iterable<ReactNode> | ReactPortal | PromiseLikeOfReactNode | null | undefined; }) => (
                   <div key={post.id} className="flex gap-2">
                     <p>{post.authorId}:</p>
 
