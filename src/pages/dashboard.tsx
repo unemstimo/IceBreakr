@@ -20,6 +20,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import PlayCircleOutlineRoundedIcon from '@mui/icons-material/PlayCircleOutlineRounded';
 import MoreHorizRoundedIcon from '@mui/icons-material/MoreHorizRounded';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
+import { randomInt } from 'crypto';
 
 export default function Dashboard() {
 
@@ -35,18 +36,6 @@ export default function Dashboard() {
 
     const handleShowMorePopup = (friendId: string | null) => {
         setShowMorePopup({ visible: !showMorePopup.visible, friendId});
-    };
-    
-
-    const playList = [
-        { id: 1, name: 'Playlist 1', numberOfGames: 3, author: 'Meg'},
-        { id: 2, name: 'Playlist 2', numberOfGames: 10, author: 'Friend 2' },
-        { id: 3, name: 'Playlist 3', numberOfGames: 22, author: 'Friend 3' },
-    ];
-
-    const handleSearchSubmit = (e: FormEvent) => {
-        e.preventDefault();
-        console.log("Search Term:", searchTerm);
     };
 
     const handleAddFriend = () => {
@@ -66,6 +55,42 @@ export default function Dashboard() {
     const handleFriendsButton = () => {
         console.log("Friend clicked");
     }
+    
+
+    const [playlists, setPlaylists] = useState([
+        { id: uuid(), name: 'Lekeliste ' + uuid().slice(0,4), numberOfGames: 5, author: 'Meg '},
+        { id: uuid(), name: 'Lekeliste ' + uuid().slice(0,4), numberOfGames: 12, author: 'Venn ' + uuid().slice(0,4) },
+        { id: uuid(), name: 'Lekeliste ' + uuid().slice(0,4), numberOfGames: 512, author: 'Venn ' + uuid().slice(0,4) },
+    ]);
+
+    const [showMorePopupPlaylist, setShowMorePopupPlaylist] = useState({ visible: false, playlistId: null });
+
+    const handleShowMorePopupPlaylist = (playlistId: string | null) => {
+        setShowMorePopupPlaylist({ visible: !showMorePopupPlaylist.visible, playlistId});
+    };
+
+    const handleAddPlaylist = () => {
+        const newID = uuid();
+        console.log("Add Playlist");
+        const newPlaylist = { id: newID, name: 'Lekeliste ' + newID.slice(0,4), numberOfGames: 0, author: 'Meg'};
+        setPlaylists([...playlists, newPlaylist]);
+    };
+
+    const handleRemovePlaylist = (playlistId) => {
+        console.log("Remove Playlist" + playlistId);
+        const newPlaylists = playlists.filter(list => list.id !== playlistId);
+        setPlaylists(newPlaylists);
+        handleShowMorePopupPlaylist(null);
+    }
+
+    const handlePlaylistClick = () => {
+        console.log("Playlist clicked");
+    }
+
+    const handleSearchSubmit = (e: FormEvent) => {
+        e.preventDefault();
+        console.log("Search Term:", searchTerm);
+    };
 
   return (
     <div>
@@ -95,21 +120,38 @@ export default function Dashboard() {
                     <div className='rounded-2xl flex-col w-full h-full bg-neutral-900 flex align-middle justify-start p-4 mb-2' >
                         <div className='flex flex-row justify-between align-baseline items-baseline'>
                             <h2 className='font-bold text-2xl '>Mine Lekelister</h2>
-                            <button className='text-l text-neutral-500 hover:underline'>Lag ny</button>
+                            <button className='text-l text-neutral-500 hover:underline' onClick={handleAddPlaylist}>Lag ny</button>
                         </div>
-                        <ul className='w-full mt-5'>
-                            {playList.map(list => (
-                                <li key={list.id} className='h-18'>
-                                    <button className='w-full h-full hover:bg-neutral-700 border border-neutral-600 flex align-middle items-center justify-start gap-4 rounded-xl mb-2 p-4'>
-                                        <PlayCircleOutlineRoundedIcon/>
-                                        <div className='flex w-full flex-col items-start'>
-                                            <p className='-mb-2'>{list.name}</p>
-                                            <p className='font-normal text-neutral-400'>{list.numberOfGames} leker • {list.author}</p>
+                        <ul className='w-full mt-5 relative'>
+                            {playlists.map(list => (
+                                <li key={list.id} className='h-16 flex'>
+                                    <button className='w-full h-full hover:bg-neutral-700 flex align-middle items-center justify-between gap-4 rounded-xl p-2 border border-neutral-800' onClick={handlePlaylistClick}>
+                                        <div className='flex justify-start align-middle items-center gap-4'>
+                                            <PlayCircleOutlineRoundedIcon/>
+                                            <div className='flex flex-col justify-start align-middle items-start'>
+                                                <p className='-mb-2'>{list.name}</p>
+                                                <p className='text-neutral-400 font-normal'>{list.numberOfGames} leker • {list.author}</p>
+                                            </div>
                                         </div>
+                                        <button className='w-12' onClick={() => handleShowMorePopupPlaylist(list.id)}><MoreHorizRoundedIcon/></button>
+                                        {showMorePopupPlaylist.visible && showMorePopupPlaylist.playlistId === list.id && (
+                                            <div className='absolute right-0 top-0 flex flex-col py-4 px-6 w-48 justify-center bg-neutral-800 align-middle items-center rounded-xl gap-4'>
+                                                {/* Popup content here */}
+                                                <p>{list.name}</p>
+                                                <button onClick={() => handleRemovePlaylist(list.id)} className='bg-red-500 hover:bg-red-400 active:bg-red-600 px-4 py-1 rounded-lg'> Slett</button>
+                                                <button onClick={() => handleShowMorePopupPlaylist(list.id)}><p className='text-neutral-400 hover:underline absolute top-1 right-2'><CloseRoundedIcon/></p></button>
+                                            </div>
+                                        )}
                                     </button>
                                 </li>
                             ))}
                         </ul>
+                        {playlists.length === 0 && (
+                            <div className='text-neutral-400 font-normal'>
+                                <p>Ingen lekelister enda 🧐</p>
+                                <div className='flex gap-1'><p>Fiks det ved å</p><button onClick={handleAddPlaylist} className='font-bold text-violet-400 hover:text-violet-300'>lage en lekeliste</button></div>
+                            </div>
+                        )}
                     </div>
                 </section>
 
@@ -150,14 +192,14 @@ export default function Dashboard() {
                             <h2 className='font-bold text-2xl '>Venner</h2>
                             <button className='text-l text-neutral-500 hover:underline' onClick={handleAddFriend}>Legg til</button>
                         </div>
-                        <ul className='w-full mt-5'>
+                        <ul className='w-full mt-5 relative'>
                             {friendsList.map(friend => (
                                 <li key={friend.id} className='h-16 flex'>
                                     <button className='w-full h-full hover:bg-neutral-700 flex align-middle items-center justify-between gap-4 rounded-xl p-2' onClick={handleFriendsButton}>
                                         <div className='flex justify-start align-middle items-center gap-4'><FaceRoundedIcon/> {friend.name}</div>
                                         <button className='w-12' onClick={() => handleShowMorePopup(friend.id)}><MoreHorizRoundedIcon/></button>
                                         {showMorePopup.visible && showMorePopup.friendId === friend.id && (
-                                            <div className='absolute flex flex-col py-4 px-6 w-48 justify-center bg-neutral-800 align-middle items-center rounded-xl gap-4'>
+                                            <div className='absolute right-0 top-0 flex flex-col py-4 px-6 w-48 justify-center bg-neutral-800 align-middle items-center rounded-xl gap-4'>
                                                 {/* Popup content here */}
                                                 <p>{friend.name}</p>
                                                 <button onClick={() => handleRemoveFriend(friend.id)} className='bg-red-500 hover:bg-red-400 active:bg-red-600 px-4 py-1 rounded-lg'> Fjern</button>
