@@ -1,25 +1,117 @@
 import Head from 'next/head';
 import Link from 'next/link';
+import { useState, FormEvent, useEffect} from 'react';
+import { v4 as uuid } from "uuid";
 
-export default function Browse() {
+import {
+    SignInButton,
+    SignOutButton,
+    SignedIn,
+    SignedOut,
+    UserButton,
+    useUser,
+  } from "@clerk/nextjs";
+import { Container } from 'postcss';
+
+import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
+import FaceRoundedIcon from '@mui/icons-material/FaceRounded';
+import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRounded';
+import SearchIcon from '@mui/icons-material/Search';
+import PlayCircleOutlineRoundedIcon from '@mui/icons-material/PlayCircleOutlineRounded';
+import MoreHorizRoundedIcon from '@mui/icons-material/MoreHorizRounded';
+import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
+
+export default function Dashboard() {
+
+    const [searchTerm, setSearchTerm] = useState('');
+
+    const handleSearchSubmit = (e: FormEvent) => {
+        e.preventDefault();
+        console.log("Search Term:", searchTerm);
+    };
+
+    const handleClearFilters = () => {
+        setSearchTerm('');
+    }
+
   return (
     <div>
       <Head>
-        <title>Browse | IceBreakr</title>
-        <meta name="description" content="Learn more about what IceBreakr offers." />
+        <title>Dashboard | IceBreakr</title>
+        <meta name="dashboard" content="Learn more about what IceBreakr offers." />
       </Head>
 
       <main className="flex font-darker text-lg font-bold min-h-screen flex-col items-center justify-center bg-neutral-950 text-white">
-        <div className='flex w-full max-w-screen-l h-screen justify-center bg-neutral-950 rounded-3xl'>
-            <section className='rounded-2xl w-3/4 h-full flex flex-col align-middle justify-start bg-neutral-900 p-4 my-2'>
-                    <div className='flex w-full h-full bg-neutral-800 rounded-xl items-center justify-center'>
-                        <p>Browse Section</p>
+        <SignedOut>
+          <SignInButton />
+          <p>
+            This content is public. Only signed out users can see the
+            SignInButton above this text.
+          </p>
+        </SignedOut>
+        <SignedIn>
+            <div className='flex w-full max-w-screen-l max-w-[1440px] h-screen bg-neutral-950 rounded-3xl'>
+                {/* Left section */}
+                <section className='rounded-2xl flex-col w-1/4 min-w-72 max-w-96 h-full flex align-middle justify-start p-0 m-2'>
+                    <div className='rounded-2xl w-full h-fit max-h-40 bg-neutral-900 flex flex-col align-middle justify-center p-4 mb-2'>
+                        <Link href={"/profile"} className='w-full h-full'>
+                          <button className='w-full h-full hover:bg-neutral-700 flex align-middle items-center justify-start gap-4 rounded-xl p-2'>
+                            <UserButton/> Min Profil
+                          </button>
+                        </Link>
+                        <Link href={"/dashboard"} className='w-full h-full'>
+                          <button className='w-full h-full hover:bg-neutral-700 flex align-middle items-center justify-start gap-4 rounded-xl p-2'>
+                            <HomeRoundedIcon />Hjem
+                          </button>
+                        </Link>
+                    </div>
+                    {/* Filters */}
+                    <div className='rounded-2xl flex-col w-full h-fit bg-neutral-900 flex align-middle justify-start p-4 mb-2' >
+                      <div className='flex flex-row justify-between align-baseline items-baseline'> 
+                        <h2 className='font-bold text-2xl '>Filtere</h2>
+                        <button className='text-l text-neutral-500 hover:underline' onClick={handleClearFilters}>Tøm</button>
+                      </div>
+                      
                     </div>
                 </section>
-        </div>
-        <Link href="/">
-          <button className='m-8'>Return to Home</button>
-        </Link>
+
+                {/* Middle section */}
+                <section className='rounded-2xl w-full min-w-[420px] h-full flex flex-col align-middle justify-start bg-neutral-900 p-4 my-2'>
+                    {/* Search section */}
+                    <div className='flex w-full flex-row justify-between align-middle items-center'>
+                        <form onSubmit={handleSearchSubmit} className="flex align-middle w-2/3 items-center font-normal bg-neutral-800 text-neutral-600 rounded-full overflow-hidden p-1">
+                            <button type="submit" className="p-2">
+                                <SearchIcon className='text-neutral-500' />
+                            </button>
+                            <input 
+                                className="pl-2 pr-2 py-2 w-full bg-neutral-800 text-white focus:outline-none" 
+                                type="search" // Changed to search to improve semantics
+                                placeholder="Søk..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                            />
+                        </form>
+                        <div className='flex gap-2 align-middle justify-start items-center'>
+                            <p className="text-neutral-500 font-bold mr-2">Sorter: </p>
+                            <button className=" rounded-full bg-violet-600 hover:bg-violet-500 active:bg-violet-800 px-4 py-2 text-white shadow-lg">Populære</button>
+                            <button className=" rounded-full bg-violet-600 hover:bg-violet-500 active:bg-violet-800 px-4 py-2 text-white shadow-lg">Nyeste</button>
+                            <button className=" rounded-full bg-violet-600 hover:bg-violet-500 active:bg-violet-800 px-4 py-2 text-white shadow-lg">Navn</button>
+                        </div>
+                    </div>
+                    {/* Content section */}
+                    <div className='mt-4 -mb-2 w-full flex justify-start'>
+                      <p className='font-normal text-neutral-500'>Viser 0 av 999 leker • Navn A -> Æ</p>
+                    </div>
+                    <div className='flex w-full h-full bg-neutral-800 rounded-xl mt-4 items-center justify-center'>
+                        <p>Content</p>
+                    </div>
+                </section>
+
+                
+            </div>
+
+
+        </SignedIn>
       </main>
     </div>
   );

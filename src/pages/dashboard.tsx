@@ -20,16 +20,12 @@ import SearchIcon from '@mui/icons-material/Search';
 import PlayCircleOutlineRoundedIcon from '@mui/icons-material/PlayCircleOutlineRounded';
 import MoreHorizRoundedIcon from '@mui/icons-material/MoreHorizRounded';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
-import { randomInt } from 'crypto';
 
 export default function Dashboard() {
 
     const [searchTerm, setSearchTerm] = useState('');
 
     const [friendsList, setFriendsList] = useState([
-        { id: uuid(), name: 'Friend ' + uuid().slice(0,4) },
-        { id: uuid(), name: 'Friend ' + uuid().slice(0,4) },
-        { id: uuid(), name: 'Friend ' + uuid().slice(0,4) },
     ]);
 
     const [showMorePopup, setShowMorePopup] = useState({ visible: false, friendId: null });
@@ -58,9 +54,6 @@ export default function Dashboard() {
     
 
     const [playlists, setPlaylists] = useState([
-        { id: uuid(), name: 'Lekeliste ' + uuid().slice(0,4), numberOfGames: 5, author: 'Meg '},
-        { id: uuid(), name: 'Lekeliste ' + uuid().slice(0,4), numberOfGames: 12, author: 'Venn ' + uuid().slice(0,4) },
-        { id: uuid(), name: 'Lekeliste ' + uuid().slice(0,4), numberOfGames: 512, author: 'Venn ' + uuid().slice(0,4) },
     ]);
 
     const [showMorePopupPlaylist, setShowMorePopupPlaylist] = useState({ visible: false, playlistId: null });
@@ -108,14 +101,20 @@ export default function Dashboard() {
           </p>
         </SignedOut>
         <SignedIn>
-            <div className='flex w-full max-w-screen-l h-screen bg-neutral-950 rounded-3xl'>
+            <div className='flex w-full max-w-screen-l max-w-[1440px] h-screen bg-neutral-950 rounded-3xl'>
                 {/* Left section */}
                 <section className='rounded-2xl flex-col w-1/4 min-w-72 h-full flex align-middle justify-start p-0 m-2'>
-                    <div className='rounded-2xl w-full h-full max-h-40 bg-neutral-900 flex flex-col align-middle justify-center p-4 mb-2'>
-                        <button className='w-full h-full hover:bg-neutral-700 flex align-middle items-center justify-start gap-4 rounded-xl p-2'> <UserButton/> Min Profil</button>
-                        <button className='w-full h-full hover:bg-neutral-700 flex align-middle items-center justify-start gap-4 rounded-xl p-2'>
-                        <HomeRoundedIcon />Hjem
-                        </button>
+                    <div className='rounded-2xl w-full h-fit max-h-40 bg-neutral-900 flex flex-col align-middle justify-center p-4 mb-2'>
+                        <Link href={"/profile"} className='w-full h-full'>
+                          <button className='w-full h-full hover:bg-neutral-700 flex align-middle items-center justify-start gap-4 rounded-xl p-2'>
+                            <UserButton/> Min Profil
+                          </button>
+                        </Link>
+                        <Link href={"/dashboard"} className='w-full h-full'>
+                          <button className='w-full h-full hover:bg-neutral-700 flex align-middle items-center justify-start gap-4 rounded-xl p-2'>
+                            <HomeRoundedIcon />Hjem
+                          </button>
+                        </Link>
                     </div>
                     <div className='rounded-2xl flex-col w-full h-full bg-neutral-900 flex align-middle justify-start p-4 mb-2' >
                         <div className='flex flex-row justify-between align-baseline items-baseline'>
@@ -124,7 +123,7 @@ export default function Dashboard() {
                         </div>
                         <ul className='w-full mt-5 relative'>
                             {playlists.map(list => (
-                                <li key={list.id} className='h-16 flex'>
+                                <li key={list.id} className='h-16 flex mb-2'>
                                     <button className='w-full h-full hover:bg-neutral-700 flex align-middle items-center justify-between gap-4 rounded-xl p-2 border border-neutral-800' onClick={handlePlaylistClick}>
                                         <div className='flex justify-start align-middle items-center gap-4'>
                                             <PlayCircleOutlineRoundedIcon/>
