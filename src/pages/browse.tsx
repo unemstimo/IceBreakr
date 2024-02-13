@@ -2,6 +2,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useState, FormEvent, useEffect} from 'react';
 import { v4 as uuid } from "uuid";
+import CreateGame from '~/components/CreateGame';
 
 import {
     SignInButton,
@@ -34,6 +35,16 @@ export default function Dashboard() {
         setSearchTerm('');
     }
 
+    const [showCreateGame, setShowCreateGame] = useState({ visible: false});
+
+    const handleCreateGameShow = () => {
+      setShowCreateGame({ visible: !showCreateGame.visible});
+    };
+
+    const handleCancelCreateGame = () => {
+        setShowCreateGame({ visible: false});
+    };
+
   return (
     <div>
       <Head>
@@ -65,6 +76,9 @@ export default function Dashboard() {
                           </button>
                         </Link>
                     </div>
+                    <button onClick={handleCreateGameShow} className='w-full h-20 min-h-20 bg-violet-600 hover:bg-violet-500 active:bg-violet-800 flex align-middle items-center justify-center gap-2 rounded-xl p-2 mb-2'>
+                        OPPRETT LEK<AddCircleOutlineRoundedIcon/>
+                    </button>
                     {/* Filters */}
                     <div className='rounded-2xl flex-col w-full h-fit bg-neutral-900 flex align-middle justify-start p-4 mb-2' >
                       <div className='flex flex-row justify-between align-baseline items-baseline'> 
@@ -106,8 +120,12 @@ export default function Dashboard() {
                         <p>Content</p>
                     </div>
                 </section>
-
-                
+                {showCreateGame.visible && (
+                    <div className='absolute flex flex-col top-0 left-0 w-full h-full bg-neutral-900 bg-opacity-90 justify-center align-middle items-center'>
+                        <CreateGame/>
+                        <button className='text-l mt-2 text-neutral-300 hover:underline' onClick={handleCancelCreateGame}>Avbryt</button>
+                    </div>
+                )}
             </div>
 
 

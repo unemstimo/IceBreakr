@@ -2,6 +2,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useState, FormEvent, useEffect} from 'react';
 import { v4 as uuid } from "uuid";
+import CreateGame from '~/components/CreateGame';
 
 import {
     SignInButton,
@@ -46,11 +47,11 @@ export default function Dashboard() {
         const newFriendsList = friendsList.filter(friend => friend.id !== friendId);
         setFriendsList(newFriendsList);
         handleShowMorePopup(null);
-    }
+    };
 
     const handleFriendsButton = () => {
         console.log("Friend clicked");
-    }
+    };
     
 
     const [playlists, setPlaylists] = useState([
@@ -74,15 +75,25 @@ export default function Dashboard() {
         const newPlaylists = playlists.filter(list => list.id !== playlistId);
         setPlaylists(newPlaylists);
         handleShowMorePopupPlaylist(null);
-    }
+    };
 
     const handlePlaylistClick = () => {
         console.log("Playlist clicked");
-    }
+    };
 
     const handleSearchSubmit = (e: FormEvent) => {
         e.preventDefault();
         console.log("Search Term:", searchTerm);
+    };
+
+    const [showCreateGame, setShowCreateGame] = useState({ visible: false});
+
+    const handleCreateGameShow = () => {
+      setShowCreateGame({ visible: !showCreateGame.visible});
+    };
+
+    const handleCancelCreateGame = () => {
+        setShowCreateGame({ visible: false});
     };
 
   return (
@@ -101,7 +112,7 @@ export default function Dashboard() {
           </p>
         </SignedOut>
         <SignedIn>
-            <div className='flex w-full max-w-screen-l max-w-[1440px] h-screen bg-neutral-950 rounded-3xl'>
+            <div className='relative flex w-full max-w-screen-l max-w-[1440px] h-screen bg-neutral-950 rounded-3xl'>
                 {/* Left section */}
                 <section className='rounded-2xl flex-col w-1/4 min-w-72 h-full flex align-middle justify-start p-0 m-2'>
                     <div className='rounded-2xl w-full h-fit max-h-40 bg-neutral-900 flex flex-col align-middle justify-center p-4 mb-2'>
@@ -116,6 +127,9 @@ export default function Dashboard() {
                           </button>
                         </Link>
                     </div>
+                    <button onClick={handleCreateGameShow} className='w-full h-20 min-h-20 bg-violet-600 hover:bg-violet-500 active:bg-violet-800 flex align-middle items-center justify-center gap-2 rounded-xl p-2 mb-2'>
+                        OPPRETT LEK<AddCircleOutlineRoundedIcon/>
+                    </button>
                     <div className='rounded-2xl flex-col w-full h-full bg-neutral-900 flex align-middle justify-start p-4 mb-2' >
                         <div className='flex flex-row justify-between align-baseline items-baseline'>
                             <h2 className='font-bold text-2xl '>Mine Lekelister</h2>
@@ -217,11 +231,14 @@ export default function Dashboard() {
                             </div>
                         )}
                     </div>
-                    <button className='w-full h-24 bg-violet-600 hover:bg-violet-500 active:bg-violet-800 flex align-middle items-center justify-center gap-2 rounded-xl p-2'>OPPRETT LEK<AddCircleOutlineRoundedIcon/></button>
                 </section>
+                {showCreateGame.visible && (
+                    <div className='absolute flex flex-col top-0 left-0 w-full h-full bg-neutral-900 bg-opacity-90 justify-center align-middle items-center'>
+                        <CreateGame/>
+                        <button className='text-l mt-2 text-neutral-300 hover:underline' onClick={handleCancelCreateGame}>Avbryt</button>
+                    </div>
+                )}
             </div>
-
-
         </SignedIn>
       </main>
     </div>
