@@ -1,6 +1,7 @@
 import Head from 'next/head';
 import Link from 'next/link';
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, useEffect} from 'react';
+import { v4 as uuid } from "uuid";
 
 import {
     SignInButton,
@@ -17,16 +18,25 @@ import FaceRoundedIcon from '@mui/icons-material/FaceRounded';
 import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRounded';
 import SearchIcon from '@mui/icons-material/Search';
 import PlayCircleOutlineRoundedIcon from '@mui/icons-material/PlayCircleOutlineRounded';
+import MoreHorizRoundedIcon from '@mui/icons-material/MoreHorizRounded';
+import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 
 export default function Dashboard() {
 
     const [searchTerm, setSearchTerm] = useState('');
 
-    const friendsList = [
-        { id: 1, name: 'Friend 1' },
-        { id: 2, name: 'Friend 2' },
-        { id: 3, name: 'Friend 3' },
-    ];
+    const [friendsList, setFriendsList] = useState([
+        { id: uuid(), name: 'Friend ' + uuid().slice(0,4) },
+        { id: uuid(), name: 'Friend ' + uuid().slice(0,4) },
+        { id: uuid(), name: 'Friend ' + uuid().slice(0,4) },
+    ]);
+
+    const [showMorePopup, setShowMorePopup] = useState({ visible: false, friendId: null });
+
+    const handleShowMorePopup = (friendId) => {
+        setShowMorePopup({ visible: !showMorePopup.visible, friendId });
+    };
+    
 
     const playList = [
         { id: 1, name: 'Playlist 1', numberOfGames: 3, author: 'Meg'},
@@ -38,7 +48,25 @@ export default function Dashboard() {
         e.preventDefault();
         console.log("Search Term:", searchTerm);
     };
-      
+
+    const handleAddFriend = () => {
+        const newID = uuid();
+        console.log("Add Friend");
+        const newFriend = { id: newID, name: 'Friend ' + newID.slice(0,4) };
+        setFriendsList([...friendsList, newFriend]);
+    };
+
+    const handleRemoveFriend = (friendId) => {
+        console.log("Remove Friend");
+        const newFriendsList = friendsList.filter(friend => friend.id !== friendId);
+        setFriendsList(newFriendsList);
+        handleShowMorePopup(null);
+    }
+
+    const handleFriendsButton = () => {
+        console.log("Friend clicked");
+    }
+
   return (
     <div>
       <Head>
@@ -118,17 +146,33 @@ export default function Dashboard() {
                     <div className='rounded-2xl flex-col w-full h-fit bg-neutral-900 flex align-middle justify-center p-4 mb-2'>
                         <div className='flex flex-row justify-between align-baseline items-baseline'>
                             <h2 className='font-bold text-2xl '>Venner</h2>
-                            <button className='text-l text-neutral-500 hover:underline'>Legg til</button>
+                            <button className='text-l text-neutral-500 hover:underline' onClick={handleAddFriend}>Legg til</button>
                         </div>
                         <ul className='w-full mt-5'>
                             {friendsList.map(friend => (
-                                <li key={friend.id} className='h-16'>
-                                    <button className='w-full h-full hover:bg-neutral-700 flex align-middle items-center justify-start gap-4 rounded-xl p-2'>
-                                        <FaceRoundedIcon/> {friend.name}
+                                <li key={friend.id} className='h-16 flex'>
+                                    <button className='w-full h-full hover:bg-neutral-700 flex align-middle items-center justify-between gap-4 rounded-xl p-2' onClick={handleFriendsButton}>
+                                        <div className='flex justify-start align-middle items-center gap-4'><FaceRoundedIcon/> {friend.name}</div>
+                                        <button className='w-12' onClick={() => handleShowMorePopup(friend.id)}><MoreHorizRoundedIcon/></button>
+                                        {showMorePopup.visible && showMorePopup.friendId === friend.id && (
+                                            <div className='absolute flex flex-col py-4 px-6 w-48 justify-center bg-neutral-800 align-middle items-center rounded-xl gap-4'>
+                                                {/* Popup content here */}
+                                                <p>{friend.name}</p>
+                                                <button onClick={() => handleRemoveFriend(friend.id)} className='bg-red-500 hover:bg-red-400 active:bg-red-600 px-4 py-1 rounded-lg'> Fjern</button>
+                                                <button onClick={() => handleShowMorePopup(friend.id)}><p className='text-neutral-400 hover:underline absolute top-1 right-2'><CloseRoundedIcon/></p></button>
+                                            </div>
+                                        )}
                                     </button>
                                 </li>
                             ))}
                         </ul>
+                        {friendsList.length === 0 && (
+                            <div className='text-neutral-400 font-normal'>
+                                <p>Ingen venner enda 😭</p>
+                                <div className='flex gap-1'><p>Fiks det ved å</p><button onClick={handleAddFriend} className='font-bold text-violet-400 hover:text-violet-300'>legge til en venn</button></div>
+                                
+                            </div>
+                        )}
                     </div>
                     <button className='w-full h-24 bg-violet-600 hover:bg-violet-500 active:bg-violet-800 flex align-middle items-center justify-center gap-2 rounded-xl p-2'>OPPRETT LEK<AddCircleOutlineRoundedIcon/></button>
                 </section>
