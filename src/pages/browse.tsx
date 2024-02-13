@@ -22,7 +22,7 @@ import PlayCircleOutlineRoundedIcon from '@mui/icons-material/PlayCircleOutlineR
 import MoreHorizRoundedIcon from '@mui/icons-material/MoreHorizRounded';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 
-export default function Dashboard() {
+export default function Browse() {
 
     const [searchTerm, setSearchTerm] = useState('');
 
