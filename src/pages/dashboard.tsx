@@ -33,8 +33,8 @@ export default function Dashboard() {
 
     const [showMorePopup, setShowMorePopup] = useState({ visible: false, friendId: null });
 
-    const handleShowMorePopup = (friendId) => {
-        setShowMorePopup({ visible: !showMorePopup.visible, friendId });
+    const handleShowMorePopup = (friendId: string | null) => {
+        setShowMorePopup({ visible: !showMorePopup.visible, friendId});
     };
     
 
