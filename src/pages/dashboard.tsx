@@ -85,7 +85,7 @@ export default function Dashboard() {
         <SignedIn>
             <div className='flex w-full max-w-screen-l h-screen bg-neutral-950 rounded-3xl'>
                 {/* Left section */}
-                <section className='rounded-2xl flex-col w-1/4 h-full flex align-middle justify-start p-0 m-2'>
+                <section className='rounded-2xl flex-col w-1/4 min-w-72 h-full flex align-middle justify-start p-0 m-2'>
                     <div className='rounded-2xl w-full h-full max-h-40 bg-neutral-900 flex flex-col align-middle justify-center p-4 mb-2'>
                         <button className='w-full h-full hover:bg-neutral-700 flex align-middle items-center justify-start gap-4 rounded-xl p-2'> <UserButton/> Min Profil</button>
                         <button className='w-full h-full hover:bg-neutral-700 flex align-middle items-center justify-start gap-4 rounded-xl p-2'>
@@ -114,7 +114,7 @@ export default function Dashboard() {
                 </section>
 
                 {/* Middle section */}
-                <section className='rounded-2xl w-1/2 h-full flex flex-col align-middle justify-start bg-neutral-900 p-4 my-2'>
+                <section className='rounded-2xl w-full min-w-[420px] h-full flex flex-col align-middle justify-start bg-neutral-900 p-4 my-2'>
                     {/* Search section */}
                     <div className='flex w-full flex-row justify-between align-middle items-center'>
                         <form onSubmit={handleSearchSubmit} className="flex align-middle w-2/3 items-center font-normal bg-neutral-800 text-neutral-600 rounded-full overflow-hidden p-1">
@@ -124,7 +124,7 @@ export default function Dashboard() {
                             <input 
                                 className="pl-2 pr-2 py-2 w-full bg-neutral-800 text-white focus:outline-none" 
                                 type="search" // Changed to search to improve semantics
-                                placeholder="Search..."
+                                placeholder="Søk..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
@@ -144,7 +144,7 @@ export default function Dashboard() {
                 </section>
 
                 {/* Right section */}
-                <section className='rounded-2xl w-1/4 flex flex-col align-middle justify-start m-2'>
+                <section className='rounded-2xl w-1/4 min-w-72 flex flex-col align-middle justify-start m-2'>
                     <div className='rounded-2xl flex-col w-full h-fit bg-neutral-900 flex align-middle justify-center p-4 mb-2'>
                         <div className='flex flex-row justify-between align-baseline items-baseline'>
                             <h2 className='font-bold text-2xl '>Venner</h2>
