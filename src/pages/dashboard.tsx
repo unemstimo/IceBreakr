@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { useState, FormEvent, useEffect} from 'react';
 import { v4 as uuid } from "uuid";
 import CreateGame from '~/components/CreateGame';
+import Advertisement from '~/components/advertisement';
 
 import {
     SignInButton,
@@ -189,8 +190,8 @@ export default function Dashboard() {
                         </Link>
                     </div>
                     {/* Ad section */}
-                    <div className='flex w-full min-h-60 bg-neutral-800 rounded-xl mt-4 items-center justify-center'>
-                        <p>Ad Space</p>
+                    <div className='flex overflow-hidden w-full min-h-60 bg-neutral-800 rounded-xl mt-4 items-center justify-center'>
+                        <Advertisement/>
                     </div>
                     {/* Content section */}
                     <div className='flex w-full h-full bg-neutral-800 rounded-xl mt-4 items-center justify-center'>
