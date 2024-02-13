@@ -129,7 +129,9 @@ export default function Dashboard() {
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </form>
-                        <button className=" rounded-full bg-violet-600 hover:bg-violet-500 active:bg-violet-800 px-4 py-2 text-white shadow-lg">Bla Gjennom</button>
+                        <Link href="/browse">
+                            <button className=" rounded-full bg-violet-600 hover:bg-violet-500 active:bg-violet-800 px-4 py-2 text-white shadow-lg">Bla Gjennom</button>
+                        </Link>
                     </div>
                     {/* Ad section */}
                     <div className='flex w-full min-h-60 bg-neutral-800 rounded-xl mt-4 items-center justify-center'>
