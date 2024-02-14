@@ -5,6 +5,7 @@ const CreateGame: React.FC = () => {
     const [playerCount, setPlayerCount] = useState('');
     const [description, setDescription] = useState('');
     const [playTime, setPlayTime] = useState('');
+    const [selectedPlayTime, setSelectedPlayTime] = useState('');
     const [gameType, setGameType] = useState('');
     const [showError, setShowError] = useState(false);
 
@@ -31,7 +32,8 @@ const CreateGame: React.FC = () => {
 
     const handlePlayTimeButtonClick = (playTime: string) => {
         setPlayTime(playTime);
-        console.log("Play time: "+ playTime);
+        setSelectedPlayTime(playTime); // Set selected playtime
+        console.log("Play time: " + playTime);
     };
 
     const showErrorMessage = () => {
@@ -50,7 +52,7 @@ const CreateGame: React.FC = () => {
             return;
         }
         hideErrorMessage();
-        console.log("Navn på lek: " + name,  "Antall spillere: " + playerCount, "Beskrivelse: " + description, "Spilletid: " + playTime, "Kategori: " + gameType);
+        console.log("Navn på lek: " + name,'\n',  "Antall spillere: " + playerCount,'\n', "Beskrivelse: " + description,'\n', "Spilletid: " + playTime,'\n', "Kategori: " + gameType);
         
     };
 
@@ -62,11 +64,19 @@ const CreateGame: React.FC = () => {
                 <input type="text" value={playerCount} onChange={handlePlayerCountChange} placeholder='Antall spillere...' className="pl-2 pr-2 py-2 w-full bg-neutral-800 text-white focus:outline-none rounded-lg"/>
                 
                 <div className='flex gap-2 align-middle justify-start items-center'>
-                    <button type="button" onClick={() => handlePlayTimeButtonClick('Kort')} className=" rounded-full bg-neutral-600 hover:bg-neutral-500 px-4 py-2 text-white shadow-lg">Kort</button>
-                    <button type="button" onClick={() => handlePlayTimeButtonClick('Middels')} className=" rounded-full bg-neutral-600 hover:bg-neutral-500 px-4 py-2 text-white shadow-lg">Middels</button>
-                    <button type="button" onClick={() => handlePlayTimeButtonClick('Lang')} className=" rounded-full bg-neutral-600 hover:bg-neutral-500 px-4 py-2 text-white shadow-lg">Lang</button>
-                    <button type="button" onClick={() => handlePlayTimeButtonClick('Sykt lang')} className=" rounded-full bg-neutral-600 hover:bg-neutral-500 px-4 py-2 text-white shadow-lg">Sykt lang</button>
-                </div> 
+                    {['Kort', 'Middels', 'Lang', 'Sykt lang'].map((time) => (
+                        <button
+                            key={time}
+                            type="button"
+                            onClick={() => handlePlayTimeButtonClick(time)}
+                            className={`rounded-full px-4 py-2 text-white shadow-lg ${
+                                selectedPlayTime === time ? 'bg-violet-500' : 'bg-neutral-600 hover:bg-neutral-500'
+                            }`}
+                        >
+                            {time}
+                        </button>
+                    ))}
+                </div>
                 <textarea type="text" value={description} onChange={handleDescriptionChange} placeholder='Beskrivelse av spill...' className="pl-2 pr-2 py-2 w-full bg-neutral-800 text-white focus:outline-none rounded-lg"/>
                 <input type="text" value={gameType} onChange={handleGameTypeChange} placeholder='Kategori...' className="pl-2 pr-2 py-2 w-full bg-neutral-800 text-white focus:outline-none rounded-lg"/>
                 <button className=" rounded-full bg-violet-600 hover:bg-violet-500 active:bg-violet-800 px-4 py-2 text-white shadow-lg" type="submit">
