@@ -22,7 +22,14 @@ export const postRouter = createTRPCRouter({
   getAll: publicProcedure.query(({ ctx }) => {
     return ctx.db.post.findMany();
   }),
-  // getAllRaw: publicProcedure.query
+
+  delete: publicProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db.post.delete({
+        where: { id: input.id },
+      });
+    }),
 
   getPostsByUserId: publicProcedure
     .input(z.object({ userId: z.string().min(1) })) // Define input schema
@@ -31,15 +38,6 @@ export const postRouter = createTRPCRouter({
         where: { authorId: input.userId },
       });
     }),
-
-  // const userWithPosts = await prisma.user.findUnique({
-  //   where: {
-  //     id: 'user_id' // Replace 'user_id' with the actual user ID
-  //   },
-  //   include: {
-  //     posts: true, // This tells Prisma to include the posts related to the user
-  //   },
-  // });
 
   // merk at dette er puclibProcedure. Det vil si at den er tilgjengelig selv om brukeren ikke er logget inn
   getLatest: publicProcedure.query(({ ctx }) => {

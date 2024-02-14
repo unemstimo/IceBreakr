@@ -8,6 +8,7 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
 
+// her settes env database_url den kan jeg endre.
 const client = new Client({ url: env.DATABASE_URL });
 
 export const db =

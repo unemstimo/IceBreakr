@@ -10,7 +10,8 @@
     "dev": "next dev",
     "postinstall": "prisma generate",
     "lint": "next lint",
-    "start": "next start"
+    "start": "next start",
+    "test": "vitest run"
   },
   "dependencies": {
     "@clerk/nextjs": "^4.29.7",
@@ -44,7 +45,8 @@
     "prettier-plugin-tailwindcss": "^0.5.7",
     "prisma": "^5.9.1",
     "tailwindcss": "^3.3.5",
-    "typescript": "^5.1.6"
+    "typescript": "^5.1.6",
+    "vitest": "^1.2.2"
   },
   "ct3aMetadata": {
     "initVersion": "7.26.0"
