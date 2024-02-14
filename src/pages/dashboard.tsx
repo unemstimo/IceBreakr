@@ -189,8 +189,9 @@ export default function Dashboard() {
                             <button className=" rounded-full bg-violet-600 hover:bg-violet-500 active:bg-violet-800 px-4 py-2 text-white shadow-lg">Bla Gjennom</button>
                         </Link>
                     </div>
+                    <p className='mt-4 font-normal text-neutral-500'>Annonse</p>
                     {/* Ad section */}
-                    <div className='flex overflow-hidden w-full min-h-60 bg-neutral-800 rounded-xl mt-4 items-center justify-center'>
+                    <div className='flex overflow-hidden w-full min-h-60 bg-neutral-800 rounded-xl items-center justify-center'>
                         <Advertisement/>
                     </div>
                     {/* Content section */}

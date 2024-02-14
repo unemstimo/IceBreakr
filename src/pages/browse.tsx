@@ -89,8 +89,8 @@ export default function Browse() {
                     </div>
                     {/* Ad space */}
                     <p className='font-normal text-neutral-500'>Annonse</p>
-                    <div className='rounded-2xl overflow-hidden flex-col w-full h-fit bg-neutral-900 flex align-middle justify-start p-4 mb-2' >
-                      <div className='flex flex-row justify-between h-full w-full'> 
+                    <div className='flex overflow-hidden w-full h-auto bg-neutral-800 rounded-xl items-center justify-center' >
+                      <div className='w-full h-full'> 
                         <Advertisement/>
                       </div>
                     </div>

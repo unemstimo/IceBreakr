@@ -114,7 +114,7 @@ export default function Profile() {
 
       <main className="flex font-darker text-lg font-bold min-h-screen flex-col items-center justify-center bg-neutral-950 text-white">
         <SignedOut>
-            <p>You are signed out. Login or register to see profile.</p>
+            <p>Du er ikke pålogget. Logg inn eller opprett en bruker.</p>
             <SignInButton />
         </SignedOut>
         <SignedIn>
