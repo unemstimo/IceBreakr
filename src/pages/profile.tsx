@@ -235,7 +235,7 @@ export default function Profile() {
                     </div>
                 )}
                 {showManageAccount.visible && (
-                    <div className='absolute flex flex-col top-0 left-0 w-full h-full bg-neutral-900 bg-opacity-90 justify-center align-middle items-center'>
+                    <div className='absolute flex flex-col top-0 left-0 w-full h-full bg-neutral-900 bg-opacity-90 p-24 justify-center align-middle items-center'>
                         <UserProfile />
                         <button className='text-l mt-2 text-neutral-300 hover:underline' onClick={handleManageAccount}>Lukk</button>
                     </div>
