@@ -6,6 +6,8 @@
  * TL;DR - This is where all the tRPC server stuff is created and plugged in. The pieces you will
  * need to use are documented accordingly near the end.
  */
+
+import { getAuth } from "@clerk/nextjs/server";
 import { initTRPC } from "@trpc/server";
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import superjson from "superjson";
@@ -21,7 +23,9 @@ import { db } from "~/server/db";
  * These allow you to access things when processing a request, like the database, the session, etc.
  */
 
-type CreateContextOptions = Record<string, never>;
+type CreateContextOptions = {
+  session: ReturnType<typeof getAuth> | null;
+};
 
 /**
  * This helper generates the "internals" for a tRPC context. If you need to use it, you can export
@@ -33,8 +37,10 @@ type CreateContextOptions = Record<string, never>;
  *
  * @see https://create.t3.gg/en/usage/trpc#-serverapitrpcts
  */
-const createInnerTRPCContext = (_opts: CreateContextOptions) => {
+
+const createInnerTRPCContext = (opts: CreateContextOptions) => {
   return {
+    ...opts,
     db,
   };
 };
@@ -45,8 +51,14 @@ const createInnerTRPCContext = (_opts: CreateContextOptions) => {
  *
  * @see https://trpc.io/docs/context
  */
-export const createTRPCContext = (_opts: CreateNextContextOptions) => {
-  return createInnerTRPCContext({});
+export const createTRPCContext = (opts: CreateNextContextOptions) => {
+  const { req } = opts;
+
+  const session = getAuth(req);
+
+  return createInnerTRPCContext({
+    session: session,
+  });
 };
 
 /**
@@ -94,4 +106,20 @@ export const createTRPCRouter = t.router;
  */
 export const publicProcedure = t.procedure;
 
+const enforceUserIsAuthed = t.middleware(async ({ ctx, next }) => {
+  if (!ctx.session?.userId) {
+    throw new Error("Unauthorized 401");
+  }
+
+  return next({
+    ctx: {
+      ...ctx,
+      userId: ctx.session.userId,
+    },
+  });
+});
+
+export const privateProcedure = t.procedure.use(enforceUserIsAuthed);
+
+//caller factory for use in the frontend
 export const createCallerFactory = t.createCallerFactory;

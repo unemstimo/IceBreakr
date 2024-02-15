@@ -3,5 +3,6 @@
 @tailwind utilities;
 
 :root{
-    background-color: rgb(10 10 10);
+    /* @apply allows for tailwind css */
+    @apply bg-black;
 }
