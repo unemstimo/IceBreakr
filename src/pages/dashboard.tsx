@@ -1,19 +1,17 @@
 import Head from "next/head";
 import Link from "next/link";
-import { useState, FormEvent, useEffect } from "react";
+import { useState, type FormEvent } from "react";
 import { v4 as uuid } from "uuid";
 import CreateGame from "~/components/CreateGame";
 import Advertisement from "~/components/advertisement";
 
 import {
   SignInButton,
-  SignOutButton,
   SignedIn,
   SignedOut,
   UserButton,
   useUser,
 } from "@clerk/nextjs";
-import { Container } from "postcss";
 
 import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
 import FaceRoundedIcon from "@mui/icons-material/FaceRounded";
@@ -22,20 +20,15 @@ import SearchIcon from "@mui/icons-material/Search";
 import PlayCircleOutlineRoundedIcon from "@mui/icons-material/PlayCircleOutlineRounded";
 import MoreHorizRoundedIcon from "@mui/icons-material/MoreHorizRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
+import PlayListCard, { type Playlist } from "~/components/playListCard";
 
 type Friend = {
   id: string;
   name: string;
 };
 
-type Playlist = {
-  id: string;
-  name: string;
-  author: string;
-  numberOfGames: number;
-};
-
 export default function Dashboard() {
+  const user = useUser();
   const [searchTerm, setSearchTerm] = useState("");
 
   const [friendsList, setFriendsList] = useState<Friend[]>([]);
@@ -123,6 +116,24 @@ export default function Dashboard() {
   const handleCancelCreateGame = () => {
     setShowCreateGame({ visible: false });
   };
+
+  // TODO: Replace with actual data from the backend
+  const publicPlaylists: Playlist[] = [
+    {
+      id: "1",
+      name: "Lekeliste 1",
+      numberOfGames: 3,
+      author: "Ola Nordmann",
+      description: "En lekeliste med 3 leker",
+    },
+    {
+      id: "2",
+      name: "Lekeliste 2",
+      numberOfGames: 5,
+      author: "Kari Nordmann",
+      description: "En lekeliste med 5 leker",
+    },
+  ];
 
   return (
     <div>
@@ -225,6 +236,7 @@ export default function Dashboard() {
                     </li>
                   ))}
                 </ul>
+
                 {playlists.length === 0 && (
                   <div className="font-normal text-neutral-400">
                     <p>Ingen lekelister enda 🧐</p>
@@ -273,8 +285,15 @@ export default function Dashboard() {
                 <Advertisement />
               </div>
               {/* Content section */}
-              <div className="mt-4 flex h-full w-full items-center justify-center rounded-xl bg-neutral-800">
-                <p>Content 2</p>
+              <div className="mt-4 h-full w-full">
+                <h3>Lekelister for {user.user?.username}</h3>
+                <div className="flex gap-6">
+                  {publicPlaylists.map((playlist) => {
+                    return (
+                      <PlayListCard key={playlist.id} playlist={playlist} />
+                    );
+                  })}
+                </div>
               </div>
             </section>
 
