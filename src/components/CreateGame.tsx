@@ -4,6 +4,7 @@ const CreateGame: React.FC = () => {
     const [name, setName] = useState('');
     const [playerCount, setPlayerCount] = useState('');
     const [description, setDescription] = useState('');
+    const [rules, setRules] = useState('');
     const [playTime, setPlayTime] = useState('');
     const [selectedPlayTime, setSelectedPlayTime] = useState('');
     const [gameType, setGameType] = useState('');
@@ -25,6 +26,10 @@ const CreateGame: React.FC = () => {
     const handleGameTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setGameType(event.target.value);
     };
+
+    const handleRulesChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+        setRules(event.target.value);
+    }
 
     const handlePlayTimeButtonClick = (playTime: string) => {
         setPlayTime(playTime);
@@ -74,7 +79,8 @@ const CreateGame: React.FC = () => {
                         </button>
                     ))}
                 </div>
-                <textarea type="text" value={description} onChange={handleDescriptionChange} placeholder='Beskrivelse av spill...' className="pl-2 pr-2 py-2 w-full bg-neutral-800 text-white focus:outline-none rounded-lg"/>
+                <input type="text" value={description} onChange={handleDescriptionChange} placeholder='Beskrivelse av spill...' className="pl-2 pr-2 py-2 w-full bg-neutral-800 text-white focus:outline-none rounded-lg"/>
+                <textarea type="text" value={rules} onChange={handleRulesChange} placeholder='Regler...' className="pl-2 pr-2 py-2 w-full bg-neutral-800 text-white focus:outline-none rounded-lg"/>
                 <input type="text" value={gameType} onChange={handleGameTypeChange} placeholder='Kategori...' className="pl-2 pr-2 py-2 w-full bg-neutral-800 text-white focus:outline-none rounded-lg"/>
                 <button className=" rounded-full bg-violet-600 hover:bg-violet-500 active:bg-violet-800 px-4 py-2 text-white shadow-lg" type="submit">
                     Opprett Lek
