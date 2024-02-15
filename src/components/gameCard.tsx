@@ -5,7 +5,7 @@ import StarRoundedIcon from '@mui/icons-material/StarRounded';
 
 const gameCard = ({ name, playtime, category, players, rules, description, rating }) => {
   return (
-    <div className="relative flex flex-col max-w-60 min-w-60 h-auto min-h-80 max-h-80 p-4 rounded-xl bg-neutral-900 m-2">
+    <div className="relative flex flex-col max-w-60 min-w-60 h-auto min-h-80 max-h-80 p-4 rounded-xl bg-neutral-900">
         <div className='relative w-full h-full flex flex-col overflow-clip'>
             <Image className='w-full h-auto rounded-lg' src={Placeholder} alt="Game Image" width={200} height={200} />
             <h2 className='mt-2'>{name}</h2>
