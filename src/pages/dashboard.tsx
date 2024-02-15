@@ -2,8 +2,19 @@ import Head from "next/head";
 import Link from "next/link";
 import { useState, FormEvent, useEffect } from "react";
 import { v4 as uuid } from "uuid";
+import CreateGame from '~/components/CreateGame';
+import Advertisement from '~/components/advertisement';
 
-import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import {
+  SignInButton,
+  SignOutButton,
+  SignedIn,
+  SignedOut,
+  UserButton,
+  useUser,
+} from "@clerk/nextjs";
+import { Container } from "postcss";
+
 import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
 import FaceRoundedIcon from "@mui/icons-material/FaceRounded";
 import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
@@ -11,6 +22,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import PlayCircleOutlineRoundedIcon from "@mui/icons-material/PlayCircleOutlineRounded";
 import MoreHorizRoundedIcon from "@mui/icons-material/MoreHorizRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
+import React from "react";
 
 export default function Dashboard() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -113,6 +125,16 @@ export default function Dashboard() {
     e.preventDefault();
     console.log("Search Term:", searchTerm);
   };
+
+    const [showCreateGame, setShowCreateGame] = useState({ visible: false});
+
+    const handleCreateGameShow = () => {
+      setShowCreateGame({ visible: !showCreateGame.visible});
+    };
+
+    const handleCancelCreateGame = () => {
+        setShowCreateGame({ visible: false});
+    };
 
   return (
     <div>
