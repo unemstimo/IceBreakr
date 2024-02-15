@@ -22,6 +22,7 @@ import PlayCircleOutlineRoundedIcon from '@mui/icons-material/PlayCircleOutlineR
 import MoreHorizRoundedIcon from '@mui/icons-material/MoreHorizRounded';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import Advertisement from '~/components/advertisement';
+import GameCard from '~/components/gameCard';
 
 export default function Browse() {
 
@@ -45,6 +46,11 @@ export default function Browse() {
     const handleCancelCreateGame = () => {
         setShowCreateGame({ visible: false});
     };
+
+    const [games, setGames] = useState([
+      { id: uuid(), name: "Game 1", playtime: "30 mins", category: "Strategy", players: "2-4", description: "A fun strategy game. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec elementum ligula id lorem dictum dignissim. Etiam in dui ac sapien varius porta. Duis porta justo et dictum mattis. Ut viverra cursus arcu sed lobortis.", rating: 4.5 },
+      { id: uuid(), name: "Game 2", playtime: "1 hour", category: "Adventure", players: "1-4", description: "An exciting adventure game.", rating: 5 },
+  ]);
 
   return (
     <div>
@@ -124,7 +130,19 @@ export default function Browse() {
                       <p className='font-normal text-neutral-500'>Viser 0 av 999 leker • Navn A -> Æ</p>
                     </div>
                     <div className='flex w-full h-full bg-neutral-800 rounded-xl mt-4 items-center justify-center'>
-                        <p>Content</p>
+                        {/* Map through the games array to render GameCard components */}
+                        {games.map(game => (
+                            <GameCard
+                                key={game.id}
+                                name={game.name}
+                                playtime={game.playtime}
+                                category={game.category}
+                                players={game.players}
+                                rules={game.rules} // Make sure you have rules data if you're using it
+                                description={game.description}
+                                rating={game.rating}
+                            />
+                        ))}
                     </div>
                 </section>
                 {showCreateGame.visible && (
