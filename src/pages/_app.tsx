@@ -1,5 +1,5 @@
 import { type AppType } from "next/app";
-import { ClerkProvider, SignedIn, SignedOut } from "@clerk/nextjs";
+import { ClerkProvider } from "@clerk/nextjs";
 import "~/styles/globals.css";
 
 import { api } from "~/utils/api";
@@ -10,7 +10,7 @@ import Header from "~/components/Header";
 const MyApp: AppType = ({ Component, pageProps }) => {
   return (
     <ClerkProvider>
-      <Header/>
+      <Header />
       <Component {...pageProps} />
     </ClerkProvider>
   );
