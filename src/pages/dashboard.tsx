@@ -2,6 +2,8 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useState, FormEvent, useEffect} from 'react';
 import { v4 as uuid } from "uuid";
+import CreateGame from '~/components/CreateGame';
+import Advertisement from '~/components/advertisement';
 
 import {
     SignInButton,
@@ -20,16 +22,12 @@ import SearchIcon from '@mui/icons-material/Search';
 import PlayCircleOutlineRoundedIcon from '@mui/icons-material/PlayCircleOutlineRounded';
 import MoreHorizRoundedIcon from '@mui/icons-material/MoreHorizRounded';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
-import { randomInt } from 'crypto';
 
 export default function Dashboard() {
 
     const [searchTerm, setSearchTerm] = useState('');
 
     const [friendsList, setFriendsList] = useState([
-        { id: uuid(), name: 'Friend ' + uuid().slice(0,4) },
-        { id: uuid(), name: 'Friend ' + uuid().slice(0,4) },
-        { id: uuid(), name: 'Friend ' + uuid().slice(0,4) },
     ]);
 
     const [showMorePopup, setShowMorePopup] = useState({ visible: false, friendId: null });
@@ -50,17 +48,14 @@ export default function Dashboard() {
         const newFriendsList = friendsList.filter(friend => friend.id !== friendId);
         setFriendsList(newFriendsList);
         handleShowMorePopup(null);
-    }
+    };
 
     const handleFriendsButton = () => {
         console.log("Friend clicked");
-    }
+    };
     
 
     const [playlists, setPlaylists] = useState([
-        { id: uuid(), name: 'Lekeliste ' + uuid().slice(0,4), numberOfGames: 5, author: 'Meg '},
-        { id: uuid(), name: 'Lekeliste ' + uuid().slice(0,4), numberOfGames: 12, author: 'Venn ' + uuid().slice(0,4) },
-        { id: uuid(), name: 'Lekeliste ' + uuid().slice(0,4), numberOfGames: 512, author: 'Venn ' + uuid().slice(0,4) },
     ]);
 
     const [showMorePopupPlaylist, setShowMorePopupPlaylist] = useState({ visible: false, playlistId: null });
@@ -81,15 +76,25 @@ export default function Dashboard() {
         const newPlaylists = playlists.filter(list => list.id !== playlistId);
         setPlaylists(newPlaylists);
         handleShowMorePopupPlaylist(null);
-    }
+    };
 
     const handlePlaylistClick = () => {
         console.log("Playlist clicked");
-    }
+    };
 
     const handleSearchSubmit = (e: FormEvent) => {
         e.preventDefault();
         console.log("Search Term:", searchTerm);
+    };
+
+    const [showCreateGame, setShowCreateGame] = useState({ visible: false});
+
+    const handleCreateGameShow = () => {
+      setShowCreateGame({ visible: !showCreateGame.visible});
+    };
+
+    const handleCancelCreateGame = () => {
+        setShowCreateGame({ visible: false});
     };
 
   return (
@@ -108,15 +113,24 @@ export default function Dashboard() {
           </p>
         </SignedOut>
         <SignedIn>
-            <div className='flex w-full max-w-screen-l h-screen bg-neutral-950 rounded-3xl'>
+            <div className='relative flex w-full max-w-screen-l max-w-[1440px] h-screen bg-neutral-950 rounded-3xl'>
                 {/* Left section */}
                 <section className='rounded-2xl flex-col w-1/4 min-w-72 h-full flex align-middle justify-start p-0 m-2'>
-                    <div className='rounded-2xl w-full h-full max-h-40 bg-neutral-900 flex flex-col align-middle justify-center p-4 mb-2'>
-                        <button className='w-full h-full hover:bg-neutral-700 flex align-middle items-center justify-start gap-4 rounded-xl p-2'> <UserButton/> Min Profil</button>
-                        <button className='w-full h-full hover:bg-neutral-700 flex align-middle items-center justify-start gap-4 rounded-xl p-2'>
-                        <HomeRoundedIcon />Hjem
-                        </button>
+                    <div className='rounded-2xl w-full h-fit max-h-40 bg-neutral-900 flex flex-col align-middle justify-center p-4 mb-2'>
+                        <Link href={"/profile"} className='w-full h-full'>
+                          <button className='w-full h-full hover:bg-neutral-700 flex align-middle items-center justify-start gap-4 rounded-xl p-2'>
+                            <UserButton/> Min Profil
+                          </button>
+                        </Link>
+                        <Link href={"/dashboard"} className='w-full h-full'>
+                          <button className='w-full h-full hover:bg-neutral-700 flex align-middle items-center justify-start gap-4 rounded-xl p-2'>
+                            <HomeRoundedIcon />Hjem
+                          </button>
+                        </Link>
                     </div>
+                    <button onClick={handleCreateGameShow} className='w-full h-20 min-h-20 bg-violet-600 hover:bg-violet-500 active:bg-violet-800 flex align-middle items-center justify-center gap-2 rounded-xl p-2 mb-2'>
+                        OPPRETT LEK<AddCircleOutlineRoundedIcon/>
+                    </button>
                     <div className='rounded-2xl flex-col w-full h-full bg-neutral-900 flex align-middle justify-start p-4 mb-2' >
                         <div className='flex flex-row justify-between align-baseline items-baseline'>
                             <h2 className='font-bold text-2xl '>Mine Lekelister</h2>
@@ -124,7 +138,7 @@ export default function Dashboard() {
                         </div>
                         <ul className='w-full mt-5 relative'>
                             {playlists.map(list => (
-                                <li key={list.id} className='h-16 flex'>
+                                <li key={list.id} className='h-16 flex mb-2'>
                                     <button className='w-full h-full hover:bg-neutral-700 flex align-middle items-center justify-between gap-4 rounded-xl p-2 border border-neutral-800' onClick={handlePlaylistClick}>
                                         <div className='flex justify-start align-middle items-center gap-4'>
                                             <PlayCircleOutlineRoundedIcon/>
@@ -175,9 +189,10 @@ export default function Dashboard() {
                             <button className=" rounded-full bg-violet-600 hover:bg-violet-500 active:bg-violet-800 px-4 py-2 text-white shadow-lg">Bla Gjennom</button>
                         </Link>
                     </div>
+                    <p className='mt-4 font-normal text-neutral-500'>Annonse</p>
                     {/* Ad section */}
-                    <div className='flex w-full min-h-60 bg-neutral-800 rounded-xl mt-4 items-center justify-center'>
-                        <p>Ad Space</p>
+                    <div className='flex overflow-hidden w-full min-h-60 bg-neutral-800 rounded-xl items-center justify-center'>
+                        <Advertisement/>
                     </div>
                     {/* Content section */}
                     <div className='flex w-full h-full bg-neutral-800 rounded-xl mt-4 items-center justify-center'>
@@ -218,11 +233,14 @@ export default function Dashboard() {
                             </div>
                         )}
                     </div>
-                    <button className='w-full h-24 bg-violet-600 hover:bg-violet-500 active:bg-violet-800 flex align-middle items-center justify-center gap-2 rounded-xl p-2'>OPPRETT LEK<AddCircleOutlineRoundedIcon/></button>
                 </section>
+                {showCreateGame.visible && (
+                    <div className='absolute flex flex-col top-0 left-0 w-full h-full bg-neutral-900 bg-opacity-90 justify-center align-middle items-center'>
+                        <CreateGame/>
+                        <button className='text-l mt-2 text-neutral-300 hover:underline' onClick={handleCancelCreateGame}>Avbryt</button>
+                    </div>
+                )}
             </div>
-
-
         </SignedIn>
       </main>
     </div>
