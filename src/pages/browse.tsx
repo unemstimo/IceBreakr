@@ -138,7 +138,7 @@ export default function Browse() {
                                 playtime={game.playtime}
                                 category={game.category}
                                 players={game.players}
-                                rules={game.rules} // Make sure you have rules data if you're using it
+                                rules={game.rules}
                                 description={game.description}
                                 rating={game.rating}
                             />
