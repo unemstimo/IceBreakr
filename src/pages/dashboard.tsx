@@ -21,6 +21,7 @@ import PlayCircleOutlineRoundedIcon from "@mui/icons-material/PlayCircleOutlineR
 import MoreHorizRoundedIcon from "@mui/icons-material/MoreHorizRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import PlayListCard, { type Playlist } from "~/components/playListCard";
+import { api } from "~/utils/api";
 
 type Friend = {
   id: string;
@@ -135,6 +136,11 @@ export default function Dashboard() {
     },
   ];
 
+  const userQuery = api.user.getAll.useQuery();
+
+  //
+
+  // userQuery.
   return (
     <div>
       <Head>

@@ -7,10 +7,10 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider     = "mysql"
   // provider = "sqlite"
   relationMode = "prisma"
-  url      = env("DATABASE_URL")
+  url          = env("DATABASE_URL")
 }
 
 //Example
@@ -33,9 +33,9 @@ model Post {
 }
 
 model User {
-  userId          String                  @id @unique
+  userId          String               @id @unique
   username        String               @unique
-  password        String
+  mail            String               @unique
   administrator   Boolean
   games           Game[]
   playlists       Playlist[]
@@ -60,6 +60,8 @@ model Game {
   GameInPlaylist     GameInPlaylist[]
   UserFavouritedGame UserFavouritedGame[]
   UserReportedGame   UserReportedGame[]
+
+  @@index([userId])
 }
 
 model Playlist {
@@ -69,6 +71,8 @@ model Playlist {
   user           User             @relation(fields: [userId], references: [userId])
   games          Game[]
   GameInPlaylist GameInPlaylist[]
+
+  @@index([userId])
 }
 
 model Category {
@@ -99,8 +103,8 @@ model GameInPlaylist {
 model UserFavouritedGame {
   userId String
   gameId Int
-  user   User @relation(fields: [userId], references: [userId])
-  game   Game @relation(fields: [gameId], references: [gameId])
+  user   User   @relation(fields: [userId], references: [userId])
+  game   Game   @relation(fields: [gameId], references: [gameId])
 
   @@id([userId, gameId])
 }
