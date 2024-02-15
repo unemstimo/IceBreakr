@@ -146,7 +146,7 @@ export default function Browse() {
                     <div className='mt-4 -mb-2 w-full flex justify-start'>
                       <p className='font-normal text-neutral-500'>Viser 0 av 999 leker • Navn A -> Æ</p>
                     </div>
-                    <div className='flex w-full h-full bg-neutral-800 rounded-xl mt-4 justify-start flex-wrap gap-2 p-2 overflow-y-auto'>
+                    <div className='flex w-full h-full bg-neutral-900 rounded-xl mt-4 justify-start flex-wrap gap-4 overflow-y-auto'>
                         {/* Map through the games array to render GameCard components */}
                         {games.map(game => (
                             <GameCard
@@ -163,7 +163,7 @@ export default function Browse() {
                     </div>
                 </section>
                 {showCreateGame.visible && (
-                    <div className='absolute flex flex-col top-0 left-0 w-full h-full bg-neutral-900 bg-opacity-90 justify-center align-middle items-center'>
+                    <div className='absolute flex flex-col top-0 left-0 w-screen h-screen overflow-hidden bg-neutral-900 bg-opacity-90 justify-center align-middle items-center'>
                         <CreateGame/>
                         <button className='text-l mt-2 text-neutral-300 hover:underline' onClick={handleCancelCreateGame}>Avbryt</button>
                     </div>
