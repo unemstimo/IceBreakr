@@ -1,6 +1,6 @@
 import Image from "next/image";
 import React from "react";
-import ExampleAd from '~/assets//images/eucalyptus-oil-ad.png';
+import ExampleAd from '~/assets/images/eucalyptus-oil-ad.png';
 
 const Advertisement: React.FC = () => {
     return (
