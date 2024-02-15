@@ -1,3 +1,5 @@
+// make prisma schema from sql https://sql-to-prisma.vercel.app/
+
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["driverAdapters"]
@@ -6,16 +8,134 @@ generator client {
 
 datasource db {
   provider     = "mysql"
-  url          = env("DATABASE_URL")
+  // provider = "sqlite"
   relationMode = "prisma"
+  url          = env("DATABASE_URL")
 }
 
+//Example
+model User2 {
+  id    String @id
+  name  String
+  posts Post[]
+}
+
+//Example
 model Post {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  authorId  String
+  author    User2    @relation(fields: [authorId], references: [id])
   content   String
+  authorId  String
 
   @@index([authorId])
+}
+
+model User {
+  userId          String               @id @unique
+  username        String               @unique
+  mail            String               @unique
+  administrator   Boolean
+  games           Game[]
+  playlists       Playlist[]
+  reportedGames   UserReportedGame[]
+  reportedRatings UserReportedRating[]
+  favouritedGames UserFavouritedGame[]
+  GameRating      GameRating[]
+}
+
+model Game {
+  gameId             Int                  @id @unique @default(autoincrement())
+  userId             String
+  name               String
+  estimate           Int
+  rules              String
+  description        String
+  user               User                 @relation(fields: [userId], references: [userId])
+  categories         Category[]
+  playlists          Playlist[]
+  ratings            GameRating[]
+  GameInCategory     GameInCategory[]
+  GameInPlaylist     GameInPlaylist[]
+  UserFavouritedGame UserFavouritedGame[]
+  UserReportedGame   UserReportedGame[]
+
+  @@index([userId])
+}
+
+model Playlist {
+  playlistId     Int              @id @unique @default(autoincrement())
+  name           String
+  userId         String
+  user           User             @relation(fields: [userId], references: [userId])
+  games          Game[]
+  GameInPlaylist GameInPlaylist[]
+
+  @@index([userId])
+}
+
+model Category {
+  categoryId     Int              @id @unique @default(autoincrement())
+  name           String
+  games          Game[]
+  GameInCategory GameInCategory[]
+}
+
+model GameInCategory {
+  gameId     Int
+  categoryId Int
+  game       Game     @relation(fields: [gameId], references: [gameId])
+  category   Category @relation(fields: [categoryId], references: [categoryId])
+
+  @@id([categoryId, gameId])
+}
+
+model GameInPlaylist {
+  gameId     Int
+  playlistId Int
+  game       Game     @relation(fields: [gameId], references: [gameId])
+  playlist   Playlist @relation(fields: [playlistId], references: [playlistId])
+
+  @@id([gameId, playlistId])
+}
+
+model UserFavouritedGame {
+  userId String
+  gameId Int
+  user   User   @relation(fields: [userId], references: [userId])
+  game   Game   @relation(fields: [gameId], references: [gameId])
+
+  @@id([userId, gameId])
+}
+
+model UserReportedGame {
+  userId String
+  gameId Int
+  reason String?
+  user   User    @relation(fields: [userId], references: [userId])
+  game   Game    @relation(fields: [gameId], references: [gameId])
+
+  @@id([userId, gameId])
+}
+
+model GameRating {
+  ratingId           Int                  @id @unique @default(autoincrement())
+  userId             String
+  gameId             Int
+  starRating         Int
+  reviewText         String
+  user               User                 @relation(fields: [userId], references: [userId])
+  game               Game                 @relation(fields: [gameId], references: [gameId])
+  UserReportedRating UserReportedRating[]
+}
+
+model UserReportedRating {
+  reporterId String
+  ratingId   Int
+  reason     String?
+  user       User       @relation(fields: [reporterId], references: [userId])
+  rating     GameRating @relation(fields: [ratingId], references: [ratingId])
+
+  @@id([reporterId, ratingId])
 }
