@@ -1,6 +1,6 @@
 import Head from "next/head";
 import Link from "next/link";
-import { useState, FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import { v4 as uuid } from "uuid";
 import CreateGame from "~/components/CreateGame";
 import Advertisement from "~/components/advertisement";
@@ -12,7 +12,6 @@ import {
   UserButton,
   useUser,
 } from "@clerk/nextjs";
-import { Container } from "postcss";
 
 import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
 import FaceRoundedIcon from "@mui/icons-material/FaceRounded";
@@ -21,7 +20,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import PlayCircleOutlineRoundedIcon from "@mui/icons-material/PlayCircleOutlineRounded";
 import MoreHorizRoundedIcon from "@mui/icons-material/MoreHorizRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
-import PlayListCard, { Playlist } from "~/components/playListCard";
+import PlayListCard, { type Playlist } from "~/components/playListCard";
 
 type Friend = {
   id: string;
