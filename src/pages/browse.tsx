@@ -22,6 +22,7 @@ import PlayCircleOutlineRoundedIcon from '@mui/icons-material/PlayCircleOutlineR
 import MoreHorizRoundedIcon from '@mui/icons-material/MoreHorizRounded';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import Advertisement from '~/components/advertisement';
+import GameCard from '~/components/gameCard';
 
 export default function Browse() {
 
@@ -45,6 +46,32 @@ export default function Browse() {
     const handleCancelCreateGame = () => {
         setShowCreateGame({ visible: false});
     };
+
+    const [games, setGames] = useState([
+      { id: uuid(), name: "Sura", playtime: "30 minutter", category: "Fysisk lek", players: "2-10", description: "En morsom fysisk lek.", rating: 4.5 },
+      { id: uuid(), name: "Sisten", playtime: "1 time", category: "Fysisk lek", players: "4-20", description: "En spennende utendørs lek.", rating: 5 },
+      { id: uuid(), name: "Vri åtter", playtime: "45 minutter", category: "Fysisk lek", players: "3-12", description: "En utfordrende lek for å strekke seg.", rating: 4 },
+      { id: uuid(), name: "Boksen går", playtime: "20 minutter", category: "Fysisk lek", players: "5-15", description: "En klassisk lek for å øve på reaksjonsevne.", rating: 4.2 },
+      { id: uuid(), name: "Ringleken", playtime: "40 minutter", category: "Fysisk lek", players: "4-12", description: "En morsom lek som innebærer å kaste ringer.", rating: 4.7 },
+      { id: uuid(), name: "Kubb", playtime: "1 time", category: "Fysisk lek", players: "2-12", description: "Et strategisk spill som innebærer å kaste kubber.", rating: 4.3 },
+      { id: uuid(), name: "Husker", playtime: "30 minutter", category: "Fysisk lek", players: "2-4", description: "En klassisk lek som utfordrer balanse.", rating: 4.8 },
+      { id: uuid(), name: "Hoppe tau", playtime: "20 minutter", category: "Fysisk lek", players: "1-4", description: "En flott måte å trene kondisjon på.", rating: 4.6 },
+      { id: uuid(), name: "Kongen befaler", playtime: "1 time", category: "Fysisk lek", players: "5-30", description: "En morsom lek hvor en person gir kommandoer.", rating: 4.4 },
+      { id: uuid(), name: "Blindemann", playtime: "30 minutter", category: "Fysisk lek", players: "5-20", description: "En spennende lek som handler om å unngå å bli fanget.", rating: 4.9 },
+      { id: uuid(), name: "Fotball", playtime: "1 time", category: "Fysisk lek", players: "6-22", description: "En populær sport som spilles over hele verden.", rating: 4.5 },
+      { id: uuid(), name: "Stikkball", playtime: "45 minutter", category: "Fysisk lek", players: "4-16", description: "En morsom lek som involverer å kaste og fange baller.", rating: 4.3 },
+      { id: uuid(), name: "Hesteskokasting", playtime: "30 minutter", category: "Fysisk lek", players: "2-8", description: "En tradisjonell lek som handler om å kaste hestesko på en pinne.", rating: 4.7 },
+      { id: uuid(), name: "Tautrekking", playtime: "1 time", category: "Fysisk lek", players: "4-20", description: "En konkurransedyktig lek som tester styrke.", rating: 4.6 },
+      { id: uuid(), name: "Potetløp", playtime: "20 minutter", category: "Fysisk lek", players: "3-10", description: "En morsom lek som innebærer å balansere poteter på skjeer.", rating: 4.4 },
+      { id: uuid(), name: "Eggeløp", playtime: "30 minutter", category: "Fysisk lek", players: "3-12", description: "En utfordrende lek hvor man må bære et egg på en skje.", rating: 4.8 },
+      { id: uuid(), name: "På staur", playtime: "40 minutter", category: "Fysisk lek", players: "5-15", description: "En morsom lek som handler om å hoppe over staur.", rating: 4.5 },
+      { id: uuid(), name: "Flasketuten peker på", playtime: "1 time", category: "Fysisk lek", players: "4-20", description: "En klassisk lek som innebærer å kysse den flasken peker på.", rating: 4.3 },
+      { id: uuid(), name: "Katt og mus", playtime: "30 minutter", category: "Fysisk lek", players: "6-30", description: "En morsom lek som handler om å unngå å bli fanget.", rating: 4.9 },
+      { id: uuid(), name: "Stiv heks", playtime: "40 minutter", category: "Fysisk lek", players: "4-16", description: "En spennende lek hvor en person prøver å fange andre spillere.", rating: 4.7 },
+      { id: uuid(), name: "Bytte plass", playtime: "1 time", category: "Fysisk lek", players: "8-40", description: "En morsom lek som innebærer å bytte plass raskt.", rating: 4.5 },
+      { id: uuid(), name: "Kaste på boks", playtime: "30 minutter", category: "Fysisk lek", players: "4-12", description: "En utfordrende lek som handler om å kaste baller på en boks.", rating: 4.2 },
+      { id: uuid(), name: "Potetkasting", playtime: "20 minutter", category: "Fysisk lek", players: "3-8", description: "En morsom lek hvor man kaster poteter på en målskive.", rating: 4.6 },
+    ]);
 
   return (
     <div>
@@ -123,12 +150,24 @@ export default function Browse() {
                     <div className='mt-4 -mb-2 w-full flex justify-start'>
                       <p className='font-normal text-neutral-500'>Viser 0 av 999 leker • Navn A -> Æ</p>
                     </div>
-                    <div className='flex w-full h-full bg-neutral-800 rounded-xl mt-4 items-center justify-center'>
-                        <p>Content</p>
+                    <div className='flex w-full h-full bg-neutral-900 rounded-xl mt-4 justify-start flex-wrap gap-4 overflow-y-auto'>
+                        {/* Map through the games array to render GameCard components */}
+                        {games.map(game => (
+                            <GameCard
+                                key={game.id}
+                                name={game.name}
+                                playtime={game.playtime}
+                                category={game.category}
+                                players={game.players}
+                                rules={game.rules}
+                                description={game.description}
+                                rating={game.rating}
+                            />
+                        ))}
                     </div>
                 </section>
                 {showCreateGame.visible && (
-                    <div className='absolute flex flex-col top-0 left-0 w-full h-full bg-neutral-900 bg-opacity-90 justify-center align-middle items-center'>
+                    <div className='absolute flex flex-col top-0 left-0 w-screen h-screen overflow-hidden bg-neutral-900 bg-opacity-90 justify-center align-middle items-center'>
                         <CreateGame/>
                         <button className='text-l mt-2 text-neutral-300 hover:underline' onClick={handleCancelCreateGame}>Avbryt</button>
                     </div>
