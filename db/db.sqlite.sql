@@ -39,8 +39,8 @@ CREATE TABLE IF NOT EXISTS "GameInPlaylist" (
 	"gameId"	INTEGER NOT NULL,
 	"playlistId"	INTEGER NOT NULL,
 	PRIMARY KEY("gameId","playlistId"),
-	FOREIGN KEY("playlistId") REFERENCES "Game"("gameId"),
-	FOREIGN KEY("gameId") REFERENCES "Playlist"("playlistId")
+	FOREIGN KEY("gameId") REFERENCES "Game"("gameId"),
+	FOREIGN KEY("playlistId") REFERENCES "Playlist"("playlistId")
 );
 CREATE TABLE IF NOT EXISTS "UserFavouritedGame" (
 	"userId"	INTEGER NOT NULL,
