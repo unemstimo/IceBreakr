@@ -1,3 +1,5 @@
+// make prisma schema from sql https://sql-to-prisma.vercel.app/
+
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["driverAdapters"]
@@ -6,16 +8,35 @@ generator client {
 
 datasource db {
   provider     = "mysql"
-  url          = env("DATABASE_URL")
+  // provider = "sqlite"
   relationMode = "prisma"
+  url          = env("DATABASE_URL")
+}
+
+model User {
+  id    String @id
+  name  String
+  posts Post[]
 }
 
 model Post {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  authorId  String
+  author    User     @relation(fields: [authorId], references: [id])
   content   String
+  authorId  String
 
   @@index([authorId])
 }
+
+// model Post {
+//   id       Int    @id @default(autoincrement())
+//   title    String
+//   author   User   @relation(fields: [authorId], references: [id])
+//   authorId Int
+// }
+
+// model Play {
+
+// }
