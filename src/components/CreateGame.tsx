@@ -18,10 +18,6 @@ const CreateGame: React.FC = () => {
         setPlayerCount(event.target.value);
     };
 
-    const handlePlayTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setPlayTime(event.target.value);
-    };
-
     const handleDescriptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setDescription(event.target.value);
     };
@@ -32,7 +28,7 @@ const CreateGame: React.FC = () => {
 
     const handlePlayTimeButtonClick = (playTime: string) => {
         setPlayTime(playTime);
-        setSelectedPlayTime(playTime); // Set selected playtime
+        setSelectedPlayTime(playTime);
         console.log("Play time: " + playTime);
     };
 
@@ -64,6 +60,7 @@ const CreateGame: React.FC = () => {
                 <input type="text" value={playerCount} onChange={handlePlayerCountChange} placeholder='Antall spillere...' className="pl-2 pr-2 py-2 w-full bg-neutral-800 text-white focus:outline-none rounded-lg"/>
                 
                 <div className='flex gap-2 align-middle justify-start items-center'>
+                    {/* AI generated snippet*/}
                     {['Kort', 'Middels', 'Lang', 'Sykt lang'].map((time) => (
                         <button
                             key={time}
