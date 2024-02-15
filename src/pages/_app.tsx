@@ -5,12 +5,12 @@ import "~/styles/globals.css";
 import { api } from "~/utils/api";
 
 import "~/styles/globals.css";
-import Header from "~/components/Header";
+import { useEffect } from "react";
 
 const MyApp: AppType = ({ Component, pageProps }) => {
   return (
     <ClerkProvider>
-      <Header />
+      {/* <Header /> */}
       <Component {...pageProps} />
     </ClerkProvider>
   );

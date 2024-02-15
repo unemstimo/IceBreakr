@@ -1,23 +1,24 @@
 import { z } from "zod";
 
-import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import {
+  createTRPCRouter,
+  privateProcedure,
+  publicProcedure,
+} from "~/server/api/trpc";
 
 export const userRouter = createTRPCRouter({
-  create: publicProcedure
+  create: privateProcedure
     .input(
       z.object({
-        userId: z.string().min(1),
         username: z.string().min(1),
         mail: z.string().min(1),
         administrator: z.boolean(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
       return ctx.db.user.create({
         data: {
-          userId: input.userId,
+          userId: ctx.userId,
           username: input.username,
           mail: input.mail,
           administrator: input.administrator ?? false,
@@ -27,6 +28,12 @@ export const userRouter = createTRPCRouter({
 
   getAll: publicProcedure.query(({ ctx }) => {
     return ctx.db.user.findMany();
+  }),
+
+  getCurrentUser: privateProcedure.query(({ ctx }) => {
+    return ctx.db.user.findFirst({
+      where: { userId: ctx.userId },
+    });
   }),
 
   getUserById: publicProcedure
@@ -48,11 +55,9 @@ export const userRouter = createTRPCRouter({
       });
     }),
 
-  delete: publicProcedure
-    .input(z.object({ id: z.string() }))
-    .mutation(async ({ ctx, input }) => {
-      return ctx.db.user.delete({
-        where: { userId: input.id },
-      });
-    }),
+  delete: privateProcedure.mutation(async ({ ctx }) => {
+    return ctx.db.user.delete({
+      where: { userId: ctx.userId },
+    });
+  }),
 });
