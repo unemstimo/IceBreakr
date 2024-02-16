@@ -7,11 +7,10 @@ deploy_preview:
   # except:
   #   - main
   script:
-    - export VERCEL_TOKEN='XREzE5hfirZEaNYXzSJXdLO0'
     - npm install --global vercel
-    - vercel pull --yes --environment=preview --token='XREzE5hfirZEaNYXzSJXdLO0'
-    - vercel build --token='XREzE5hfirZEaNYXzSJXdLO0'
-    - vercel deploy --prebuilt  --token='XREzE5hfirZEaNYXzSJXdLO0'
+    - vercel pull --yes --environment=preview --token=$VERCEL_TOKEN
+    - vercel build --token=$VERCEL_TOKEN
+    - vercel deploy --prebuilt  --token=$VERCEL_TOKEN
 
 deploy_production:
   stage: deploy
@@ -19,6 +18,6 @@ deploy_production:
     - main
   script:
     - npm install --global vercel
-    - vercel pull --yes --environment=production --token='XREzE5hfirZEaNYXzSJXdLO0'
-    - vercel build --prod --token='XREzE5hfirZEaNYXzSJXdLO0'
-    - vercel deploy --prebuilt --prod --token='XREzE5hfirZEaNYXzSJXdLO0'
+    - vercel pull --yes --environment=production --token=$VERCEL_TOKEN
+    - vercel build --prod --token=$VERCEL_TOKEN
+    - vercel deploy --prebuilt --prod --token=$VERCEL_TOKEN
