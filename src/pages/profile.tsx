@@ -1,22 +1,17 @@
 import Head from "next/head";
-import Link from "next/link";
 import { useState, type FormEvent } from "react";
 import { v4 as uuid } from "uuid";
 import CreateGame from "~/components/CreateGame";
-import NavBar from "~/components/navBar";
 
 import {
   SignInButton,
   SignOutButton,
   SignedIn,
   SignedOut,
-  UserButton,
   UserProfile,
 } from "@clerk/nextjs";
 
-import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
 import FaceRoundedIcon from "@mui/icons-material/FaceRounded";
-import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
 import PlayCircleOutlineRoundedIcon from "@mui/icons-material/PlayCircleOutlineRounded";
 import MoreHorizRoundedIcon from "@mui/icons-material/MoreHorizRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";

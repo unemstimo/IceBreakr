@@ -1,14 +1,7 @@
 import Head from "next/head";
-import Link from "next/link";
 import { useState, type FormEvent } from "react";
 import { v4 as uuid } from "uuid";
 import CreateGame from "~/components/CreateGame";
-import NavBar from "~/components/navBar";
-
-import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
-
-import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
-import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
 import SearchIcon from "@mui/icons-material/Search";
 
 import Advertisement from "~/components/advertisement";

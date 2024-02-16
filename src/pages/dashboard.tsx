@@ -4,8 +4,6 @@ import { useState, type FormEvent } from "react";
 import { v4 as uuid } from "uuid";
 import CreateGame from "~/components/CreateGame";
 import Advertisement from "~/components/advertisement";
-import NavBar from "../components/navBar";
-
 import { useUser } from "@clerk/nextjs";
 
 import FaceRoundedIcon from "@mui/icons-material/FaceRounded";
