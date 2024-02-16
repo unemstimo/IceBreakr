@@ -7,7 +7,6 @@ deploy_preview:
   # except:
   #   - main
   script:
-    - export VERCEL_TOKEN='XREzE5hfirZEaNYXzSJXdLO0'
     - npm install --global vercel
     - vercel pull --yes --environment=preview --token='XREzE5hfirZEaNYXzSJXdLO0'
     - vercel build --token='XREzE5hfirZEaNYXzSJXdLO0'

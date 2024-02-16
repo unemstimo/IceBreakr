@@ -43,6 +43,8 @@ model User {
   reportedRatings UserReportedRating[]
   favouritedGames UserFavouritedGame[]
   GameRating      GameRating[]
+
+  @@index([userId])
 }
 
 model Game {

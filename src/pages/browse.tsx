@@ -1,28 +1,13 @@
 import Head from "next/head";
-import Link from "next/link";
-import { useState, FormEvent, useEffect } from "react";
+import { useState, type FormEvent } from "react";
 import { v4 as uuid } from "uuid";
 import CreateGame from "~/components/CreateGame";
-
-import {
-  SignInButton,
-  SignOutButton,
-  SignedIn,
-  SignedOut,
-  UserButton,
-  useUser,
-} from "@clerk/nextjs";
-import { Container } from "postcss";
-
-import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
-import FaceRoundedIcon from "@mui/icons-material/FaceRounded";
-import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
 import SearchIcon from "@mui/icons-material/Search";
-import PlayCircleOutlineRoundedIcon from "@mui/icons-material/PlayCircleOutlineRounded";
-import MoreHorizRoundedIcon from "@mui/icons-material/MoreHorizRounded";
-import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
+
 import Advertisement from "~/components/advertisement";
 import GameCard from "~/components/gameCard";
+import PageWrapper from "~/components/pageWrapper";
+import NavigationBar from "~/components/navigationBar";
 
 export default function Browse() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -293,127 +278,99 @@ export default function Browse() {
         />
       </Head>
 
-      <main className="flex min-h-screen flex-col items-center justify-center bg-neutral-950 font-darker text-lg font-bold text-white">
-        <SignedOut>
-          <SignInButton />
-          <p>
-            This content is public. Only signed out users can see the
-            SignInButton above this text.
-          </p>
-        </SignedOut>
-        <SignedIn>
-          <div className="max-w-screen-l flex h-screen w-full max-w-[1440px] rounded-3xl bg-neutral-950">
-            {/* Left section */}
-            <section className="m-2 flex h-full w-1/4 min-w-72 max-w-96 flex-col justify-start rounded-2xl p-0 align-middle">
-              <div className="mb-2 flex h-fit max-h-40 w-full flex-col justify-center rounded-2xl bg-neutral-900 p-4 align-middle">
-                <Link href={"/profile"} className="h-full w-full">
-                  <button className="flex h-full w-full items-center justify-start gap-4 rounded-xl p-2 align-middle hover:bg-neutral-700">
-                    <UserButton /> Min Profil
-                  </button>
-                </Link>
-                <Link href={"/dashboard"} className="h-full w-full">
-                  <button className="flex h-full w-full items-center justify-start gap-4 rounded-xl p-2 align-middle hover:bg-neutral-700">
-                    <HomeRoundedIcon />
-                    Hjem
-                  </button>
-                </Link>
-              </div>
-              <button
-                onClick={handleCreateGameShow}
-                className="mb-2 flex h-20 min-h-20 w-full items-center justify-center gap-2 rounded-xl bg-violet-600 p-2 align-middle hover:bg-violet-500 active:bg-violet-800"
-              >
-                OPPRETT LEK
-                <AddCircleOutlineRoundedIcon />
-              </button>
-              {/* Filters */}
-              <div className="mb-2 flex h-fit w-full flex-col justify-start rounded-2xl bg-neutral-900 p-4 align-middle">
-                <div className="flex flex-row items-baseline justify-between align-baseline">
-                  <h2 className="text-2xl font-bold ">Filtere</h2>
-                  <button
-                    className="text-l text-neutral-500 hover:underline"
-                    onClick={handleClearFilters}
-                  >
-                    Tøm
-                  </button>
-                </div>
-              </div>
-              {/* Ad space */}
-              <p className="font-normal text-neutral-500">Annonse</p>
-              <div className="flex h-auto w-full items-center justify-center overflow-hidden rounded-xl bg-neutral-800">
-                <div className="h-full w-full">
-                  <Advertisement />
-                </div>
-              </div>
-            </section>
+      <PageWrapper>
+        {/* Left section */}
 
-            {/* Middle section */}
-            <section className="my-2 flex h-full w-full min-w-[420px] flex-col justify-start rounded-2xl bg-neutral-900 p-4 align-middle">
-              {/* Search section */}
-              <div className="flex w-full flex-row items-center justify-between align-middle">
-                <form
-                  onSubmit={handleSearchSubmit}
-                  className="flex w-2/3 items-center overflow-hidden rounded-full bg-neutral-800 p-1 align-middle font-normal text-neutral-600"
-                >
-                  <button type="submit" className="p-2">
-                    <SearchIcon className="text-neutral-500" />
-                  </button>
-                  <input
-                    className="w-full bg-neutral-800 py-2 pl-2 pr-2 text-white focus:outline-none"
-                    type="search" // Changed to search to improve semantics
-                    placeholder="Søk..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
-                </form>
-                <div className="flex items-center justify-start gap-2 align-middle">
-                  <p className="mr-2 font-bold text-neutral-500">Sorter: </p>
-                  <button className=" rounded-full bg-violet-600 px-4 py-2 text-white shadow-lg hover:bg-violet-500 active:bg-violet-800">
-                    Populære
-                  </button>
-                  <button className=" rounded-full bg-violet-600 px-4 py-2 text-white shadow-lg hover:bg-violet-500 active:bg-violet-800">
-                    Nyeste
-                  </button>
-                  <button className=" rounded-full bg-violet-600 px-4 py-2 text-white shadow-lg hover:bg-violet-500 active:bg-violet-800">
-                    Navn
-                  </button>
-                </div>
-              </div>
-              {/* Content section */}
-              <div className="-mb-2 mt-4 flex w-full justify-start">
-                <p className="font-normal text-neutral-500">
-                  Viser 0 av 999 leker • Navn A til Æ
-                </p>
-              </div>
-              <div className="mt-4 flex h-full w-full flex-wrap justify-start gap-4 overflow-y-auto rounded-xl bg-neutral-900">
-                {/* Map through the games array to render GameCard components */}
-                {games.map((game) => (
-                  <GameCard
-                    key={game.id}
-                    name={game.name}
-                    playtime={game.playtime}
-                    category={game.category}
-                    players={game.players}
-                    rules={game.rules}
-                    description={game.description}
-                    rating={game.rating}
-                  />
-                ))}
-              </div>
-            </section>
-            {showCreateGame.visible && (
-              <div className="absolute left-0 top-0 flex h-screen w-screen flex-col items-center justify-center overflow-hidden bg-neutral-900 bg-opacity-90 align-middle">
-                <CreateGame />
-                <button
-                  className="text-l mt-2 text-neutral-300 hover:underline"
-                  onClick={handleCancelCreateGame}
-                >
-                  Avbryt
-                </button>
-              </div>
-            )}
+        <NavigationBar>
+          {/* Filters */}
+          <div className="mb-2 flex h-fit w-full flex-col justify-start rounded-2xl bg-neutral-900 p-4 align-middle">
+            <div className="flex flex-row items-baseline justify-between align-baseline">
+              <h2 className="text-2xl font-bold ">Filtere</h2>
+              <button
+                className="text-l text-neutral-500 hover:underline"
+                onClick={handleClearFilters}
+              >
+                Tøm
+              </button>
+            </div>
           </div>
-        </SignedIn>
-      </main>
+          {/* Ad space */}
+          <p className="font-normal text-neutral-500">Annonse</p>
+          <div className="flex h-auto w-full items-center justify-center overflow-hidden rounded-xl bg-neutral-800">
+            <div className="h-full w-full">
+              <Advertisement />
+            </div>
+          </div>
+        </NavigationBar>
+
+        {/* Middle section */}
+        <section className="my-2 flex h-full w-full min-w-[420px] flex-col justify-start rounded-2xl bg-neutral-900 p-4 align-middle">
+          {/* Search section */}
+          <div className="flex w-full flex-row items-center justify-between align-middle">
+            <form
+              onSubmit={handleSearchSubmit}
+              className="flex w-2/3 items-center overflow-hidden rounded-full bg-neutral-800 p-1 align-middle font-normal text-neutral-600"
+            >
+              <button type="submit" className="p-2">
+                <SearchIcon className="text-neutral-500" />
+              </button>
+              <input
+                className="w-full bg-neutral-800 py-2 pl-2 pr-2 text-white focus:outline-none"
+                type="search" // Changed to search to improve semantics
+                placeholder="Søk..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </form>
+            <div className="flex items-center justify-start gap-2 align-middle">
+              <p className="mr-2 font-bold text-neutral-500">Sorter: </p>
+              <button className=" rounded-full bg-violet-600 px-4 py-2 text-white shadow-lg hover:bg-violet-500 active:bg-violet-800">
+                Populære
+              </button>
+              <button className=" rounded-full bg-violet-600 px-4 py-2 text-white shadow-lg hover:bg-violet-500 active:bg-violet-800">
+                Nyeste
+              </button>
+              <button className=" rounded-full bg-violet-600 px-4 py-2 text-white shadow-lg hover:bg-violet-500 active:bg-violet-800">
+                Navn
+              </button>
+            </div>
+          </div>
+          {/* Content section */}
+          <div className="-mb-2 mt-4 flex w-full justify-start">
+            <p className="font-normal text-neutral-500">
+              Viser 0 av 999 leker • Navn A til Æ
+            </p>
+          </div>
+          <div className="mt-4 flex h-full w-full flex-wrap justify-start gap-4 overflow-y-auto rounded-xl bg-neutral-900">
+            {/* Map through the games array to render GameCard components */}
+            {games.map((game) => (
+              <GameCard
+                key={game.id}
+                name={game.name}
+                playtime={game.playtime}
+                category={game.category}
+                players={game.players}
+                rules={game.rules}
+                description={game.description}
+                rating={game.rating}
+              />
+            ))}
+          </div>
+        </section>
+        {showCreateGame.visible && (
+          <div className="absolute left-0 top-0 flex h-screen w-screen flex-col items-center justify-center overflow-hidden bg-neutral-900 bg-opacity-90 align-middle">
+            <CreateGame />
+            <button
+              className="text-l mt-2 text-neutral-300 hover:underline"
+              onClick={handleCancelCreateGame}
+            >
+              Avbryt
+            </button>
+          </div>
+        )}
+        {/* </div>
+      </main> */}
+      </PageWrapper>
     </div>
   );
 }

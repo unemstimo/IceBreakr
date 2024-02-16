@@ -9,7 +9,7 @@
 // test("add and get post", async () => {
 //   const createCaller = createFactory(appRouter.post);
 //   //   gå i db for å endre database url
-//   const postCaller = createCaller({ db });
+//   const postCaller = createCaller({ db, session: null });
 
 //   const input: inferProcedureInput<AppRouter["post"]["create"]> = {
 //     authorId: "1",
