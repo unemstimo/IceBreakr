@@ -243,11 +243,6 @@ export default function Dashboard() {
               </button>
             </Link>
           </div>
-          <p className="mt-4 font-normal text-neutral-500">Annonse</p>
-          {/* Ad section */}
-          <div className="flex min-h-60 w-full items-center justify-center overflow-hidden rounded-xl bg-neutral-800">
-            <Advertisement />
-          </div>
           {/* Content section */}
           <div className="mt-4 h-full w-full">
             <h3>Lekelister for {user.user?.username}</h3>
@@ -256,6 +251,11 @@ export default function Dashboard() {
                 return <PlayListCard key={playlist.id} playlist={playlist} />;
               })}
             </div>
+          </div>
+          {/* Ad section */}
+          <p className="mt-4 font-normal text-neutral-500">Annonse</p>
+          <div className="flex min-h-60 w-full items-center justify-center overflow-hidden rounded-xl bg-neutral-800">
+            <Advertisement />
           </div>
         </section>
 

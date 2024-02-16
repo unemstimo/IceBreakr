@@ -304,59 +304,62 @@ export default function Browse() {
         </NavigationBar>
 
         {/* Middle section */}
-        <section className="my-2 flex h-full w-full min-w-[420px] flex-col justify-start rounded-2xl bg-neutral-900 p-4 align-middle">
-          {/* Search section */}
-          <div className="flex w-full flex-row items-center justify-between align-middle">
-            <form
-              onSubmit={handleSearchSubmit}
-              className="flex w-2/3 items-center overflow-hidden rounded-full bg-neutral-800 p-1 align-middle font-normal text-neutral-600"
-            >
-              <button type="submit" className="p-2">
-                <SearchIcon className="text-neutral-500" />
-              </button>
-              <input
-                className="w-full bg-neutral-800 py-2 pl-2 pr-2 text-white focus:outline-none"
-                type="search" // Changed to search to improve semantics
-                placeholder="Søk..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </form>
-            <div className="flex items-center justify-start gap-2 align-middle">
-              <p className="mr-2 font-bold text-neutral-500">Sorter: </p>
-              <button className=" rounded-full bg-violet-600 px-4 py-2 text-white shadow-lg hover:bg-violet-500 active:bg-violet-800">
-                Populære
-              </button>
-              <button className=" rounded-full bg-violet-600 px-4 py-2 text-white shadow-lg hover:bg-violet-500 active:bg-violet-800">
-                Nyeste
-              </button>
-              <button className=" rounded-full bg-violet-600 px-4 py-2 text-white shadow-lg hover:bg-violet-500 active:bg-violet-800">
-                Navn
-              </button>
+        <section className="flex h-full ">
+          <section className=" flex h-full w-full min-w-[420px] grow flex-col justify-start rounded-2xl bg-neutral-900 p-4 align-middle">
+            {/* Search section */}
+            <div className="flex w-full flex-row items-center justify-between align-middle">
+              <form
+                onSubmit={handleSearchSubmit}
+                className="flex w-2/3 items-center overflow-hidden rounded-full bg-neutral-800 p-1 align-middle font-normal text-neutral-600"
+              >
+                <button type="submit" className="p-2">
+                  <SearchIcon className="text-neutral-500" />
+                </button>
+                <input
+                  className="w-full bg-neutral-800 py-2 pl-2 pr-2 text-white focus:outline-none"
+                  type="search" // Changed to search to improve semantics
+                  placeholder="Søk..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </form>
+              <div className="flex items-center justify-start gap-2 align-middle">
+                <p className="mr-2 font-bold text-neutral-500">Sorter: </p>
+                <button className=" rounded-full bg-violet-600 px-4 py-2 text-white shadow-lg hover:bg-violet-500 active:bg-violet-800">
+                  Populære
+                </button>
+                <button className=" rounded-full bg-violet-600 px-4 py-2 text-white shadow-lg hover:bg-violet-500 active:bg-violet-800">
+                  Nyeste
+                </button>
+                <button className=" rounded-full bg-violet-600 px-4 py-2 text-white shadow-lg hover:bg-violet-500 active:bg-violet-800">
+                  Navn
+                </button>
+              </div>
             </div>
-          </div>
-          {/* Content section */}
-          <div className="-mb-2 mt-4 flex w-full justify-start">
-            <p className="font-normal text-neutral-500">
-              Viser 0 av 999 leker • Navn A til Æ
-            </p>
-          </div>
-          <div className="mt-4 flex h-full w-full flex-wrap justify-start gap-4 overflow-y-auto rounded-xl bg-neutral-900">
-            {/* Map through the games array to render GameCard components */}
-            {games.map((game) => (
-              <GameCard
-                key={game.id}
-                name={game.name}
-                playtime={game.playtime}
-                category={game.category}
-                players={game.players}
-                rules={game.rules}
-                description={game.description}
-                rating={game.rating}
-              />
-            ))}
-          </div>
+            {/* Content section */}
+            <div className="-mb-2 mt-4 flex w-full justify-start">
+              <p className="font-normal text-neutral-500">
+                Viser 0 av 999 leker • Navn A til Æ
+              </p>
+            </div>
+            <div className="mt-4 flex h-full w-full flex-wrap justify-start gap-4 overflow-y-auto rounded-xl bg-neutral-900">
+              {/* Map through the games array to render GameCard components */}
+              {games.map((game) => (
+                <GameCard
+                  key={game.id}
+                  name={game.name}
+                  playtime={game.playtime}
+                  category={game.category}
+                  players={game.players}
+                  rules={game.rules}
+                  description={game.description}
+                  rating={game.rating}
+                />
+              ))}
+            </div>
+          </section>
         </section>
+
         {showCreateGame.visible && (
           <div className="absolute left-0 top-0 flex h-screen w-screen flex-col items-center justify-center overflow-hidden bg-neutral-900 bg-opacity-90 align-middle">
             <CreateGame />
