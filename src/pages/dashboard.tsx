@@ -4,6 +4,7 @@ import { useState, type FormEvent } from "react";
 import { v4 as uuid } from "uuid";
 import CreateGame from "~/components/CreateGame";
 import Advertisement from "~/components/advertisement";
+import NavBar from "../components/navBar";
 
 import {
   SignInButton,
@@ -149,26 +150,9 @@ export default function Dashboard() {
         <div className="max-w-screen-l relative flex h-screen w-full max-w-[1440px] rounded-3xl bg-neutral-950">
           {/* Left section */}
           <section className="m-2 flex h-full w-1/4 min-w-72 flex-col justify-start rounded-2xl p-0 align-middle">
-            <div className="mb-2 flex h-fit max-h-40 w-full flex-col justify-center rounded-2xl bg-neutral-900 p-4 align-middle">
-              <Link href={"/profile"} className="h-full w-full">
-                <button className="flex h-full w-full items-center justify-start gap-4 rounded-xl p-2 align-middle hover:bg-neutral-700">
-                  <UserButton /> Min Profil
-                </button>
-              </Link>
-              <Link href={"/dashboard"} className="h-full w-full">
-                <button className="flex h-full w-full items-center justify-start gap-4 rounded-xl p-2 align-middle hover:bg-neutral-700">
-                  <HomeRoundedIcon />
-                  Hjem
-                </button>
-              </Link>
-
-              <Link href={"/browse"} className="h-full w-full">
-                <button className="flex h-full w-full items-center justify-start gap-4 rounded-xl p-2 align-middle hover:bg-neutral-700">
-                  <SearchIcon />
-                  Utforsk
-                </button>
-              </Link>
-            </div>
+            <div className="mb-2 flex h-fit max-h-44 min-h-44 w-full flex-col justify-center rounded-2xl bg-neutral-900 align-middle">
+              <NavBar />
+            </div>  
             <button
               onClick={handleCreateGameShow}
               className="mb-2 flex h-20 min-h-20 w-full items-center justify-center gap-2 rounded-xl bg-violet-600 p-2 align-middle hover:bg-violet-500 active:bg-violet-800"
