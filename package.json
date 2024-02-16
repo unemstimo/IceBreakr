@@ -33,6 +33,7 @@
     "@types/babel__core": "^7.20.5",
     "@types/uuid": "^9.0.8",
     "@types/ws": "^8.5.10",
+    "classnames": "^2.5.1",
     "framer-motion": "^11.0.3",
     "localforage": "^1.10.0",
     "match-sorter": "^6.3.4",
