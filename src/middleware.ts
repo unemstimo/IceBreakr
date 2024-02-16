@@ -6,7 +6,7 @@ import { NextResponse } from "next/server";
 // See https://clerk.com/docs/references/nextjs/auth-middleware for more information about configuring your Middleware
 export default authMiddleware({
   // her kan vi legg til routes som skal være offentlige og ikke begrenset at innlogging
-  publicRoutes: ["/home", "/dashboard", "browse", "/"],
+  publicRoutes: ["/home", "/dashboard", "/browse", "/profile", "/"],
 });
 
 export const config = {
