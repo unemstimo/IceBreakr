@@ -142,6 +142,7 @@ export default function Dashboard() {
         <div className="max-w-screen-l relative flex h-screen w-full max-w-[1440px] rounded-3xl bg-neutral-950"> */}
       {/* Left section */}
       <PageWrapper>
+        <div className="ml-2 flex flex-col h-auto">
         <NavigationBar>
           <div className="mb-0 flex h-full w-full flex-col justify-start rounded-2xl bg-neutral-900 p-2 align-middle">
             <div className="flex flex-row items-baseline justify-between align-baseline">
@@ -217,6 +218,7 @@ export default function Dashboard() {
             )}
           </div>
         </NavigationBar>
+        </div>
 
         {/* Middle section */}
         <section className="flex h-screen overflow-y-auto max-h-screen w-full min-w-[420px] flex-col justify-start rounded-2xl bg-neutral-900 p-4 align-middle">
@@ -260,7 +262,7 @@ export default function Dashboard() {
         </section>
 
         {/* Right section */}
-        <section className="m-2 flex w-1/4 min-w-72 flex-col justify-start rounded-2xl align-middle">
+        <section className="mr-2 flex w-1/4 min-w-72 flex-col justify-start rounded-2xl align-middle">
           <div className="flex h-fit w-full flex-col justify-center rounded-2xl bg-neutral-900 p-4 align-middle">
             <div className="flex flex-row items-baseline justify-between align-baseline">
               <h2 className="text-2xl font-bold ">Venner</h2>

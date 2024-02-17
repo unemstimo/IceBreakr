@@ -280,7 +280,7 @@ export default function Browse() {
 
       <PageWrapper>
         {/* Left section */}
-
+        <div className="ml-2 flex flex-col h-auto">
         <NavigationBar>
           {/* Filters */}
           <div className="mb-2 flex h-fit w-full flex-col justify-start rounded-2xl bg-neutral-900 p-2 align-middle">
@@ -302,10 +302,10 @@ export default function Browse() {
             </div>
           </div>
         </NavigationBar>
-
+        </div>
         {/* Middle section */}
         <section className="flex h-full ">
-          <section className=" flex h-full w-full min-w-[420px] grow flex-col justify-start rounded-2xl bg-neutral-900 p-4 align-middle">
+          <section className="mr-2 flex h-full w-full min-w-[420px] grow flex-col justify-start rounded-2xl bg-neutral-900 p-4 align-middle">
             {/* Search section */}
             <div className="flex w-full flex-row items-center justify-between align-middle">
               <form
