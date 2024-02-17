@@ -134,9 +134,9 @@ export default function Profile() {
       <PageWrapper>
         {/* <main className="flex min-h-screen flex-col items-center justify-center bg-neutral-950 font-darker text-lg font-bold text-white">
         <div className="max-w-screen-l relative flex h-screen w-full max-w-[1440px] rounded-3xl bg-neutral-950"> */}
-
+        
         <NavigationBar>
-          <div className="flex h-full w-full flex-col justify-start rounded-2xl bg-neutral-900 p-4 align-middle">
+          <div className="flex h-full w-full flex-col justify-start rounded-2xl bg-neutral-900 p-2 align-middle">
             <div className="flex flex-row items-baseline justify-between align-baseline">
               <h2 className="text-2xl font-bold ">Mine Lekelister</h2>
               <button
@@ -216,7 +216,7 @@ export default function Profile() {
         </SignedOut>
         <SignedIn>
           {/* Middle section */}
-          <section className="my-2 flex h-full w-full min-w-[420px] flex-col justify-start rounded-2xl bg-neutral-900 p-4 align-middle">
+          <section className=" flex h-full w-full min-w-[420px] flex-col justify-start rounded-2xl bg-neutral-900 p-4 align-middle">
             <div className="flex justify-between">
               <h2 className="text-2xl font-bold ">Min Profil</h2>
               <div className="flex items-center gap-2">

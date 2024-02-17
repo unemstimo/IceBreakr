@@ -143,7 +143,7 @@ export default function Dashboard() {
       {/* Left section */}
       <PageWrapper>
         <NavigationBar>
-          <div className="mb-0 flex h-full w-full flex-col justify-start rounded-2xl bg-neutral-900 p-4 align-middle">
+          <div className="mb-0 flex h-full w-full flex-col justify-start rounded-2xl bg-neutral-900 p-2 align-middle">
             <div className="flex flex-row items-baseline justify-between align-baseline">
               <h2 className="text-2xl font-bold ">Mine Lekelister</h2>
               <button
@@ -219,7 +219,7 @@ export default function Dashboard() {
         </NavigationBar>
 
         {/* Middle section */}
-        <section className="flex h-full w-full min-w-[420px] flex-col justify-start rounded-2xl bg-neutral-900 p-4 align-middle">
+        <section className="flex h-screen overflow-y-auto max-h-screen w-full min-w-[420px] flex-col justify-start rounded-2xl bg-neutral-900 p-4 align-middle">
           {/* Search section */}
           <div className="flex w-full flex-row items-center justify-between align-middle">
             <form
@@ -254,7 +254,7 @@ export default function Dashboard() {
           </div>
           {/* Ad section */}
           <p className="mt-4 font-normal text-neutral-500">Annonse</p>
-          <div className="flex min-h-60 w-full items-center justify-center overflow-hidden rounded-xl bg-neutral-800">
+          <div className="flex min-h-48 max-h-60 w-full items-center justify-center overflow-hidden rounded-xl bg-neutral-800">
             <Advertisement />
           </div>
         </section>

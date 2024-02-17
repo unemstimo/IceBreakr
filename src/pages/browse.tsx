@@ -283,7 +283,7 @@ export default function Browse() {
 
         <NavigationBar>
           {/* Filters */}
-          <div className="mb-2 flex h-fit w-full flex-col justify-start rounded-2xl bg-neutral-900 p-4 align-middle">
+          <div className="mb-2 flex h-fit w-full flex-col justify-start rounded-2xl bg-neutral-900 p-2 align-middle">
             <div className="flex flex-row items-baseline justify-between align-baseline">
               <h2 className="text-2xl font-bold ">Filtere</h2>
               <button
