@@ -24,6 +24,7 @@ type Friend = {
   id: string;
   name: string;
 };
+
 export default function Profile() {
   const [searchTerm, setSearchTerm] = useState("");
 
