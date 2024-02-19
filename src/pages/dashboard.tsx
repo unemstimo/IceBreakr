@@ -186,13 +186,27 @@ export default function Dashboard() {
                 </button>
               </Link>
             </div>
-            <button
-              onClick={handleCreateGameShow}
-              className="mb-2 flex h-20 min-h-20 w-full items-center justify-center gap-2 rounded-xl bg-violet-600 p-2 align-middle hover:bg-violet-500 active:bg-violet-800"
-            >
-              OPPRETT LEK
-              <AddCircleOutlineRoundedIcon />
-            </button>
+            <div className="relative flex flex-col">
+              <button
+                onClick={handleCreateGameShow}
+                className="mb-2 flex h-20 min-h-20 w-full items-center justify-center gap-2 rounded-xl bg-violet-600 p-2 align-middle hover:bg-violet-500 active:bg-violet-800"
+              >
+                OPPRETT LEK
+                <AddCircleOutlineRoundedIcon />
+              </button>
+              {showLoginPopup && (
+                <div className=" absolute justify-center w-full flex-col px-6 py-4 top-0 left-0 flex gap-4 bg-red-600 rounded-xl">
+                  <p>Du må være logget inn for å utføre denne handlingen.</p>
+                  <div className="flex justify-center w-full gap-4">
+                    <SignInButton><button className="border rounded-full py-2 px-4 hover:bg-red-500 select-none">Logg Inn</button></SignInButton>
+                    <button className="text-4xl flex" onClick={() => setShowLoginPopup(false)}>
+                      &times;
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+            
             <div className="mb-2 flex h-full w-full flex-col justify-start rounded-2xl bg-neutral-900 p-4 align-middle">
               <div className="flex flex-row items-baseline justify-between align-baseline">
                 <h2 className="text-2xl font-bold ">Mine Lekelister</h2>
@@ -394,22 +408,7 @@ export default function Dashboard() {
             </div>
           )}
         </div>
-        <div>
-            {showLoginPopup && (
-              <div className="mb-2 flex h-30 min-h-20 w-120 items-center justify-center min-w-40 gap-4 rounded-xl bg-violet-600 p-2 align-middle hover:bg-violet-500 active:bg-violet-800 absolute top-52 left-40">
-                <p>Du må være logget inn for å utføre denne handlingen.</p>
-                
-                <SignInButton>Logg Inn</SignInButton>
-                <button className="text-4xl align-center cursor-pointer alert-del" onClick={() => setShowLoginPopup(false)}>
-                  &times;
-                </button>
-                </div>
-                )}
-                <button onClick={handleCreateGameShow}></button>
-                <button onClick={handleAddFriend}></button>
-                <button onClick={handleAddPlaylist}></button>
-  
-        </div>
+        
       </main>
     </div>
   );
