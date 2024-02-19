@@ -246,19 +246,10 @@ export default function Browse() {
           </section>
         </section>
 
-        {showCreateGame.visible && (
-          <div className="absolute left-0 top-0 flex h-screen w-screen flex-col items-center justify-center overflow-hidden bg-neutral-900 bg-opacity-90 align-middle">
-            <CreateGame />
-            <button
-              className="text-l mt-2 text-neutral-300 hover:underline"
-              onClick={handleCancelCreateGame}
-            >
-              Avbryt
-            </button>
-          </div>
-        )}
+        
         {/* </div>
       </main> */}
+      
       </PageWrapper>
     </div>
   );
