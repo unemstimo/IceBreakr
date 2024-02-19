@@ -30,8 +30,12 @@ type Friend = {
 export default function Dashboard() {
   const user = useUser();
   const [searchTerm, setSearchTerm] = useState("");
+  const { isSignedIn } = useUser();
+  const [showLoginPopup, setShowLoginPopup] = useState(false);
 
   const [friendsList, setFriendsList] = useState<Friend[]>([]);
+
+
 
   const [showMorePopup, setShowMorePopup] = useState({
     visible: false,
@@ -43,10 +47,15 @@ export default function Dashboard() {
   };
 
   const handleAddFriend = () => {
-    const newID = uuid();
-    console.log("Add Friend");
-    const newFriend = { id: newID, name: "Friend " + newID.slice(0, 4) };
-    setFriendsList([...friendsList, newFriend]);
+    if(!isSignedIn){
+      setShowLoginPopup(true);
+    } else {
+      const newID = uuid();
+      console.log("Add Friend");
+      const newFriend = { id: newID, name: "Friend " + newID.slice(0, 4) };
+      setFriendsList([...friendsList, newFriend]);
+    }
+    
   };
 
   const handleRemoveFriend = (friendId: string) => {
@@ -80,6 +89,9 @@ export default function Dashboard() {
   };
 
   const handleAddPlaylist = () => {
+    if(!isSignedIn) {
+      setShowLoginPopup(true);
+    }else {
     const newID = uuid();
     console.log("Add Playlist");
     const newPlaylist = {
@@ -89,6 +101,7 @@ export default function Dashboard() {
       author: "Meg",
     };
     setPlaylists([...playlists, newPlaylist]);
+    }
   };
 
   const handleRemovePlaylist = (playlistId: string) => {
@@ -110,7 +123,11 @@ export default function Dashboard() {
   const [showCreateGame, setShowCreateGame] = useState({ visible: false });
 
   const handleCreateGameShow = () => {
-    setShowCreateGame({ visible: !showCreateGame.visible });
+    if(!isSignedIn){
+      setShowLoginPopup(true);
+    } else {
+      setShowCreateGame({ visible: !showCreateGame.visible });}
+    
   };
 
   const handleCancelCreateGame = () => {
@@ -251,6 +268,7 @@ export default function Dashboard() {
                 </div>
               )}
             </div>
+            
           </section>
 
           {/* Middle section */}
@@ -292,6 +310,7 @@ export default function Dashboard() {
                 })}
               </div>
             </div>
+          
           </section>
 
           {/* Right section */}
@@ -374,6 +393,22 @@ export default function Dashboard() {
               </button>
             </div>
           )}
+        </div>
+        <div>
+            {showLoginPopup && (
+              <div className="mb-2 flex h-30 min-h-20 w-120 items-center justify-center min-w-40 gap-4 rounded-xl bg-violet-600 p-2 align-middle hover:bg-violet-500 active:bg-violet-800 absolute top-52 left-40">
+                <p>Du må være logget inn for å utføre denne handlingen.</p>
+                
+                <SignInButton>Logg Inn</SignInButton>
+                <button className="text-4xl align-center cursor-pointer alert-del" onClick={() => setShowLoginPopup(false)}>
+                  &times;
+                </button>
+                </div>
+                )}
+                <button onClick={handleCreateGameShow}></button>
+                <button onClick={handleAddFriend}></button>
+                <button onClick={handleAddPlaylist}></button>
+  
         </div>
       </main>
     </div>
