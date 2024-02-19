@@ -23,7 +23,8 @@ type Friend = {
 export default function Dashboard() {
   const user = useUser();
   const [searchTerm, setSearchTerm] = useState("");
-
+  const { isSignedIn } = useUser();
+  const [showLoginPopup, setShowLoginPopup] = useState(false);
   const [friendsList, setFriendsList] = useState<Friend[]>([]);
 
   const [showMorePopup, setShowMorePopup] = useState({
@@ -36,10 +37,15 @@ export default function Dashboard() {
   };
 
   const handleAddFriend = () => {
-    const newID = uuid();
-    console.log("Add Friend");
-    const newFriend = { id: newID, name: "Friend " + newID.slice(0, 4) };
-    setFriendsList([...friendsList, newFriend]);
+    if(!isSignedIn) {
+      setShowLoginPopup(true);
+    } else{
+      const newID = uuid();
+      console.log("Add Friend");
+      const newFriend = { id: newID, name: "Friend " + newID.slice(0, 4) };
+      setFriendsList([...friendsList, newFriend]);
+    }
+    
   };
 
   const handleRemoveFriend = (friendId: string) => {
@@ -73,15 +79,20 @@ export default function Dashboard() {
   };
 
   const handleAddPlaylist = () => {
-    const newID = uuid();
-    console.log("Add Playlist");
-    const newPlaylist = {
-      id: newID,
-      name: "Lekeliste " + newID.slice(0, 4),
-      numberOfGames: 0,
-      author: "Meg",
-    };
-    setPlaylists([...playlists, newPlaylist]);
+    if(!isSignedIn){
+      setShowLoginPopup(true);
+    } else {
+      const newID = uuid();
+      console.log("Add Playlist");
+      const newPlaylist = {
+        id: newID,
+        name: "Lekeliste " + newID.slice(0, 4),
+        numberOfGames: 0,
+        author: "Meg",
+      };
+      setPlaylists([...playlists, newPlaylist]);
+    }
+    
   };
 
   const handleRemovePlaylist = (playlistId: string) => {
@@ -103,7 +114,12 @@ export default function Dashboard() {
   const [showCreateGame, setShowCreateGame] = useState({ visible: false });
 
   const handleCreateGameShow = () => {
-    setShowCreateGame({ visible: !showCreateGame.visible });
+    if(!isSignedIn){
+      setShowLoginPopup(true);
+    } else {
+      setShowCreateGame({ visible: !showCreateGame.visible });
+    }
+    
   };
 
   const handleCancelCreateGame = () => {
@@ -328,6 +344,18 @@ export default function Dashboard() {
                 </div>
               </div>
             )}
+            {showLoginPopup && (
+               <div className=" mb-2 flex h-30 absolute justify-center w-60 flex-col px-6 py-4 bottom-6 right-6 gap-4 bg-red-600 rounded-xl">
+                 <p>Du må være logget inn for å utføre denne handlingen.</p>
+                 <div className="flex justify-center w-full gap-4">
+                   <SignInButton><button className="border rounded-full py-2 px-4 hover:bg-red-500 select-none">Logg Inn</button></SignInButton>
+                   <button className="text-4xl flex" onClick={() => setShowLoginPopup(false)}>
+                     &times;
+                   </button>
+                 </div>
+               </div>
+             )} 
+
           </div>
         </section>
         {showCreateGame.visible && (
