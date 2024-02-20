@@ -33,17 +33,17 @@ export default function Browse() {
 
   const [games, setGames] = useState([
     {
-      rules: "fuck off",
+      rules: "Kast frisbeen til en medspiller i motstanderens målområde uten å bli tatt av motstanderen. Poeng scores når mottakeren fanger frisbeen i motstanderens målområde. Bytt besittelse av frisbeen ved feil eller turnover.",
       id: uuid(),
-      name: "Sura",
-      playtime: "30 minutter",
+      name: "Ultimate Treningskamp",
+      playtime: "Varierer",
       category: "Fysisk lek",
-      players: "2-10",
-      description: "En morsom fysisk lek.",
-      rating: 4.5,
+      players: "7-14",
+      description: "En kombinasjon av fotball, rugby og Ultimate Frisbee.",
+      rating: 4.7,
     },
     {
-      rules: "fuck off",
+      rules: "En spiller som 'den som jakter' prøver å berøre andre spillere. Spillerne løper rundt for å unngå å bli fanget. Den siste som er igjen, blir den neste 'den som jakter'.",
       id: uuid(),
       name: "Sisten",
       playtime: "1 time",
@@ -53,7 +53,7 @@ export default function Browse() {
       rating: 5,
     },
     {
-      rules: "fuck off",
+      rules: "Spillerne står i en sirkel og kaster en ball til hverandre. Målet er å ikke la ballen falle på bakken. Hvis ballen faller, må spilleren som kastet ballen, gå ut av sirkelen.",
       id: uuid(),
       name: "Vri åtter",
       playtime: "45 minutter",
@@ -63,7 +63,7 @@ export default function Browse() {
       rating: 4,
     },
     {
-      rules: "fuck off",
+      rules: "En klassisk lek hvor en person prøver å fange andre spillere. Hvis en spiller blir fanget, blir de med i jakten.",
       id: uuid(),
       name: "Boksen går",
       playtime: "20 minutter",
@@ -73,7 +73,7 @@ export default function Browse() {
       rating: 4.2,
     },
     {
-      rules: "fuck off",
+      rules: "Spillerne kaster ringer mot en sylinder som står i en avstand. Poeng scores når en ring lander rundt sylinderen.",
       id: uuid(),
       name: "Ringleken",
       playtime: "40 minutter",
@@ -83,7 +83,7 @@ export default function Browse() {
       rating: 4.7,
     },
     {
-      rules: "fuck off",
+      rules: "Kast en kubbe for å forsøke å treffe motstanderens kubber. Målet er å treffe alle kubbene og deretter kaste kongen for å vinne.",
       id: uuid(),
       name: "Kubb",
       playtime: "1 time",
@@ -93,7 +93,7 @@ export default function Browse() {
       rating: 4.3,
     },
     {
-      rules: "fuck off",
+      rules: "Sitt på huskene og prøv å svinge så høyt som mulig. Vinneren er den som klarer å svinge høyest.",
       id: uuid(),
       name: "Husker",
       playtime: "30 minutter",
@@ -103,7 +103,7 @@ export default function Browse() {
       rating: 4.8,
     },
     {
-      rules: "fuck off",
+      rules: "Hopp over et tau som blir svingt av en person på den ene siden til den andre. Prøv å unngå å bli truffet av tauet.",
       id: uuid(),
       name: "Hoppe tau",
       playtime: "20 minutter",
@@ -113,7 +113,7 @@ export default function Browse() {
       rating: 4.6,
     },
     {
-      rules: "fuck off",
+      rules: "En person er 'kongen' og gir kommandoer til resten av gruppen. De andre spillerne må følge kommandoene.",
       id: uuid(),
       name: "Kongen befaler",
       playtime: "1 time",
@@ -123,7 +123,7 @@ export default function Browse() {
       rating: 4.4,
     },
     {
-      rules: "fuck off",
+      rules: "En spiller er 'blindemann' og prøver å fange de andre spillerne mens de er blindfolded. Andre spillere må unngå å bli fanget.",
       id: uuid(),
       name: "Blindemann",
       playtime: "30 minutter",
@@ -133,7 +133,7 @@ export default function Browse() {
       rating: 4.9,
     },
     {
-      rules: "fuck off",
+      rules: "To lag konkurrerer om å score mål ved å sparke en ball inn i motstanderens mål. Målet er å score flere mål enn motstanderlaget.",
       id: uuid(),
       name: "Fotball",
       playtime: "1 time",
@@ -143,7 +143,7 @@ export default function Browse() {
       rating: 4.5,
     },
     {
-      rules: "fuck off",
+      rules: "Spillerne kaster baller på hverandre mens de prøver å unngå å bli truffet. Hvis en spiller blir truffet, er de ute.",
       id: uuid(),
       name: "Stikkball",
       playtime: "45 minutter",
@@ -151,120 +151,6 @@ export default function Browse() {
       players: "4-16",
       description: "En morsom lek som involverer å kaste og fange baller.",
       rating: 4.3,
-    },
-    {
-      rules: "fuck off",
-      id: uuid(),
-      name: "Hesteskokasting",
-      playtime: "30 minutter",
-      category: "Fysisk lek",
-      players: "2-8",
-      description:
-        "En tradisjonell lek som handler om å kaste hestesko på en pinne.",
-      rating: 4.7,
-    },
-    {
-      rules: "fuck off",
-      id: uuid(),
-      name: "Tautrekking",
-      playtime: "1 time",
-      category: "Fysisk lek",
-      players: "4-20",
-      description: "En konkurransedyktig lek som tester styrke.",
-      rating: 4.6,
-    },
-    {
-      rules: "fuck off",
-      id: uuid(),
-      name: "Potetløp",
-      playtime: "20 minutter",
-      category: "Fysisk lek",
-      players: "3-10",
-      description: "En morsom lek som innebærer å balansere poteter på skjeer.",
-      rating: 4.4,
-    },
-    {
-      rules: "fuck off",
-      id: uuid(),
-      name: "Eggeløp",
-      playtime: "30 minutter",
-      category: "Fysisk lek",
-      players: "3-12",
-      description: "En utfordrende lek hvor man må bære et egg på en skje.",
-      rating: 4.8,
-    },
-    {
-      rules: "fuck off",
-      id: uuid(),
-      name: "På staur",
-      playtime: "40 minutter",
-      category: "Fysisk lek",
-      players: "5-15",
-      description: "En morsom lek som handler om å hoppe over staur.",
-      rating: 4.5,
-    },
-    {
-      rules: "fuck off",
-      id: uuid(),
-      name: "Flasketuten peker på",
-      playtime: "1 time",
-      category: "Fysisk lek",
-      players: "4-20",
-      description:
-        "En klassisk lek som innebærer å kysse den flasken peker på.",
-      rating: 4.3,
-    },
-    {
-      rules: "fuck off",
-      id: uuid(),
-      name: "Katt og mus",
-      playtime: "30 minutter",
-      category: "Fysisk lek",
-      players: "6-30",
-      description: "En morsom lek som handler om å unngå å bli fanget.",
-      rating: 4.9,
-    },
-    {
-      rules: "fuck off",
-      id: uuid(),
-      name: "Stiv heks",
-      playtime: "40 minutter",
-      category: "Fysisk lek",
-      players: "4-16",
-      description:
-        "En spennende lek hvor en person prøver å fange andre spillere.",
-      rating: 4.7,
-    },
-    {
-      rules: "fuck off",
-      id: uuid(),
-      name: "Bytte plass",
-      playtime: "1 time",
-      category: "Fysisk lek",
-      players: "8-40",
-      description: "En morsom lek som innebærer å bytte plass raskt.",
-      rating: 4.5,
-    },
-    {
-      rules: "fuck off",
-      id: uuid(),
-      name: "Kaste på boks",
-      playtime: "30 minutter",
-      category: "Fysisk lek",
-      players: "4-12",
-      description:
-        "En utfordrende lek som handler om å kaste baller på en boks.",
-      rating: 4.2,
-    },
-    {
-      rules: "fuck off",
-      id: uuid(),
-      name: "Potetkasting",
-      playtime: "20 minutter",
-      category: "Fysisk lek",
-      players: "3-8",
-      description: "En morsom lek hvor man kaster poteter på en målskive.",
-      rating: 4.6,
     },
   ]);
 
@@ -360,19 +246,10 @@ export default function Browse() {
           </section>
         </section>
 
-        {showCreateGame.visible && (
-          <div className="absolute left-0 top-0 flex h-screen w-screen flex-col items-center justify-center overflow-hidden bg-neutral-900 bg-opacity-90 align-middle">
-            <CreateGame />
-            <button
-              className="text-l mt-2 text-neutral-300 hover:underline"
-              onClick={handleCancelCreateGame}
-            >
-              Avbryt
-            </button>
-          </div>
-        )}
+        
         {/* </div>
       </main> */}
+      
       </PageWrapper>
     </div>
   );

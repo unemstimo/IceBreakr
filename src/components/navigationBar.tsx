@@ -87,7 +87,7 @@ const NavigationBar = ({ children }: NavigationBarProps) => {
       </section>
 
       {showCreateGame && (
-        <div className="absolute left-0 top-0 flex h-full w-full flex-col items-center justify-center bg-neutral-900 bg-opacity-90 align-middle">
+        <div className="fixed z-10 left-0 right-0 bottom-0 flex h-full w-full flex-col items-center justify-center bg-neutral-900 bg-opacity-90 align-middle">
           <CreateGame />
           <button
             className="text-l mt-2 text-neutral-300 hover:underline"
