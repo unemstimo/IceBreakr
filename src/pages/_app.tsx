@@ -10,7 +10,6 @@ import { useEffect } from "react";
 const MyApp: AppType = ({ Component, pageProps }) => {
   return (
     <ClerkProvider>
-      {/* <Header /> */}
       <Component {...pageProps} />
     </ClerkProvider>
   );

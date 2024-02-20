@@ -16,12 +16,14 @@ Hvis noen andre gjør endringer i databasen, kjør "npx primsa pull".
 
 Ved enringer kjør "npx prisma generate" for å oppdatere prisma rekksriving fra databasen.
 
-# Create T3 App
-
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
-
 # authentication
 
 Alle api kall som krever autentisering må bruker "privateProcedure" eller bruker vi "publicProcedure" for å få tilgang til data uten autentisering.
 
-Sider
+Alle urler som skal være tilgjengelig uten autentisering må legges til i [middleware](/src/middleware.ts) filen.
+
+# for å kjøre sqlite
+
+[env](.env): Endre DATABASE_URL til sqlite:./dev.db
+[prisma](/prisma/schema.prisma): Endre providor i til sqlite:./dev.db
+[db](/src/db.ts): Kommenter ut linje 19 "adapter: new PrismaPlanetScale(client)," i
