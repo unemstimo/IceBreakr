@@ -8,6 +8,7 @@ import Advertisement from "~/components/advertisement";
 import GameCard from "~/components/gameCard";
 import PageWrapper from "~/components/pageWrapper";
 import NavigationBar from "~/components/navigationBar";
+import Checkboxes from "~/components/filterCheckboxes";
 
 export default function Browse() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -137,7 +138,7 @@ export default function Browse() {
       id: uuid(),
       name: "Fotball",
       playtime: "1 time",
-      category: "Fysisk lek",
+      category: "Ballspill",
       players: "6-22",
       description: "En populær sport som spilles over hele verden.",
       rating: 4.5,
@@ -179,6 +180,50 @@ export default function Browse() {
                 Tøm
               </button>
             </div>
+
+            <div className="rounded-xl bg-neutral-800 p-2 -m-2 mt-2 mb-2">
+              <p className = "-mt-1 mb-1">Antall Spillere:</p>
+              <button className="rounded-full bg-neutral-700 px-3 py-1 text-sm text-white shadow-lg hover:bg-violet-500 active:bg-violet-800 mr-2 ml-1">
+                2
+              </button>
+              <button className="rounded-full bg-neutral-700 px-3 py-1 text-sm text-white shadow-lg hover:bg-violet-500 active:bg-violet-800 mr-2">
+                3
+              </button>
+              <button className="rounded-full bg-neutral-700 px-3 py-1 text-sm text-white shadow-lg hover:bg-violet-500 active:bg-violet-800 mr-2">
+                4
+              </button>
+              <button className="rounded-full bg-neutral-700 px-3 py-1 text-sm text-white shadow-lg hover:bg-violet-500 active:bg-violet-800 mr-2">
+                5
+              </button>
+              <button className="rounded-full bg-neutral-700 px-3 py-1 text-sm text-white shadow-lg hover:bg-violet-500 active:bg-violet-800 mr-2">
+                6
+              </button>
+              <button className="rounded-full bg-neutral-700 px-3 py-1 text-sm text-white shadow-lg hover:bg-violet-500 active:bg-violet-800">
+                7+
+              </button>
+            </div>
+
+            <div className="rounded-xl bg-neutral-800 p-2 -m-2 mt-2 mb-2">
+            <p>Spillkategorier:</p>
+              <Checkboxes />
+            </div>
+
+            <div className="rounded-xl bg-neutral-800 p-2 -m-2 mt-2">
+              <p className = "-mt-1 mb-1">Varighet:</p>
+              <button className="rounded-full bg-neutral-700 px-2 py-1 text-sm text-white shadow-lg hover:bg-violet-500 active:bg-violet-800 mr-2 -ml-1">
+                Kort
+              </button>
+              <button className="rounded-full bg-neutral-700 px-2 py-1 text-sm text-white shadow-lg hover:bg-violet-500 active:bg-violet-800 mr-2">
+                Middels
+              </button>
+              <button className="rounded-full bg-neutral-700 px-2 py-1 text-sm text-white shadow-lg hover:bg-violet-500 active:bg-violet-800 mr-2">
+                Lang
+              </button>
+              <button className="rounded-full bg-neutral-700 px-2 py-1 text-sm text-white shadow-lg hover:bg-violet-500 active:bg-violet-800 -mr-1">
+                veldig lang
+              </button>
+            </div>
+
           </div>
           {/* Ad space */}
           <p className="font-normal text-neutral-500">Annonse</p>
