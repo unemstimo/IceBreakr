@@ -21,26 +21,54 @@ import ManageAccountsRoundedIcon from "@mui/icons-material/ManageAccountsRounded
 import { type Playlist } from "~/components/playListCard";
 import PageWrapper from "~/components/pageWrapper";
 import NavigationBar from "~/components/navigationBar";
-import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
+import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
 import Link from "next/link";
-import router from "next/router";
+import { useRouter } from "next/router";
 import Placeholder from "~/assets/images/placeholder.png";
 import StarRoundedIcon from "@mui/icons-material/StarRounded";
+import { api } from "~/utils/api";
 
 type Friend = {
   id: string;
   name: string;
 };
+// type Game = inferProcedureOutput<AppRouter["gameRouter"]["getGameById"]>;
 
 export default function GamePage() {
   const [searchTerm, setSearchTerm] = useState("");
-  const { name, playtime, category, players, rules, description, rating } = router.query;
+  const router = useRouter();
+  const { gameId } = router.query;
+
+  // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+  const gameQuery = api.gameRouter.getGameById.useQuery(
+    { id: Number(gameId ?? 1) },
+    { enabled: gameId !== undefined },
+  );
+
+  const name = gameQuery.data?.name ?? "Lek";
+  const numberOfPlayers = (gameQuery.data?.numberOfPlayers ?? "1-10") as string;
+  const duration = (gameQuery.data?.duration ?? "10-30 min") as string;
+  const description = gameQuery.data?.description ?? "Dette er en kul lek";
+  const rules = gameQuery.data?.rules ?? "Regler her";
+  // TODO add ratings and categories to game via relations
+  const category = "Kortspill";
+  const rating = Math.floor(Math.random() * 5) + 1;
 
   const [friendsList, setFriendsList] = useState<Friend[]>([]);
 
   const [comments, setComments] = useState([
-    {id: uuid(), author: "Trond", comment: "Dette var en kul lek!", rating: 4},
-    {id: uuid(), author: "Mats", comment: "Dette var en DRITT lek!", rating: 1}
+    {
+      id: uuid(),
+      author: "Trond",
+      comment: "Dette var en kul lek!",
+      rating: 4,
+    },
+    {
+      id: uuid(),
+      author: "Mats",
+      comment: "Dette var en DRITT lek!",
+      rating: 1,
+    },
   ]);
 
   const [newComment, setNewComment] = useState("");
@@ -161,81 +189,83 @@ export default function GamePage() {
       <PageWrapper>
         {/* <main className="flex min-h-screen flex-col items-center justify-center bg-neutral-950 font-darker text-lg font-bold text-white">
         <div className="max-w-screen-l relative flex h-screen w-full max-w-[1440px] rounded-3xl bg-neutral-950"> */}
-        <div className="ml-2 flex flex-col h-auto">
-        <NavigationBar>
-          <div className="flex h-full w-full flex-col justify-start rounded-2xl bg-neutral-900 p-2 align-middle">
-            <div className="flex flex-row items-baseline justify-between align-baseline">
-              <h2 className="text-2xl font-bold ">Mine Lekelister</h2>
-              <button
-                className="text-l text-neutral-500 hover:underline"
-                onClick={handleAddPlaylist}
-              >
-                Lag ny
-              </button>
-            </div>
-            <ul className="relative mt-5 w-full">
-              {playlists.map((list) => (
-                <li key={list.id} className="mb-2 flex h-16">
-                  <button
-                    className="flex h-full w-full items-center justify-between gap-4 rounded-xl border border-neutral-800 p-2 align-middle hover:bg-neutral-700"
-                    onClick={handlePlaylistClick}
-                  >
-                    <div className="flex items-center justify-start gap-4 align-middle">
-                      <PlayCircleOutlineRoundedIcon />
-                      <div className="flex flex-col items-start justify-start align-middle">
-                        <p className="-mb-2">{list.name}</p>
-                        <p className="font-normal text-neutral-400">
-                          {list.numberOfGames} leker • {list.author}
-                        </p>
-                      </div>
-                    </div>
-                    <button
-                      className="w-12"
-                      onClick={() => handleShowMorePopupPlaylist(list.id)}
-                    >
-                      <MoreHorizRoundedIcon />
-                    </button>
-                    {showMorePopupPlaylist.visible &&
-                      showMorePopupPlaylist.playlistId === list.id && (
-                        <div className="absolute right-0 top-0 flex w-48 flex-col items-center justify-center gap-4 rounded-xl bg-neutral-800 px-6 py-4 align-middle">
-                          {/* Popup content here */}
-                          <p>{list.name}</p>
-                          <button
-                            onClick={() => handleRemovePlaylist(list.id)}
-                            className="rounded-lg bg-red-500 px-4 py-1 hover:bg-red-400 active:bg-red-600"
-                          >
-                            {" "}
-                            Slett
-                          </button>
-                          <button
-                            onClick={() => handleShowMorePopupPlaylist(list.id)}
-                          >
-                            <p className="absolute right-2 top-1 text-neutral-400 hover:underline">
-                              <CloseRoundedIcon />
-                            </p>
-                          </button>
-                        </div>
-                      )}
-                  </button>
-                </li>
-              ))}
-            </ul>
-            {playlists.length === 0 && (
-              <div className="font-normal text-neutral-400">
-                <p>Ingen lekelister enda 🧐</p>
-                <div className="flex gap-1">
-                  <p>Fiks det ved å</p>
-                  <button
-                    onClick={handleAddPlaylist}
-                    className="font-bold text-violet-400 hover:text-violet-300"
-                  >
-                    lage en lekeliste
-                  </button>
-                </div>
+        <div className="ml-2 flex h-auto flex-col">
+          <NavigationBar>
+            <div className="flex h-full w-full flex-col justify-start rounded-2xl bg-neutral-900 p-2 align-middle">
+              <div className="flex flex-row items-baseline justify-between align-baseline">
+                <h2 className="text-2xl font-bold ">Mine Lekelister</h2>
+                <button
+                  className="text-l text-neutral-500 hover:underline"
+                  onClick={handleAddPlaylist}
+                >
+                  Lag ny
+                </button>
               </div>
-            )}
-          </div>
-        </NavigationBar>
+              <ul className="relative mt-5 w-full">
+                {playlists.map((list) => (
+                  <li key={list.id} className="mb-2 flex h-16">
+                    <button
+                      className="flex h-full w-full items-center justify-between gap-4 rounded-xl border border-neutral-800 p-2 align-middle hover:bg-neutral-700"
+                      onClick={handlePlaylistClick}
+                    >
+                      <div className="flex items-center justify-start gap-4 align-middle">
+                        <PlayCircleOutlineRoundedIcon />
+                        <div className="flex flex-col items-start justify-start align-middle">
+                          <p className="-mb-2">{list.name}</p>
+                          <p className="font-normal text-neutral-400">
+                            {list.numberOfGames} leker • {list.author}
+                          </p>
+                        </div>
+                      </div>
+                      <button
+                        className="w-12"
+                        onClick={() => handleShowMorePopupPlaylist(list.id)}
+                      >
+                        <MoreHorizRoundedIcon />
+                      </button>
+                      {showMorePopupPlaylist.visible &&
+                        showMorePopupPlaylist.playlistId === list.id && (
+                          <div className="absolute right-0 top-0 flex w-48 flex-col items-center justify-center gap-4 rounded-xl bg-neutral-800 px-6 py-4 align-middle">
+                            {/* Popup content here */}
+                            <p>{list.name}</p>
+                            <button
+                              onClick={() => handleRemovePlaylist(list.id)}
+                              className="rounded-lg bg-red-500 px-4 py-1 hover:bg-red-400 active:bg-red-600"
+                            >
+                              {" "}
+                              Slett
+                            </button>
+                            <button
+                              onClick={() =>
+                                handleShowMorePopupPlaylist(list.id)
+                              }
+                            >
+                              <p className="absolute right-2 top-1 text-neutral-400 hover:underline">
+                                <CloseRoundedIcon />
+                              </p>
+                            </button>
+                          </div>
+                        )}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+              {playlists.length === 0 && (
+                <div className="font-normal text-neutral-400">
+                  <p>Ingen lekelister enda 🧐</p>
+                  <div className="flex gap-1">
+                    <p>Fiks det ved å</p>
+                    <button
+                      onClick={handleAddPlaylist}
+                      className="font-bold text-violet-400 hover:text-violet-300"
+                    >
+                      lage en lekeliste
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </NavigationBar>
         </div>
         <SignedOut>
           <div className="flex grow items-center justify-center">
@@ -244,10 +274,12 @@ export default function GamePage() {
         </SignedOut>
         <SignedIn>
           {/* Middle section */}
-          <section className=" flex h-full w-full min-w-[420px] flex-col justify-start max-h-screen overflow-y-auto rounded-2xl bg-neutral-900 p-4 align-middle">
+          <section className=" flex h-full max-h-screen w-full min-w-[420px] flex-col justify-start overflow-y-auto rounded-2xl bg-neutral-900 p-4 align-middle">
             <div className="flex justify-between">
-              <div className="flex gap-2 justify-start align-middle items-center">
-                <Link href="/browse"><ArrowBackRoundedIcon/></Link>
+              <div className="flex items-center justify-start gap-2 align-middle">
+                <Link href="/browse">
+                  <ArrowBackRoundedIcon />
+                </Link>
                 <h2 className="text-2xl font-bold ">{name}</h2>
               </div>
               <div className="flex items-center gap-2">
@@ -260,20 +292,22 @@ export default function GamePage() {
               </div>
             </div>
             {/* Title, image section */}
-            <div className="relative mt-4 flex-col flex h-full w-full items-start justify-start rounded-xl bg-neutral-800 p-4">
-              <div className="flex min-h-48 w-full h-full items-start">
-                <div className="w-full h-full max-w-60">
+            <div className="relative mt-4 flex h-full w-full flex-col items-start justify-start rounded-xl bg-neutral-800 p-4">
+              <div className="flex h-full min-h-48 w-full items-start">
+                <div className="h-full w-full max-w-60">
                   <Image
-                  className="h-auto w-full rounded-lg"
-                  src={Placeholder}
-                  alt="Game Image"
-                  width={200}
-                  height={200}
+                    className="h-auto w-full rounded-lg"
+                    src={Placeholder}
+                    alt="Game Image"
+                    width={200}
+                    height={200}
                   />
                 </div>
                 <div className="mb-4 ml-4">
                   <h1 className="text-6xl">{name}</h1>
-                  <h2 className="text-neutral-400">{category} • {players} spillere • {playtime}</h2>
+                  <h2 className="text-neutral-400">
+                    {category} • {numberOfPlayers} spillere • {duration}
+                  </h2>
                   <p className="font-normal text-neutral-200">{description}</p>
                 </div>
               </div>
@@ -283,20 +317,20 @@ export default function GamePage() {
               </button>
             </div>
             {/* Rules */}
-            <div className="mt-4 py-2 flex h-full w-full items-center justify-start rounded-xl bg-neutral-800">
-              <div className="mb-4 ml-4 w-full h-full">
+            <div className="mt-4 flex h-full w-full items-center justify-start rounded-xl bg-neutral-800 py-2">
+              <div className="mb-4 ml-4 h-full w-full">
                 <h1 className="text-4xl">Regler</h1>
                 <p className="font-normal text-neutral-400">{rules}</p>
-              </div> 
+              </div>
             </div>
             {/* Rating section */}
-            <div className="mt-4 py-2 flex h-full w-full items-center justify-start rounded-xl">
+            <div className="mt-4 flex h-full w-full items-center justify-start rounded-xl py-2">
               <div className="mb-4 ml-0 mr-0 w-full">
-                <h1 className="text-4xl mb-2 text-neutral-500">Kommentarer</h1>
+                <h1 className="mb-2 text-4xl text-neutral-500">Kommentarer</h1>
                 <div>
                   <form
                     onSubmit={handleCommentSubmit}
-                    className="flex w-full h-full items-center justify-start gap-4 align-middle mb-4"
+                    className="mb-4 flex h-full w-full items-center justify-start gap-4 align-middle"
                   >
                     <input
                       type="text"
@@ -307,54 +341,61 @@ export default function GamePage() {
                     />
                     <button
                       type="submit"
-                      className="rounded-full h-full bg-violet-500 px-4 py-1 hover:bg-violet-400 active:bg-violet-600"
+                      className="h-full rounded-full bg-violet-500 px-4 py-1 hover:bg-violet-400 active:bg-violet-600"
                     >
                       Post
                     </button>
                   </form>
                 </div>
-                <ul className="flex w-full flex-col gap-4 items-center align-middle justify-start">
+                <ul className="flex w-full flex-col items-center justify-start gap-4 align-middle">
                   {comments.map((comment) => (
                     // eslint-disable-next-line react/jsx-key
-                    <li className="relative rounded-lg bg-neutral-800 flex h-full w-full gap-4 p-4 justify-between align-middle items-center">
-                        <div className="flex items-center gap-4 h-full">
-                          <UserButton/>
-                          <div className="px-3 py-0 flex items-center justify-center bg-violet-500 rounded-full">
+                    <li className="relative flex h-full w-full items-center justify-between gap-4 rounded-lg bg-neutral-800 p-4 align-middle">
+                      <div className="flex h-full items-center gap-4">
+                        <UserButton />
+                        <div className="flex items-center justify-center rounded-full bg-violet-500 px-3 py-0">
                           <StarRoundedIcon />
                           {comment.rating}
                         </div>
-                          <div className="flex flex-col items-start justify-start">
-                            <h2 className="-mb-1">{comment.author}</h2>
-                            <p className="-mt-1 font-normal text-neutral-400">{comment.comment}</p>
+                        <div className="flex flex-col items-start justify-start">
+                          <h2 className="-mb-1">{comment.author}</h2>
+                          <p className="-mt-1 font-normal text-neutral-400">
+                            {comment.comment}
+                          </p>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => handleMoreCommentButton(comment.id)}
+                      >
+                        <MoreHorizRoundedIcon />
+                      </button>
+                      {showMorePopupComment.visible &&
+                        showMorePopupComment.commentID === comment.id && (
+                          <div className="absolute right-0 top-0 flex h-full w-full flex-row items-center justify-center gap-4 rounded-xl bg-neutral-700 px-6 py-4 align-middle">
+                            {/* Popup content here */}
+                            <p>{comment.author}</p>
+                            <button
+                              onClick={() => handleRemovePlaylist(comment.id)}
+                              className="rounded-lg bg-red-500 px-4 py-1 hover:bg-red-400 active:bg-red-600"
+                            >
+                              {" "}
+                              Rapporter
+                            </button>
+                            <button
+                              onClick={() =>
+                                handleMoreCommentButton(comment.id)
+                              }
+                            >
+                              <p className="absolute right-2 top-1 text-neutral-400 hover:underline">
+                                <CloseRoundedIcon />
+                              </p>
+                            </button>
                           </div>
-                        </div>
-                        <button onClick={() => handleMoreCommentButton(comment.id)}><MoreHorizRoundedIcon/></button>
-                        {showMorePopupComment.visible &&
-                      showMorePopupComment.commentID === comment.id && (
-                        <div className="absolute right-0 top-0 flex w-full h-full flex-row items-center justify-center gap-4 rounded-xl bg-neutral-700 px-6 py-4 align-middle">
-                          {/* Popup content here */}
-                          <p>{comment.author}</p>
-                          <button
-                            onClick={() => handleRemovePlaylist(comment.id)}
-                            className="rounded-lg bg-red-500 px-4 py-1 hover:bg-red-400 active:bg-red-600"
-                          >
-                            {" "}
-                            Rapporter
-                          </button>
-                          <button
-                            onClick={() => handleMoreCommentButton(comment.id)}
-                          >
-                            <p className="absolute right-2 top-1 text-neutral-400 hover:underline">
-                              <CloseRoundedIcon />
-                            </p>
-                          </button>
-                        </div>
-                      )}
+                        )}
                     </li>
                   ))}
                 </ul>
-                
-              </div> 
+              </div>
             </div>
           </section>
 
