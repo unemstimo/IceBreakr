@@ -13,6 +13,8 @@ datasource db {
   url          = env("DATABASE_URL")
 }
 
+// Les om relasjoner osv
+// https://www.prisma.io/docs/orm/prisma-schema
 //Example
 model User2 {
   id    String @id
@@ -51,7 +53,8 @@ model Game {
   gameId             Int                  @id @unique @default(autoincrement())
   userId             String
   name               String
-  estimate           Int
+  duration           String
+  numberOfPlayers    String
   rules              String
   description        String
   user               User                 @relation(fields: [userId], references: [userId])
@@ -77,6 +80,15 @@ model Playlist {
   @@index([userId])
 }
 
+model GameInPlaylist {
+  gameId     Int
+  playlistId Int
+  game       Game     @relation(fields: [gameId], references: [gameId])
+  playlist   Playlist @relation(fields: [playlistId], references: [playlistId])
+
+  @@id([gameId, playlistId])
+}
+
 model Category {
   categoryId     Int              @id @unique @default(autoincrement())
   name           String
@@ -91,15 +103,6 @@ model GameInCategory {
   category   Category @relation(fields: [categoryId], references: [categoryId])
 
   @@id([categoryId, gameId])
-}
-
-model GameInPlaylist {
-  gameId     Int
-  playlistId Int
-  game       Game     @relation(fields: [gameId], references: [gameId])
-  playlist   Playlist @relation(fields: [playlistId], references: [playlistId])
-
-  @@id([gameId, playlistId])
 }
 
 model UserFavouritedGame {

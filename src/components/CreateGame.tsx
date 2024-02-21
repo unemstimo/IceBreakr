@@ -1,5 +1,9 @@
+import { type inferProcedureInput } from "@trpc/server";
 import Link from "next/link";
 import React, { useState } from "react";
+import { api } from "~/utils/api";
+import { type AppRouter, appRouter, createFactory } from "~/server/api/root";
+import { useRouter } from "next/router";
 
 export type Game = {
   name: string;
@@ -22,25 +26,19 @@ const CreateGame: React.FC = () => {
   const [showError, setShowError] = useState(false);
   const rating = 0;
 
-  const game = {
-    name,
-    playtime,
-    category,
-    players,
-    rules,
-    description,
-    rating,
-  };
-  
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
   };
 
-  const handlePlayerCountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePlayerCountChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     setPlayerCount(event.target.value);
   };
 
-  const handleDescriptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleDescriptionChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     setDescription(event.target.value);
   };
 
@@ -66,9 +64,10 @@ const CreateGame: React.FC = () => {
     setShowError(false);
   };
 
-  const query = new URLSearchParams(game).toString();
+  const useGameMutation = api.gameRouter.create.useMutation();
+  const router = useRouter();
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (
       name === "" ||
@@ -93,10 +92,17 @@ const CreateGame: React.FC = () => {
       "\n",
       "Kategori: " + category,
     );
-    // TODO
-    // Send data to backend
-    // Wait for response
-    // Link to gamePage with the new game
+
+    const input: inferProcedureInput<AppRouter["gameRouter"]["create"]> = {
+      name,
+      description,
+      rules,
+      duration: playtime,
+      numberOfPlayers: players,
+    };
+    const game = await useGameMutation.mutateAsync(input);
+    const url = "/gamePage?gameId=" + game.gameId;
+    await router.push(url);
   };
 
   return (
@@ -158,15 +164,13 @@ const CreateGame: React.FC = () => {
           placeholder="Kategori..."
           className="w-full rounded-lg bg-neutral-800 py-2 pl-2 pr-2 text-white focus:outline-none"
         />
-        <Link href={`/gamePage?${query}`} passHref>
-        
+
         <button
           className=" rounded-full bg-violet-600 px-4 py-2 text-white shadow-lg hover:bg-violet-500 active:bg-violet-800"
           type="submit"
         >
           Opprett Lek
         </button>
-        </Link>
         {showError && <p className="text-red-500">Fyll ut alle felt!</p>}
       </form>
     </div>
