@@ -296,8 +296,8 @@ type FilteredGames = Game[];
                 <label className="inline-flex items-center mt-1 ml-2">
                   <input
                     type="checkbox"
-                    name="Navneleker"
-                    checked={gameCategories.Navneleker || false}
+                    name="Navnelek"
+                    checked={gameCategories.Navnelek || false}
                     onChange={handleCategorySelection}
                     className="form-checkbox h-5 w-5 text-gray-600 bg-neutral-600 border-gray-400 rounded mr-1"
                   />
@@ -316,8 +316,8 @@ type FilteredGames = Game[];
                 <label className="inline-flex items-center mt-1 ml-2">
                   <input
                     type="checkbox"
-                    name="Kasteleker"
-                    checked={gameCategories.Kasteleker || false}
+                    name="Kastelek"
+                    checked={gameCategories.Kastelek || false}
                     onChange={handleCategorySelection}
                     className="form-checkbox h-5 w-5 text-gray-600 bg-neutral-600 border-gray-400 rounded mr-1"
                   />
