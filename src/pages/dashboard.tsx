@@ -23,8 +23,12 @@ type Friend = {
 export default function Dashboard() {
   const user = useUser();
   const [searchTerm, setSearchTerm] = useState("");
+  const { isSignedIn } = useUser();
+  const [showLoginPopup, setShowLoginPopup] = useState(false);
 
   const [friendsList, setFriendsList] = useState<Friend[]>([]);
+
+
 
   const [showMorePopup, setShowMorePopup] = useState({
     visible: false,
@@ -36,10 +40,15 @@ export default function Dashboard() {
   };
 
   const handleAddFriend = () => {
-    const newID = uuid();
-    console.log("Add Friend");
-    const newFriend = { id: newID, name: "Friend " + newID.slice(0, 4) };
-    setFriendsList([...friendsList, newFriend]);
+    if(!isSignedIn){
+      setShowLoginPopup(true);
+    } else {
+      const newID = uuid();
+      console.log("Add Friend");
+      const newFriend = { id: newID, name: "Friend " + newID.slice(0, 4) };
+      setFriendsList([...friendsList, newFriend]);
+    }
+    
   };
 
   const handleRemoveFriend = (friendId: string) => {
@@ -73,6 +82,9 @@ export default function Dashboard() {
   };
 
   const handleAddPlaylist = () => {
+    if(!isSignedIn) {
+      setShowLoginPopup(true);
+    }else {
     const newID = uuid();
     console.log("Add Playlist");
     const newPlaylist = {
@@ -82,6 +94,7 @@ export default function Dashboard() {
       author: "Meg",
     };
     setPlaylists([...playlists, newPlaylist]);
+    }
   };
 
   const handleRemovePlaylist = (playlistId: string) => {
@@ -103,7 +116,11 @@ export default function Dashboard() {
   const [showCreateGame, setShowCreateGame] = useState({ visible: false });
 
   const handleCreateGameShow = () => {
-    setShowCreateGame({ visible: !showCreateGame.visible });
+    if(!isSignedIn){
+      setShowLoginPopup(true);
+    } else {
+      setShowCreateGame({ visible: !showCreateGame.visible });}
+    
   };
 
   const handleCancelCreateGame = () => {
@@ -142,8 +159,9 @@ export default function Dashboard() {
         <div className="max-w-screen-l relative flex h-screen w-full max-w-[1440px] rounded-3xl bg-neutral-950"> */}
       {/* Left section */}
       <PageWrapper>
+        <div className="ml-2 flex flex-col h-auto">
         <NavigationBar>
-          <div className="mb-0 flex h-full w-full flex-col justify-start rounded-2xl bg-neutral-900 p-4 align-middle">
+          <div className="mb-0 flex h-full w-full flex-col justify-start rounded-2xl bg-neutral-900 p-2 align-middle">
             <div className="flex flex-row items-baseline justify-between align-baseline">
               <h2 className="text-2xl font-bold ">Mine Lekelister</h2>
               <button
@@ -217,9 +235,10 @@ export default function Dashboard() {
             )}
           </div>
         </NavigationBar>
+        </div>
 
         {/* Middle section */}
-        <section className="flex h-full w-full min-w-[420px] flex-col justify-start rounded-2xl bg-neutral-900 p-4 align-middle">
+        <section className="flex h-screen overflow-y-auto max-h-screen w-full min-w-[420px] flex-col justify-start rounded-2xl bg-neutral-900 p-4 align-middle">
           {/* Search section */}
           <div className="flex w-full flex-row items-center justify-between align-middle">
             <form
@@ -254,13 +273,13 @@ export default function Dashboard() {
           </div>
           {/* Ad section */}
           <p className="mt-4 font-normal text-neutral-500">Annonse</p>
-          <div className="flex min-h-60 w-full items-center justify-center overflow-hidden rounded-xl bg-neutral-800">
+          <div className="flex min-h-48 max-h-60 w-full items-center justify-center overflow-hidden rounded-xl bg-neutral-800">
             <Advertisement />
           </div>
         </section>
 
         {/* Right section */}
-        <section className="m-2 flex w-1/4 min-w-72 flex-col justify-start rounded-2xl align-middle">
+        <section className="mr-2 flex w-1/4 min-w-72 flex-col justify-start rounded-2xl align-middle">
           <div className="flex h-fit w-full flex-col justify-center rounded-2xl bg-neutral-900 p-4 align-middle">
             <div className="flex flex-row items-baseline justify-between align-baseline">
               <h2 className="text-2xl font-bold ">Venner</h2>
@@ -328,17 +347,7 @@ export default function Dashboard() {
             )}
           </div>
         </section>
-        {showCreateGame.visible && (
-          <div className="absolute left-0 top-0 flex h-full w-full flex-col items-center justify-center bg-neutral-900 bg-opacity-90 align-middle">
-            <CreateGame />
-            <button
-              className="text-l mt-2 text-neutral-300 hover:underline"
-              onClick={handleCancelCreateGame}
-            >
-              Avbryt
-            </button>
-          </div>
-        )}
+        
         {/* </div>
       </main> */}
       </PageWrapper>
