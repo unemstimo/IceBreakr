@@ -105,6 +105,8 @@ const CreateGame: React.FC = () => {
     await router.push(url);
   };
 
+  // const { data } = api.category.getAll.useQuery();
+
   return (
     <div className="flex min-w-96 justify-center rounded-2xl bg-neutral-700 p-4">
       <form
