@@ -23,8 +23,12 @@ type Friend = {
 export default function Dashboard() {
   const user = useUser();
   const [searchTerm, setSearchTerm] = useState("");
+  const { isSignedIn } = useUser();
+  const [showLoginPopup, setShowLoginPopup] = useState(false);
 
   const [friendsList, setFriendsList] = useState<Friend[]>([]);
+
+
 
   const [showMorePopup, setShowMorePopup] = useState({
     visible: false,
@@ -36,10 +40,15 @@ export default function Dashboard() {
   };
 
   const handleAddFriend = () => {
-    const newID = uuid();
-    console.log("Add Friend");
-    const newFriend = { id: newID, name: "Friend " + newID.slice(0, 4) };
-    setFriendsList([...friendsList, newFriend]);
+    if(!isSignedIn){
+      setShowLoginPopup(true);
+    } else {
+      const newID = uuid();
+      console.log("Add Friend");
+      const newFriend = { id: newID, name: "Friend " + newID.slice(0, 4) };
+      setFriendsList([...friendsList, newFriend]);
+    }
+    
   };
 
   const handleRemoveFriend = (friendId: string) => {
@@ -73,6 +82,9 @@ export default function Dashboard() {
   };
 
   const handleAddPlaylist = () => {
+    if(!isSignedIn) {
+      setShowLoginPopup(true);
+    }else {
     const newID = uuid();
     console.log("Add Playlist");
     const newPlaylist = {
@@ -82,6 +94,7 @@ export default function Dashboard() {
       author: "Meg",
     };
     setPlaylists([...playlists, newPlaylist]);
+    }
   };
 
   const handleRemovePlaylist = (playlistId: string) => {
@@ -103,7 +116,11 @@ export default function Dashboard() {
   const [showCreateGame, setShowCreateGame] = useState({ visible: false });
 
   const handleCreateGameShow = () => {
-    setShowCreateGame({ visible: !showCreateGame.visible });
+    if(!isSignedIn){
+      setShowLoginPopup(true);
+    } else {
+      setShowCreateGame({ visible: !showCreateGame.visible });}
+    
   };
 
   const handleCancelCreateGame = () => {
@@ -330,17 +347,7 @@ export default function Dashboard() {
             )}
           </div>
         </section>
-        {showCreateGame.visible && (
-          <div className="absolute left-0 top-0 flex h-full w-full flex-col items-center justify-center bg-neutral-900 bg-opacity-90 align-middle">
-            <CreateGame />
-            <button
-              className="text-l mt-2 text-neutral-300 hover:underline"
-              onClick={handleCancelCreateGame}
-            >
-              Avbryt
-            </button>
-          </div>
-        )}
+        
         {/* </div>
       </main> */}
       </PageWrapper>
