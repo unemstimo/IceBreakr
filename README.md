@@ -26,4 +26,4 @@ Alle urler som skal være tilgjengelig uten autentisering må legges til i [midd
 
 [env](.env): Endre DATABASE_URL til sqlite:./dev.db
 [prisma](/prisma/schema.prisma): Endre providor i til sqlite:./dev.db
-[db](/src/db.ts): Kommenter ut linje 19 "adapter: new PrismaPlanetScale(client)," i
+[db](/src/server/db.ts): Kommenter ut linje 19 "adapter: new PrismaPlanetScale(client)," i
