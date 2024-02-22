@@ -8,13 +8,16 @@ import Advertisement from "~/components/advertisement";
 import GameCard from "~/components/gameCard";
 import PageWrapper from "~/components/pageWrapper";
 import NavigationBar from "~/components/navigationBar";
+import { api } from "~/utils/api";
 
 export default function Browse() {
   const [searchTerm, setSearchTerm] = useState("");
   const [numberOfPlayers, setNumberOfPlayers] = useState("");
   const [duration, setDuration] = useState("");
   const [filteredGames, setFilteredGames] = useState<FilteredGames>([]);
-  const [gameCategories, setGameCategories] = useState<{ [key: string]: boolean }>({});
+  const [gameCategories, setGameCategories] = useState<Record<string, boolean>>(
+    {},
+  );
 
   type Game = {
     rules: string;
@@ -25,8 +28,8 @@ export default function Browse() {
     players: string;
     description: string;
     rating: number;
-}
-type FilteredGames = Game[];
+  };
+  type FilteredGames = Game[];
 
   const handleSearchSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -34,7 +37,7 @@ type FilteredGames = Game[];
   };
 
   const filterGames = () => {
-    let filtered = games.filter((game) => {
+    const filtered = games.filter((game) => {
       //Number of players
       if (numberOfPlayers && game.players !== numberOfPlayers) {
         return false;
@@ -45,7 +48,9 @@ type FilteredGames = Game[];
       }
       //Categories
       if (Object.values(gameCategories).some((value) => value)) {
-        const categories = Object.keys(gameCategories).filter((category) => gameCategories[category]);
+        const categories = Object.keys(gameCategories).filter(
+          (category) => gameCategories[category],
+        );
         if (!categories.includes(game.category)) {
           return false;
         }
@@ -86,7 +91,7 @@ type FilteredGames = Game[];
       setNumberOfPlayers(players);
     }
   };
-  
+
   const handleDurationSelection = (selectedDuration: string) => {
     if (selectedDuration === duration) {
       setDuration("");
@@ -95,19 +100,24 @@ type FilteredGames = Game[];
     }
   };
 
-  const handleCategorySelection = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCategorySelection = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     setGameCategories({
       ...gameCategories,
       [event.target.name]: event.target.checked,
     });
   };
-    
+
   const playerButtons = ["2", "3", "4", "5", "6", "7+"];
   const durationButtons = ["10 min", "20 min", "30 min", "40 min+"];
 
+  const gameQuery = api.gameRouter.getAll.useQuery();
+
   const [games, setGames] = useState([
     {
-      rules: "Kast frisbeen til en medspiller i motstanderens målområde uten å bli tatt av motstanderen. Poeng scores når mottakeren fanger frisbeen i motstanderens målområde. Bytt besittelse av frisbeen ved feil eller turnover.",
+      rules:
+        "Kast frisbeen til en medspiller i motstanderens målområde uten å bli tatt av motstanderen. Poeng scores når mottakeren fanger frisbeen i motstanderens målområde. Bytt besittelse av frisbeen ved feil eller turnover.",
       id: uuid(),
       name: "Ultimate Treningskamp",
       playtime: "10 min",
@@ -117,7 +127,8 @@ type FilteredGames = Game[];
       rating: 4.7,
     },
     {
-      rules: "En spiller som 'den som jakter' prøver å berøre andre spillere. Spillerne løper rundt for å unngå å bli fanget. Den siste som er igjen, blir den neste 'den som jakter'.",
+      rules:
+        "En spiller som 'den som jakter' prøver å berøre andre spillere. Spillerne løper rundt for å unngå å bli fanget. Den siste som er igjen, blir den neste 'den som jakter'.",
       id: uuid(),
       name: "Sisten",
       playtime: "20 min",
@@ -127,7 +138,8 @@ type FilteredGames = Game[];
       rating: 5,
     },
     {
-      rules: "Spillerne står i en sirkel og kaster en ball til hverandre. Målet er å ikke la ballen falle på bakken. Hvis ballen faller, må spilleren som kastet ballen, gå ut av sirkelen.",
+      rules:
+        "Spillerne står i en sirkel og kaster en ball til hverandre. Målet er å ikke la ballen falle på bakken. Hvis ballen faller, må spilleren som kastet ballen, gå ut av sirkelen.",
       id: uuid(),
       name: "Vri åtter",
       playtime: "30 min",
@@ -137,7 +149,8 @@ type FilteredGames = Game[];
       rating: 4,
     },
     {
-      rules: "En klassisk lek hvor en person prøver å fange andre spillere. Hvis en spiller blir fanget, blir de med i jakten.",
+      rules:
+        "En klassisk lek hvor en person prøver å fange andre spillere. Hvis en spiller blir fanget, blir de med i jakten.",
       id: uuid(),
       name: "Boksen går",
       playtime: "30 min",
@@ -147,7 +160,8 @@ type FilteredGames = Game[];
       rating: 4.2,
     },
     {
-      rules: "Spillerne kaster ringer mot en sylinder som står i en avstand. Poeng scores når en ring lander rundt sylinderen.",
+      rules:
+        "Spillerne kaster ringer mot en sylinder som står i en avstand. Poeng scores når en ring lander rundt sylinderen.",
       id: uuid(),
       name: "Ringleken",
       playtime: "40 min+",
@@ -157,7 +171,8 @@ type FilteredGames = Game[];
       rating: 4.7,
     },
     {
-      rules: "Kast en kubbe for å forsøke å treffe motstanderens kubber. Målet er å treffe alle kubbene og deretter kaste kongen for å vinne.",
+      rules:
+        "Kast en kubbe for å forsøke å treffe motstanderens kubber. Målet er å treffe alle kubbene og deretter kaste kongen for å vinne.",
       id: uuid(),
       name: "Kubb",
       playtime: "30 min",
@@ -167,7 +182,8 @@ type FilteredGames = Game[];
       rating: 4.3,
     },
     {
-      rules: "Sitt på huskene og prøv å svinge så høyt som mulig. Vinneren er den som klarer å svinge høyest.",
+      rules:
+        "Sitt på huskene og prøv å svinge så høyt som mulig. Vinneren er den som klarer å svinge høyest.",
       id: uuid(),
       name: "Husker",
       playtime: "20 min",
@@ -177,7 +193,8 @@ type FilteredGames = Game[];
       rating: 4.8,
     },
     {
-      rules: "Hopp over et tau som blir svingt av en person på den ene siden til den andre. Prøv å unngå å bli truffet av tauet.",
+      rules:
+        "Hopp over et tau som blir svingt av en person på den ene siden til den andre. Prøv å unngå å bli truffet av tauet.",
       id: uuid(),
       name: "Hoppe tau",
       playtime: "20 min",
@@ -187,7 +204,8 @@ type FilteredGames = Game[];
       rating: 4.6,
     },
     {
-      rules: "En person er 'kongen' og gir kommandoer til resten av gruppen. De andre spillerne må følge kommandoene.",
+      rules:
+        "En person er 'kongen' og gir kommandoer til resten av gruppen. De andre spillerne må følge kommandoene.",
       id: uuid(),
       name: "Kongen befaler",
       playtime: "10 min",
@@ -197,7 +215,8 @@ type FilteredGames = Game[];
       rating: 4.4,
     },
     {
-      rules: "En spiller er 'blindemann' og prøver å fange de andre spillerne mens de er blindfolded. Andre spillere må unngå å bli fanget.",
+      rules:
+        "En spiller er 'blindemann' og prøver å fange de andre spillerne mens de er blindfolded. Andre spillere må unngå å bli fanget.",
       id: uuid(),
       name: "Blindemann",
       playtime: "10 min",
@@ -207,7 +226,8 @@ type FilteredGames = Game[];
       rating: 4.9,
     },
     {
-      rules: "To lag konkurrerer om å score mål ved å sparke en ball inn i motstanderens mål. Målet er å score flere mål enn motstanderlaget.",
+      rules:
+        "To lag konkurrerer om å score mål ved å sparke en ball inn i motstanderens mål. Målet er å score flere mål enn motstanderlaget.",
       id: uuid(),
       name: "Fotball",
       playtime: "40 min+",
@@ -217,7 +237,8 @@ type FilteredGames = Game[];
       rating: 4.5,
     },
     {
-      rules: "Spillerne kaster baller på hverandre mens de prøver å unngå å bli truffet. Hvis en spiller blir truffet, er de ute.",
+      rules:
+        "Spillerne kaster baller på hverandre mens de prøver å unngå å bli truffet. Hvis en spiller blir truffet, er de ute.",
       id: uuid(),
       name: "Stikkball",
       playtime: "20 min",
@@ -240,137 +261,141 @@ type FilteredGames = Game[];
 
       <PageWrapper>
         {/* Left section */}
-        <div className="ml-2 flex flex-col h-auto">
-        <NavigationBar>
-          {/* Filters */}
-          <div className="mb-2 flex h-fit w-full flex-col justify-start rounded-2xl bg-neutral-900 p-2 align-middle">
-            <div className="flex flex-row items-baseline justify-between align-baseline">
-              <h2 className="text-2xl font-bold ">Filtere</h2>
-              <button
-                className="text-l text-neutral-500 hover:underline"
-                onClick={handleClearFilters}
-              >
-                Tøm
-              </button>
-            </div>
-
-             {/* Number of player buttons */}
-            <div className="rounded-xl bg-neutral-800 p-2 -m-2 mt-2 mb-2">
-              <p className = "-mt-1 mb-1">Antall Spillere:</p>
-              {playerButtons.map((players) => (
+        <div className="ml-2 flex h-auto flex-col">
+          <NavigationBar>
+            {/* Filters */}
+            <div className="mb-2 flex h-fit w-full flex-col justify-start rounded-2xl bg-neutral-900 p-2 align-middle">
+              <div className="flex flex-row items-baseline justify-between align-baseline">
+                <h2 className="text-2xl font-bold ">Filtere</h2>
                 <button
-                  key={players}
-                  className={`rounded-full px-3 py-1 text-sm text-white shadow-lg hover:bg-violet-500 active:bg-violet-800 mr-0 ml-1 ${
-                    numberOfPlayers === players ? 'bg-violet-600' : 'bg-neutral-700'
-                  }`}
-                  onClick={() => handlePlayersSelection(players)}
+                  className="text-l text-neutral-500 hover:underline"
+                  onClick={handleClearFilters}
                 >
-                  {players}
+                  Tøm
                 </button>
-              ))}
-            </div>
-            {/* Category checkboxes */}
-            <div className="rounded-xl bg-neutral-800 p-2 -m-2 mt-2 mb-2">
-              <p>Spillkategorier:</p>
-              <div className="flex flex-col">
-                <label className="inline-flex items-center mt-1 ml-2">
-                  <input
-                    type="checkbox"
-                    name="Kortspill"
-                    checked={gameCategories.Kortspill || false}
-                    onChange={handleCategorySelection}
-                    className="form-checkbox h-5 w-5 text-gray-600 bg-neutral-600 border-gray-400 rounded mr-1"
-                  />
-                  <span className="ml-2">Kortspill</span>
-                </label>
-                <label className="inline-flex items-center mt-1 ml-2">
-                  <input
-                    type="checkbox"
-                    name="Ballspill"
-                    checked={gameCategories.Ballspill || false}
-                    onChange={handleCategorySelection}
-                    className="form-checkbox h-5 w-5 text-gray-600 bg-neutral-600 border-gray-400 rounded mr-1"
-                  />
-                  <span className="ml-2">Ballspill</span>
-                </label>
-                <label className="inline-flex items-center mt-1 ml-2">
-                  <input
-                    type="checkbox"
-                    name="Navnelek"
-                    checked={gameCategories.Navnelek || false}
-                    onChange={handleCategorySelection}
-                    className="form-checkbox h-5 w-5 text-gray-600 bg-neutral-600 border-gray-400 rounded mr-1"
-                  />
-                  <span className="ml-2">Navneleker</span>
-                </label>
-                <label className="inline-flex items-center mt-1 ml-2">
-                  <input
-                    type="checkbox"
-                    name="Brettspill"
-                    checked={gameCategories.Brettspill || false}
-                    onChange={handleCategorySelection}
-                    className="form-checkbox h-5 w-5 text-gray-600 bg-neutral-600 border-gray-400 rounded mr-1"
-                  />
-                  <span className="ml-2">Brettspill</span>
-                </label>
-                <label className="inline-flex items-center mt-1 ml-2">
-                  <input
-                    type="checkbox"
-                    name="Kastelek"
-                    checked={gameCategories.Kastelek || false}
-                    onChange={handleCategorySelection}
-                    className="form-checkbox h-5 w-5 text-gray-600 bg-neutral-600 border-gray-400 rounded mr-1"
-                  />
-                  <span className="ml-2">Kasteleker</span>
-                </label>
-                <label className="inline-flex items-center mt-1 ml-2">
-                  <input
-                    type="checkbox"
-                    name="Drikkeleker"
-                    checked={gameCategories.Drikkeleker || false}
-                    onChange={handleCategorySelection}
-                    className="form-checkbox h-5 w-5 text-gray-600 bg-neutral-600 border-gray-400 rounded mr-1"
-                  />
-                  <span className="ml-2">Drikkeleker</span>
-                </label>
-                <label className="inline-flex items-center mt-1 ml-2">
-                  <input
-                    type="checkbox"
-                    name="Fysisk"
-                    checked={gameCategories.Fysisk || false}
-                    onChange={handleCategorySelection}
-                    className="form-checkbox h-5 w-5 text-gray-600 bg-neutral-600 border-gray-400 rounded mr-1"
-                  />
-                  <span className="ml-2">Fysisk lek</span>
-                </label>
+              </div>
+
+              {/* Number of player buttons */}
+              <div className="-m-2 mb-2 mt-2 rounded-xl bg-neutral-800 p-2">
+                <p className="-mt-1 mb-1">Antall Spillere:</p>
+                {playerButtons.map((players) => (
+                  <button
+                    key={players}
+                    className={`ml-1 mr-0 rounded-full px-3 py-1 text-sm text-white shadow-lg hover:bg-violet-500 active:bg-violet-800 ${
+                      numberOfPlayers === players
+                        ? "bg-violet-600"
+                        : "bg-neutral-700"
+                    }`}
+                    onClick={() => handlePlayersSelection(players)}
+                  >
+                    {players}
+                  </button>
+                ))}
+              </div>
+              {/* Category checkboxes */}
+              <div className="-m-2 mb-2 mt-2 rounded-xl bg-neutral-800 p-2">
+                <p>Spillkategorier:</p>
+                <div className="flex flex-col">
+                  <label className="ml-2 mt-1 inline-flex items-center">
+                    <input
+                      type="checkbox"
+                      name="Kortspill"
+                      checked={gameCategories.Kortspill ?? false}
+                      onChange={handleCategorySelection}
+                      className="form-checkbox mr-1 h-5 w-5 rounded border-gray-400 bg-neutral-600 text-gray-600"
+                    />
+                    <span className="ml-2">Kortspill</span>
+                  </label>
+                  <label className="ml-2 mt-1 inline-flex items-center">
+                    <input
+                      type="checkbox"
+                      name="Ballspill"
+                      checked={gameCategories.Ballspill ?? false}
+                      onChange={handleCategorySelection}
+                      className="form-checkbox mr-1 h-5 w-5 rounded border-gray-400 bg-neutral-600 text-gray-600"
+                    />
+                    <span className="ml-2">Ballspill</span>
+                  </label>
+                  <label className="ml-2 mt-1 inline-flex items-center">
+                    <input
+                      type="checkbox"
+                      name="Navnelek"
+                      checked={gameCategories.Navnelek ?? false}
+                      onChange={handleCategorySelection}
+                      className="form-checkbox mr-1 h-5 w-5 rounded border-gray-400 bg-neutral-600 text-gray-600"
+                    />
+                    <span className="ml-2">Navneleker</span>
+                  </label>
+                  <label className="ml-2 mt-1 inline-flex items-center">
+                    <input
+                      type="checkbox"
+                      name="Brettspill"
+                      checked={gameCategories.Brettspill ?? false}
+                      onChange={handleCategorySelection}
+                      className="form-checkbox mr-1 h-5 w-5 rounded border-gray-400 bg-neutral-600 text-gray-600"
+                    />
+                    <span className="ml-2">Brettspill</span>
+                  </label>
+                  <label className="ml-2 mt-1 inline-flex items-center">
+                    <input
+                      type="checkbox"
+                      name="Kastelek"
+                      checked={gameCategories.Kastelek ?? false}
+                      onChange={handleCategorySelection}
+                      className="form-checkbox mr-1 h-5 w-5 rounded border-gray-400 bg-neutral-600 text-gray-600"
+                    />
+                    <span className="ml-2">Kasteleker</span>
+                  </label>
+                  <label className="ml-2 mt-1 inline-flex items-center">
+                    <input
+                      type="checkbox"
+                      name="Drikkeleker"
+                      checked={gameCategories.Drikkeleker ?? false}
+                      onChange={handleCategorySelection}
+                      className="form-checkbox mr-1 h-5 w-5 rounded border-gray-400 bg-neutral-600 text-gray-600"
+                    />
+                    <span className="ml-2">Drikkeleker</span>
+                  </label>
+                  <label className="ml-2 mt-1 inline-flex items-center">
+                    <input
+                      type="checkbox"
+                      name="Fysisk"
+                      checked={gameCategories.Fysisk ?? false}
+                      onChange={handleCategorySelection}
+                      className="form-checkbox mr-1 h-5 w-5 rounded border-gray-400 bg-neutral-600 text-gray-600"
+                    />
+                    <span className="ml-2">Fysisk lek</span>
+                  </label>
+                </div>
+              </div>
+
+              {/* Duration buttons */}
+              <div className="-m-2 mt-2 rounded-xl bg-neutral-800 p-2">
+                <p className="-mt-1 mb-1">Varighet:</p>
+                {durationButtons.map((durationOption) => (
+                  <button
+                    key={durationOption}
+                    className={`ml-0 mr-1 rounded-full px-2 py-1 text-sm text-white shadow-lg hover:bg-violet-500 active:bg-violet-800 ${
+                      durationOption === duration
+                        ? "bg-violet-600"
+                        : "bg-neutral-700"
+                    }`}
+                    onClick={() => handleDurationSelection(durationOption)}
+                  >
+                    {durationOption}
+                  </button>
+                ))}
               </div>
             </div>
 
-             {/* Duration buttons */}
-            <div className="rounded-xl bg-neutral-800 p-2 -m-2 mt-2">
-              <p className = "-mt-1 mb-1">Varighet:</p>
-              {durationButtons.map((durationOption) => (
-              <button
-                key={durationOption}
-                className={`rounded-full px-2 py-1 text-sm text-white shadow-lg hover:bg-violet-500 active:bg-violet-800 mr-1 ml-0 ${
-                  durationOption === duration ? 'bg-violet-600' : 'bg-neutral-700'
-                }`}
-                onClick={() => handleDurationSelection(durationOption)}
-              >
-                {durationOption}
-              </button>
-            ))}
+            {/* Ad space */}
+            <p className="font-normal text-neutral-500">Annonse</p>
+            <div className="flex h-auto w-full items-center justify-center overflow-hidden rounded-xl bg-neutral-800">
+              <div className="h-full w-full">
+                <Advertisement />
+              </div>
             </div>
-          </div>
-          
-          {/* Ad space */}
-          <p className="font-normal text-neutral-500">Annonse</p>
-          <div className="flex h-auto w-full items-center justify-center overflow-hidden rounded-xl bg-neutral-800">
-            <div className="h-full w-full">
-              <Advertisement />
-            </div>
-          </div>
-        </NavigationBar>
+          </NavigationBar>
         </div>
         {/* Middle section */}
         <section className="flex h-full w-full">
@@ -413,26 +438,26 @@ type FilteredGames = Game[];
             </div>
             <div className="mt-4 flex h-full w-full flex-wrap justify-start gap-4 overflow-y-auto rounded-xl bg-neutral-900">
               {/* Map through the filteredGames array to render GameCard components */}
-              {filteredGames.map((game) => (
+              {gameQuery.data?.map((game) => (
                 <GameCard
-                  key={game.id}
+                  key={game.gameId}
                   name={game.name}
-                  playtime={game.playtime}
-                  category={game.category}
-                  players={game.players}
+                  duration={game.duration}
+                  // category={"kategori"}
+                  numberOfPlayers={game.numberOfPlayers}
                   rules={game.rules}
                   description={game.description}
-                  rating={game.rating}
+                  rating={Math.floor(Math.random() * 5) + 1}
+                  gameId={game.gameId}
+                  userId={game.userId}
                 />
               ))}
             </div>
           </section>
         </section>
 
-        
         {/* </div>
       </main> */}
-      
       </PageWrapper>
     </div>
   );

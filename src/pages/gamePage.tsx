@@ -38,7 +38,9 @@ export default function GamePage() {
   const [searchTerm, setSearchTerm] = useState("");
   const router = useRouter();
   const { gameId } = router.query;
-
+  // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+  console.log("Game ID: " + gameId);
+  console.log("Game ID: " + Number(gameId ?? 1));
   // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
   const gameQuery = api.gameRouter.getGameById.useQuery(
     { id: Number(gameId ?? 1) },
@@ -46,8 +48,8 @@ export default function GamePage() {
   );
 
   const name = gameQuery.data?.name ?? "Lek";
-  const numberOfPlayers = (gameQuery.data?.numberOfPlayers ?? "1-10") as string;
-  const duration = (gameQuery.data?.duration ?? "10-30 min") as string;
+  const numberOfPlayers = gameQuery.data?.numberOfPlayers ?? "1-10";
+  const duration = gameQuery.data?.duration ?? "10-30 min";
   const description = gameQuery.data?.description ?? "Dette er en kul lek";
   const rules = gameQuery.data?.rules ?? "Regler her";
   // TODO add ratings and categories to game via relations
