@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { useState, type FormEvent } from "react";
+import { useState, useEffect, type FormEvent } from "react";
 import { v4 as uuid } from "uuid";
 import CreateGame from "~/components/CreateGame";
 import SearchIcon from "@mui/icons-material/Search";
@@ -8,17 +8,70 @@ import Advertisement from "~/components/advertisement";
 import GameCard from "~/components/gameCard";
 import PageWrapper from "~/components/pageWrapper";
 import NavigationBar from "~/components/navigationBar";
+import { api } from "~/utils/api";
 
 export default function Browse() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [numberOfPlayers, setNumberOfPlayers] = useState("");
+  const [duration, setDuration] = useState("");
+  const [filteredGames, setFilteredGames] = useState<FilteredGames>([]);
+  const [gameCategories, setGameCategories] = useState<Record<string, boolean>>(
+    {},
+  );
+
+  type Game = {
+    rules: string;
+    id: string;
+    name: string;
+    playtime: string;
+    category: string;
+    players: string;
+    description: string;
+    rating: number;
+  };
+  type FilteredGames = Game[];
 
   const handleSearchSubmit = (e: FormEvent) => {
     e.preventDefault();
     console.log("Search Term:", searchTerm);
   };
 
+  const filterGames = () => {
+    const filtered = games.filter((game) => {
+      //Number of players
+      if (numberOfPlayers && game.players !== numberOfPlayers) {
+        return false;
+      }
+      //Duration
+      if (duration && game.playtime !== duration) {
+        return false;
+      }
+      //Categories
+      if (Object.values(gameCategories).some((value) => value)) {
+        const categories = Object.keys(gameCategories).filter(
+          (category) => gameCategories[category],
+        );
+        if (!categories.includes(game.category)) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+
+    setFilteredGames(filtered);
+  };
+
+  useEffect(() => {
+    // Call filterGames function whenever any filter changes
+    filterGames();
+  }, [numberOfPlayers, gameCategories, duration]);
+
   const handleClearFilters = () => {
     setSearchTerm("");
+    setNumberOfPlayers("");
+    setGameCategories({});
+    setDuration("");
   };
 
   const [showCreateGame, setShowCreateGame] = useState({ visible: false });
@@ -31,240 +84,168 @@ export default function Browse() {
     setShowCreateGame({ visible: false });
   };
 
+  const handlePlayersSelection = (players: string) => {
+    if (numberOfPlayers === players) {
+      setNumberOfPlayers("");
+    } else {
+      setNumberOfPlayers(players);
+    }
+  };
+
+  const handleDurationSelection = (selectedDuration: string) => {
+    if (selectedDuration === duration) {
+      setDuration("");
+    } else {
+      setDuration(selectedDuration);
+    }
+  };
+
+  const handleCategorySelection = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    setGameCategories({
+      ...gameCategories,
+      [event.target.name]: event.target.checked,
+    });
+  };
+
+  const playerButtons = ["2", "3", "4", "5", "6", "7+"];
+  const durationButtons = ["10 min", "20 min", "30 min", "40 min+"];
+
+  const gameQuery = api.gameRouter.getAll.useQuery();
+
   const [games, setGames] = useState([
     {
-      rules: "fuck off",
+      rules:
+        "Kast frisbeen til en medspiller i motstanderens målområde uten å bli tatt av motstanderen. Poeng scores når mottakeren fanger frisbeen i motstanderens målområde. Bytt besittelse av frisbeen ved feil eller turnover.",
       id: uuid(),
-      name: "Sura",
-      playtime: "30 minutter",
-      category: "Fysisk lek",
-      players: "2-10",
-      description: "En morsom fysisk lek.",
-      rating: 4.5,
+      name: "Ultimate Treningskamp",
+      playtime: "10 min",
+      category: "Kastelek",
+      players: "4",
+      description: "En kombinasjon av fotball, rugby og Ultimate Frisbee.",
+      rating: 4.7,
     },
     {
-      rules: "fuck off",
+      rules:
+        "En spiller som 'den som jakter' prøver å berøre andre spillere. Spillerne løper rundt for å unngå å bli fanget. Den siste som er igjen, blir den neste 'den som jakter'.",
       id: uuid(),
       name: "Sisten",
-      playtime: "1 time",
-      category: "Fysisk lek",
-      players: "4-20",
+      playtime: "20 min",
+      category: "Fysisk",
+      players: "7+",
       description: "En spennende utendørs lek.",
       rating: 5,
     },
     {
-      rules: "fuck off",
+      rules:
+        "Spillerne står i en sirkel og kaster en ball til hverandre. Målet er å ikke la ballen falle på bakken. Hvis ballen faller, må spilleren som kastet ballen, gå ut av sirkelen.",
       id: uuid(),
       name: "Vri åtter",
-      playtime: "45 minutter",
-      category: "Fysisk lek",
-      players: "3-12",
+      playtime: "30 min",
+      category: "Kastelek",
+      players: "7+",
       description: "En utfordrende lek for å strekke seg.",
       rating: 4,
     },
     {
-      rules: "fuck off",
+      rules:
+        "En klassisk lek hvor en person prøver å fange andre spillere. Hvis en spiller blir fanget, blir de med i jakten.",
       id: uuid(),
       name: "Boksen går",
-      playtime: "20 minutter",
-      category: "Fysisk lek",
-      players: "5-15",
+      playtime: "30 min",
+      category: "Fysisk",
+      players: "7+",
       description: "En klassisk lek for å øve på reaksjonsevne.",
       rating: 4.2,
     },
     {
-      rules: "fuck off",
+      rules:
+        "Spillerne kaster ringer mot en sylinder som står i en avstand. Poeng scores når en ring lander rundt sylinderen.",
       id: uuid(),
       name: "Ringleken",
-      playtime: "40 minutter",
-      category: "Fysisk lek",
-      players: "4-12",
+      playtime: "40 min+",
+      category: "Kastelek",
+      players: "5",
       description: "En morsom lek som innebærer å kaste ringer.",
       rating: 4.7,
     },
     {
-      rules: "fuck off",
+      rules:
+        "Kast en kubbe for å forsøke å treffe motstanderens kubber. Målet er å treffe alle kubbene og deretter kaste kongen for å vinne.",
       id: uuid(),
       name: "Kubb",
-      playtime: "1 time",
-      category: "Fysisk lek",
-      players: "2-12",
+      playtime: "30 min",
+      category: "Kastelek",
+      players: "6",
       description: "Et strategisk spill som innebærer å kaste kubber.",
       rating: 4.3,
     },
     {
-      rules: "fuck off",
+      rules:
+        "Sitt på huskene og prøv å svinge så høyt som mulig. Vinneren er den som klarer å svinge høyest.",
       id: uuid(),
       name: "Husker",
-      playtime: "30 minutter",
-      category: "Fysisk lek",
-      players: "2-4",
+      playtime: "20 min",
+      category: "Fysisk",
+      players: "2",
       description: "En klassisk lek som utfordrer balanse.",
       rating: 4.8,
     },
     {
-      rules: "fuck off",
+      rules:
+        "Hopp over et tau som blir svingt av en person på den ene siden til den andre. Prøv å unngå å bli truffet av tauet.",
       id: uuid(),
       name: "Hoppe tau",
-      playtime: "20 minutter",
-      category: "Fysisk lek",
-      players: "1-4",
+      playtime: "20 min",
+      category: "Fysisk",
+      players: "3",
       description: "En flott måte å trene kondisjon på.",
       rating: 4.6,
     },
     {
-      rules: "fuck off",
+      rules:
+        "En person er 'kongen' og gir kommandoer til resten av gruppen. De andre spillerne må følge kommandoene.",
       id: uuid(),
       name: "Kongen befaler",
-      playtime: "1 time",
-      category: "Fysisk lek",
-      players: "5-30",
+      playtime: "10 min",
+      category: "Fysisk",
+      players: "7+",
       description: "En morsom lek hvor en person gir kommandoer.",
       rating: 4.4,
     },
     {
-      rules: "fuck off",
+      rules:
+        "En spiller er 'blindemann' og prøver å fange de andre spillerne mens de er blindfolded. Andre spillere må unngå å bli fanget.",
       id: uuid(),
       name: "Blindemann",
-      playtime: "30 minutter",
-      category: "Fysisk lek",
-      players: "5-20",
+      playtime: "10 min",
+      category: "Fysisk",
+      players: "5",
       description: "En spennende lek som handler om å unngå å bli fanget.",
       rating: 4.9,
     },
     {
-      rules: "fuck off",
+      rules:
+        "To lag konkurrerer om å score mål ved å sparke en ball inn i motstanderens mål. Målet er å score flere mål enn motstanderlaget.",
       id: uuid(),
       name: "Fotball",
-      playtime: "1 time",
-      category: "Fysisk lek",
-      players: "6-22",
+      playtime: "40 min+",
+      category: "Ballspill",
+      players: "7+",
       description: "En populær sport som spilles over hele verden.",
       rating: 4.5,
     },
     {
-      rules: "fuck off",
+      rules:
+        "Spillerne kaster baller på hverandre mens de prøver å unngå å bli truffet. Hvis en spiller blir truffet, er de ute.",
       id: uuid(),
       name: "Stikkball",
-      playtime: "45 minutter",
-      category: "Fysisk lek",
-      players: "4-16",
+      playtime: "20 min",
+      category: "Ballspill",
+      players: "4",
       description: "En morsom lek som involverer å kaste og fange baller.",
       rating: 4.3,
-    },
-    {
-      rules: "fuck off",
-      id: uuid(),
-      name: "Hesteskokasting",
-      playtime: "30 minutter",
-      category: "Fysisk lek",
-      players: "2-8",
-      description:
-        "En tradisjonell lek som handler om å kaste hestesko på en pinne.",
-      rating: 4.7,
-    },
-    {
-      rules: "fuck off",
-      id: uuid(),
-      name: "Tautrekking",
-      playtime: "1 time",
-      category: "Fysisk lek",
-      players: "4-20",
-      description: "En konkurransedyktig lek som tester styrke.",
-      rating: 4.6,
-    },
-    {
-      rules: "fuck off",
-      id: uuid(),
-      name: "Potetløp",
-      playtime: "20 minutter",
-      category: "Fysisk lek",
-      players: "3-10",
-      description: "En morsom lek som innebærer å balansere poteter på skjeer.",
-      rating: 4.4,
-    },
-    {
-      rules: "fuck off",
-      id: uuid(),
-      name: "Eggeløp",
-      playtime: "30 minutter",
-      category: "Fysisk lek",
-      players: "3-12",
-      description: "En utfordrende lek hvor man må bære et egg på en skje.",
-      rating: 4.8,
-    },
-    {
-      rules: "fuck off",
-      id: uuid(),
-      name: "På staur",
-      playtime: "40 minutter",
-      category: "Fysisk lek",
-      players: "5-15",
-      description: "En morsom lek som handler om å hoppe over staur.",
-      rating: 4.5,
-    },
-    {
-      rules: "fuck off",
-      id: uuid(),
-      name: "Flasketuten peker på",
-      playtime: "1 time",
-      category: "Fysisk lek",
-      players: "4-20",
-      description:
-        "En klassisk lek som innebærer å kysse den flasken peker på.",
-      rating: 4.3,
-    },
-    {
-      rules: "fuck off",
-      id: uuid(),
-      name: "Katt og mus",
-      playtime: "30 minutter",
-      category: "Fysisk lek",
-      players: "6-30",
-      description: "En morsom lek som handler om å unngå å bli fanget.",
-      rating: 4.9,
-    },
-    {
-      rules: "fuck off",
-      id: uuid(),
-      name: "Stiv heks",
-      playtime: "40 minutter",
-      category: "Fysisk lek",
-      players: "4-16",
-      description:
-        "En spennende lek hvor en person prøver å fange andre spillere.",
-      rating: 4.7,
-    },
-    {
-      rules: "fuck off",
-      id: uuid(),
-      name: "Bytte plass",
-      playtime: "1 time",
-      category: "Fysisk lek",
-      players: "8-40",
-      description: "En morsom lek som innebærer å bytte plass raskt.",
-      rating: 4.5,
-    },
-    {
-      rules: "fuck off",
-      id: uuid(),
-      name: "Kaste på boks",
-      playtime: "30 minutter",
-      category: "Fysisk lek",
-      players: "4-12",
-      description:
-        "En utfordrende lek som handler om å kaste baller på en boks.",
-      rating: 4.2,
-    },
-    {
-      rules: "fuck off",
-      id: uuid(),
-      name: "Potetkasting",
-      playtime: "20 minutter",
-      category: "Fysisk lek",
-      players: "3-8",
-      description: "En morsom lek hvor man kaster poteter på en målskive.",
-      rating: 4.6,
     },
   ]);
 
@@ -280,32 +261,145 @@ export default function Browse() {
 
       <PageWrapper>
         {/* Left section */}
+        <div className="ml-2 flex h-auto flex-col">
+          <NavigationBar>
+            {/* Filters */}
+            <div className="mb-2 flex h-fit w-full flex-col justify-start rounded-2xl bg-neutral-900 p-2 align-middle">
+              <div className="flex flex-row items-baseline justify-between align-baseline">
+                <h2 className="text-2xl font-bold ">Filtere</h2>
+                <button
+                  className="text-l text-neutral-500 hover:underline"
+                  onClick={handleClearFilters}
+                >
+                  Tøm
+                </button>
+              </div>
 
-        <NavigationBar>
-          {/* Filters */}
-          <div className="mb-2 flex h-fit w-full flex-col justify-start rounded-2xl bg-neutral-900 p-4 align-middle">
-            <div className="flex flex-row items-baseline justify-between align-baseline">
-              <h2 className="text-2xl font-bold ">Filtere</h2>
-              <button
-                className="text-l text-neutral-500 hover:underline"
-                onClick={handleClearFilters}
-              >
-                Tøm
-              </button>
-            </div>
-          </div>
-          {/* Ad space */}
-          <p className="font-normal text-neutral-500">Annonse</p>
-          <div className="flex h-auto w-full items-center justify-center overflow-hidden rounded-xl bg-neutral-800">
-            <div className="h-full w-full">
-              <Advertisement />
-            </div>
-          </div>
-        </NavigationBar>
+              {/* Number of player buttons */}
+              <div className="-m-2 mb-2 mt-2 rounded-xl bg-neutral-800 p-2">
+                <p className="-mt-1 mb-1">Antall Spillere:</p>
+                {playerButtons.map((players) => (
+                  <button
+                    key={players}
+                    className={`ml-1 mr-0 rounded-full px-3 py-1 text-sm text-white shadow-lg hover:bg-violet-500 active:bg-violet-800 ${
+                      numberOfPlayers === players
+                        ? "bg-violet-600"
+                        : "bg-neutral-700"
+                    }`}
+                    onClick={() => handlePlayersSelection(players)}
+                  >
+                    {players}
+                  </button>
+                ))}
+              </div>
+              {/* Category checkboxes */}
+              <div className="-m-2 mb-2 mt-2 rounded-xl bg-neutral-800 p-2">
+                <p>Spillkategorier:</p>
+                <div className="flex flex-col">
+                  <label className="ml-2 mt-1 inline-flex items-center">
+                    <input
+                      type="checkbox"
+                      name="Kortspill"
+                      checked={gameCategories.Kortspill ?? false}
+                      onChange={handleCategorySelection}
+                      className="form-checkbox mr-1 h-5 w-5 rounded border-gray-400 bg-neutral-600 text-gray-600"
+                    />
+                    <span className="ml-2">Kortspill</span>
+                  </label>
+                  <label className="ml-2 mt-1 inline-flex items-center">
+                    <input
+                      type="checkbox"
+                      name="Ballspill"
+                      checked={gameCategories.Ballspill ?? false}
+                      onChange={handleCategorySelection}
+                      className="form-checkbox mr-1 h-5 w-5 rounded border-gray-400 bg-neutral-600 text-gray-600"
+                    />
+                    <span className="ml-2">Ballspill</span>
+                  </label>
+                  <label className="ml-2 mt-1 inline-flex items-center">
+                    <input
+                      type="checkbox"
+                      name="Navnelek"
+                      checked={gameCategories.Navnelek ?? false}
+                      onChange={handleCategorySelection}
+                      className="form-checkbox mr-1 h-5 w-5 rounded border-gray-400 bg-neutral-600 text-gray-600"
+                    />
+                    <span className="ml-2">Navneleker</span>
+                  </label>
+                  <label className="ml-2 mt-1 inline-flex items-center">
+                    <input
+                      type="checkbox"
+                      name="Brettspill"
+                      checked={gameCategories.Brettspill ?? false}
+                      onChange={handleCategorySelection}
+                      className="form-checkbox mr-1 h-5 w-5 rounded border-gray-400 bg-neutral-600 text-gray-600"
+                    />
+                    <span className="ml-2">Brettspill</span>
+                  </label>
+                  <label className="ml-2 mt-1 inline-flex items-center">
+                    <input
+                      type="checkbox"
+                      name="Kastelek"
+                      checked={gameCategories.Kastelek ?? false}
+                      onChange={handleCategorySelection}
+                      className="form-checkbox mr-1 h-5 w-5 rounded border-gray-400 bg-neutral-600 text-gray-600"
+                    />
+                    <span className="ml-2">Kasteleker</span>
+                  </label>
+                  <label className="ml-2 mt-1 inline-flex items-center">
+                    <input
+                      type="checkbox"
+                      name="Drikkeleker"
+                      checked={gameCategories.Drikkeleker ?? false}
+                      onChange={handleCategorySelection}
+                      className="form-checkbox mr-1 h-5 w-5 rounded border-gray-400 bg-neutral-600 text-gray-600"
+                    />
+                    <span className="ml-2">Drikkeleker</span>
+                  </label>
+                  <label className="ml-2 mt-1 inline-flex items-center">
+                    <input
+                      type="checkbox"
+                      name="Fysisk"
+                      checked={gameCategories.Fysisk ?? false}
+                      onChange={handleCategorySelection}
+                      className="form-checkbox mr-1 h-5 w-5 rounded border-gray-400 bg-neutral-600 text-gray-600"
+                    />
+                    <span className="ml-2">Fysisk lek</span>
+                  </label>
+                </div>
+              </div>
 
+              {/* Duration buttons */}
+              <div className="-m-2 mt-2 rounded-xl bg-neutral-800 p-2">
+                <p className="-mt-1 mb-1">Varighet:</p>
+                {durationButtons.map((durationOption) => (
+                  <button
+                    key={durationOption}
+                    className={`ml-0 mr-1 rounded-full px-2 py-1 text-sm text-white shadow-lg hover:bg-violet-500 active:bg-violet-800 ${
+                      durationOption === duration
+                        ? "bg-violet-600"
+                        : "bg-neutral-700"
+                    }`}
+                    onClick={() => handleDurationSelection(durationOption)}
+                  >
+                    {durationOption}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Ad space */}
+            <p className="font-normal text-neutral-500">Annonse</p>
+            <div className="flex h-auto w-full items-center justify-center overflow-hidden rounded-xl bg-neutral-800">
+              <div className="h-full w-full">
+                <Advertisement />
+              </div>
+            </div>
+          </NavigationBar>
+        </div>
         {/* Middle section */}
-        <section className="flex h-full ">
-          <section className=" flex h-full w-full min-w-[420px] grow flex-col justify-start rounded-2xl bg-neutral-900 p-4 align-middle">
+        <section className="flex h-full w-full">
+          <section className="mr-2 flex h-full w-full min-w-[1100px] grow flex-col justify-start rounded-2xl bg-neutral-900 p-4 align-middle">
             {/* Search section */}
             <div className="flex w-full flex-row items-center justify-between align-middle">
               <form
@@ -343,34 +437,25 @@ export default function Browse() {
               </p>
             </div>
             <div className="mt-4 flex h-full w-full flex-wrap justify-start gap-4 overflow-y-auto rounded-xl bg-neutral-900">
-              {/* Map through the games array to render GameCard components */}
-              {games.map((game) => (
+              {/* Map through the filteredGames array to render GameCard components */}
+              {gameQuery.data?.map((game) => (
                 <GameCard
-                  key={game.id}
+                  key={game.gameId}
                   name={game.name}
-                  playtime={game.playtime}
-                  category={game.category}
-                  players={game.players}
+                  duration={game.duration}
+                  // category={"kategori"}
+                  numberOfPlayers={game.numberOfPlayers}
                   rules={game.rules}
                   description={game.description}
-                  rating={game.rating}
+                  rating={Math.floor(Math.random() * 5) + 1}
+                  gameId={game.gameId}
+                  userId={game.userId}
                 />
               ))}
             </div>
           </section>
         </section>
 
-        {showCreateGame.visible && (
-          <div className="absolute left-0 top-0 flex h-screen w-screen flex-col items-center justify-center overflow-hidden bg-neutral-900 bg-opacity-90 align-middle">
-            <CreateGame />
-            <button
-              className="text-l mt-2 text-neutral-300 hover:underline"
-              onClick={handleCancelCreateGame}
-            >
-              Avbryt
-            </button>
-          </div>
-        )}
         {/* </div>
       </main> */}
       </PageWrapper>

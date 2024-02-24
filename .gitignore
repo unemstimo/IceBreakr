@@ -9,7 +9,8 @@
 /coverage
 
 # database
-/prisma/db.sqlite
+# For dev purposes db.sqlite is not ignored (to have a db with some seeded data that everyone can use)
+#/prisma/db.sqlite
 /prisma/db.sqlite-journal
 
 # next.js
