@@ -1,8 +1,4 @@
-import {
-  authMiddleware,
-  redirectToSignIn,
-  withClerkMiddleware,
-} from "@clerk/nextjs";
+import { withClerkMiddleware } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 
 export default withClerkMiddleware(() => {
