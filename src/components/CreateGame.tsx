@@ -1,9 +1,9 @@
 import { type inferProcedureInput } from "@trpc/server";
-import Link from "next/link";
 import React, { useState } from "react";
 import { api } from "~/utils/api";
-import { type AppRouter, appRouter, createFactory } from "~/server/api/root";
+import { type AppRouter } from "~/server/api/root";
 import { useRouter } from "next/router";
+import { Combobox } from "./ui/combox";
 
 export type Game = {
   name: string;
@@ -159,6 +159,8 @@ const CreateGame: React.FC = () => {
           placeholder="Regler..."
           className="w-full rounded-lg bg-neutral-800 py-2 pl-2 pr-2 text-white focus:outline-none"
         />
+
+        <Combobox></Combobox>
         <input
           type="text"
           value={category}

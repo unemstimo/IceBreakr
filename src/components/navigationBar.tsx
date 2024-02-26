@@ -73,6 +73,16 @@ const NavigationBar = ({ children }: NavigationBarProps) => {
               Utforsk
             </button>
           </Link>
+          <Link href={"/components"}>
+            <button
+              className={classNames(
+                "flex h-full w-full items-center justify-start gap-4 rounded-xl p-2 align-middle hover:bg-neutral-700",
+                { "bg-neutral-700": currentPath === "/components" },
+              )}
+            >
+              Components (dev)
+            </button>
+          </Link>
         </div>
         <button
           onClick={handleCreateGameShow}
@@ -87,7 +97,7 @@ const NavigationBar = ({ children }: NavigationBarProps) => {
       </section>
 
       {showCreateGame && (
-        <div className="fixed z-10 left-0 right-0 bottom-0 flex h-full w-full flex-col items-center justify-center bg-neutral-900 bg-opacity-90 align-middle">
+        <div className="fixed bottom-0 left-0 right-0 z-10 flex h-full w-full flex-col items-center justify-center bg-neutral-900 bg-opacity-90 align-middle">
           <CreateGame />
           <button
             className="text-l mt-2 text-neutral-300 hover:underline"
