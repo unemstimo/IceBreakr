@@ -1,3 +1,4 @@
+import { inferProcedureInput, inferProcedureOutput } from "@trpc/server";
 import { z } from "zod";
 
 import {
@@ -5,6 +6,13 @@ import {
   privateProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
+import { AppRouter } from "../root";
+
+export type CreateCategory = inferProcedureInput<
+  AppRouter["category"]["create"]
+>;
+
+export type Category = inferProcedureOutput<AppRouter["category"]["create"]>;
 
 export const categoryRouter = createTRPCRouter({
   create: privateProcedure
