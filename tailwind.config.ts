@@ -2,6 +2,23 @@ import type { Config } from "tailwindcss";
 import { fontFamily } from "tailwindcss/defaultTheme";
 import colors from "tailwindcss/colors";
 
+const SPACING = {
+  DEFAULT: "1.5rem", // redundant?
+  0.5: "0.125rem", // XTiny
+  1: "0.25rem", // Tiny
+  2: "0.5rem", // XXSmall
+  3: "0.75rem", // XSmall
+  4: "1rem", // Small
+  6: "1.5rem", // Regular
+  8: "2rem", // Medium
+  12: "3rem", // Large
+  16: "4rem", // XLarge
+  20: "5rem", // XXLarge
+  24: "6rem", // Huge
+  32: "8rem", // XHuge
+  48: "12rem", // XXHuge
+};
+
 const config = {
   darkMode: ["class"],
   content: [
@@ -27,6 +44,15 @@ const config = {
       },
     },
     extend: {
+      width: SPACING,
+      minWidth: SPACING,
+      maxWidth: SPACING,
+      height: SPACING,
+      minHeight: SPACING,
+      maxHeight: SPACING,
+      spacing: {
+        ...SPACING,
+      },
       fontFamily: {
         darker: ["Darker Grotesque", ...fontFamily.sans],
       },

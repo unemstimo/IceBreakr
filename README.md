@@ -8,6 +8,29 @@ mvh Mats A. Nissen-Lie
 
 # Backend tutorial
 
+opprett en fil for den entiteten du vil lage funksjonalitet [backend](/src/server/api/routers/). Se [category](/src/server/api/routers/category.ts) for eksempel. KOK!
+Legg til den ny routeren i [server.ts](/src/server/api/root.ts) for å bruke den i front end.
+
+Bruk:
+For å bruke getFunksjoner i front end, se [gamePage](/src/pages/gamePage.tsx) for eksempel.
+
+For å bruke create funksjoner i front end, se [createGame](/src/pages/createGame.tsx) for eksempel.
+
+# Frontend tutorial
+
+Komponenter:
+Gå til [local](http://localhost:3000/components) for å se alle komponenter som er tilgjengelig.
+Helst bruk layout som gjort i [gamePage](/src/pages/createGame.tsx) for å lage nye sider.
+
+Routing:
+bruk
+const router = useRouter();
+eller
+
+<Link> tag for å navigere mellom sider.</Link>
+
+se [create game ](/src/pages/createGame.tsx) for på useRouter og se [navigationBar](/src/components/navigationBar.tsx) for Link. Merk at herf samsvarer med navnet på filen.
+
 # database i prisma
 
 For å endre på databasen, gå til /prisma/schema.prisma og lag en ny modell. Deretter kjør "npx prisma db push" i terminal for å oppdatere databasen.

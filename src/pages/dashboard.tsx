@@ -28,8 +28,6 @@ export default function Dashboard() {
 
   const [friendsList, setFriendsList] = useState<Friend[]>([]);
 
-
-
   const [showMorePopup, setShowMorePopup] = useState({
     visible: false,
     friendId: null,
@@ -40,7 +38,7 @@ export default function Dashboard() {
   };
 
   const handleAddFriend = () => {
-    if(!isSignedIn){
+    if (!isSignedIn) {
       setShowLoginPopup(true);
     } else {
       const newID = uuid();
@@ -48,7 +46,6 @@ export default function Dashboard() {
       const newFriend = { id: newID, name: "Friend " + newID.slice(0, 4) };
       setFriendsList([...friendsList, newFriend]);
     }
-    
   };
 
   const handleRemoveFriend = (friendId: string) => {
@@ -82,18 +79,18 @@ export default function Dashboard() {
   };
 
   const handleAddPlaylist = () => {
-    if(!isSignedIn) {
+    if (!isSignedIn) {
       setShowLoginPopup(true);
-    }else {
-    const newID = uuid();
-    console.log("Add Playlist");
-    const newPlaylist = {
-      id: newID,
-      name: "Lekeliste " + newID.slice(0, 4),
-      numberOfGames: 0,
-      author: "Meg",
-    };
-    setPlaylists([...playlists, newPlaylist]);
+    } else {
+      const newID = uuid();
+      console.log("Add Playlist");
+      const newPlaylist = {
+        id: newID,
+        name: "Lekeliste " + newID.slice(0, 4),
+        numberOfGames: 0,
+        author: "Meg",
+      };
+      setPlaylists([...playlists, newPlaylist]);
     }
   };
 
@@ -116,11 +113,11 @@ export default function Dashboard() {
   const [showCreateGame, setShowCreateGame] = useState({ visible: false });
 
   const handleCreateGameShow = () => {
-    if(!isSignedIn){
+    if (!isSignedIn) {
       setShowLoginPopup(true);
     } else {
-      setShowCreateGame({ visible: !showCreateGame.visible });}
-    
+      setShowCreateGame({ visible: !showCreateGame.visible });
+    }
   };
 
   const handleCancelCreateGame = () => {
@@ -159,7 +156,6 @@ export default function Dashboard() {
         <div className="max-w-screen-l relative flex h-screen w-full max-w-[1440px] rounded-3xl bg-neutral-950"> */}
       {/* Left section */}
       <PageWrapper>
-        <div className="ml-2 flex flex-col h-auto">
         <NavigationBar>
           <div className="mb-0 flex h-full w-full flex-col justify-start rounded-2xl bg-neutral-900 p-2 align-middle">
             <div className="flex flex-row items-baseline justify-between align-baseline">
@@ -235,10 +231,9 @@ export default function Dashboard() {
             )}
           </div>
         </NavigationBar>
-        </div>
 
         {/* Middle section */}
-        <section className="flex h-screen overflow-y-auto max-h-screen w-full min-w-[420px] flex-col justify-start rounded-2xl bg-neutral-900 p-4 align-middle">
+        <section className="flex h-screen max-h-screen w-full min-w-[420px] flex-col justify-start overflow-y-auto rounded-2xl bg-neutral-900 p-4 align-middle">
           {/* Search section */}
           <div className="flex w-full flex-row items-center justify-between align-middle">
             <form
@@ -273,7 +268,7 @@ export default function Dashboard() {
           </div>
           {/* Ad section */}
           <p className="mt-4 font-normal text-neutral-500">Annonse</p>
-          <div className="flex min-h-48 max-h-60 w-full items-center justify-center overflow-hidden rounded-xl bg-neutral-800">
+          <div className="flex max-h-60 min-h-48 w-full items-center justify-center overflow-hidden rounded-xl bg-neutral-800">
             <Advertisement />
           </div>
         </section>
@@ -347,7 +342,7 @@ export default function Dashboard() {
             )}
           </div>
         </section>
-        
+
         {/* </div>
       </main> */}
       </PageWrapper>

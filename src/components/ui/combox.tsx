@@ -40,11 +40,27 @@ const frameworks = [
     label: "Astro",
   },
 ];
+export type ComboxOption = {
+  value: string;
+  label: string;
+};
+type ComboboxProps = {
+  options: ComboxOption[];
+  opt?: ComboxOption;
+  isMultiSelect?: boolean;
+  onChange: (option: ComboxOption) => void;
+  placeholder?: string;
+};
 
-export function Combobox() {
+export function Combobox({
+  opt,
+  onChange,
+  options = frameworks,
+  placeholder = "velg alternativ...",
+  isMultiSelect = false,
+}: ComboboxProps) {
   const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState("");
-
+  const [opt2, setOpt] = React.useState<ComboxOption | null>(null);
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -54,25 +70,34 @@ export function Combobox() {
           aria-expanded={open}
           className="w-[200px] justify-between"
         >
-          {value
-            ? frameworks.find((framework) => framework.value === value)?.label
-            : "Select framework..."}
+          {opt
+            ? options.find((options) => options.value === opt.value)?.label
+            : opt2
+              ? options.find((options) => options.value === opt2?.value)?.label
+              : placeholder}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
         <Command>
-          <CommandInput placeholder="Search framework..." />
-          <CommandEmpty>No framework found.</CommandEmpty>
+          <CommandInput placeholder="Search options..." />
+          <CommandEmpty>No options found.</CommandEmpty>
           <CommandGroup>
-            {frameworks.map((framework) => (
+            {options.map((option) => (
               <CommandItem
-                key={framework.value}
-                value={framework.value}
+                key={option.value}
+                value={option.value}
                 onSelect={(currentValue) => {
-                  setValue(
+                  if (isMultiSelect) {
+                    const newOpt = options.find(
+                      (options) => options.value === currentValue,
+                    );
+
+                    setOpt(newOpt ?? null);
+                  }
+                  onChange(
                     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-                    currentValue === value ? "" : currentValue,
+                    option,
                   );
                   setOpen(false);
                 }}
@@ -80,10 +105,10 @@ export function Combobox() {
                 <Check
                   className={cn(
                     "mr-2 h-4 w-4",
-                    value === framework.value ? "opacity-100" : "opacity-0",
+                    opt?.value === option.value ? "opacity-100" : "opacity-0",
                   )}
                 />
-                {framework.label}
+                {option.label}
               </CommandItem>
             ))}
           </CommandGroup>
