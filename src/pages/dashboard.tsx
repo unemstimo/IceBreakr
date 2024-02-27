@@ -2,7 +2,6 @@ import Head from "next/head";
 import Link from "next/link";
 import { useState, type FormEvent } from "react";
 import { v4 as uuid } from "uuid";
-import CreateGame from "~/components/CreateGame";
 import Advertisement from "~/components/advertisement";
 import { useUser } from "@clerk/nextjs";
 
