@@ -2,8 +2,6 @@ import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
 import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
 import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
-import { useState } from "react";
-import CreateGame from "./CreateGame";
 import SearchIcon from "@mui/icons-material/Search";
 import { usePathname } from "next/navigation";
 import classNames from "classnames";
@@ -13,15 +11,6 @@ type NavigationBarProps = {
   children: React.ReactNode | React.ReactElement[];
 };
 const NavigationBar = ({ children }: NavigationBarProps) => {
-  const [showCreateGame, setShowCreateGame] = useState(false);
-  const handleCreateGameShow = () => {
-    setShowCreateGame(true);
-  };
-
-  const handleCancelCreateGame = () => {
-    setShowCreateGame(false);
-  };
-
   const currentPath = usePathname();
 
   return (
@@ -84,29 +73,21 @@ const NavigationBar = ({ children }: NavigationBarProps) => {
             </button>
           </Link>
         </div>
-        <button
-          onClick={handleCreateGameShow}
-          className="flex h-20 min-h-20 w-full items-center justify-center gap-2 rounded-xl bg-violet-600 p-2 align-middle hover:bg-violet-500 active:bg-violet-800"
-        >
-          OPPRETT LEK
-          <AddCircleOutlineRoundedIcon />
-        </button>
-        <div className="mb-0 flex h-full w-full flex-col justify-start rounded-2xl bg-neutral-900 p-4 align-middle">
-          {children}
-        </div>
-      </section>
-
-      {showCreateGame && (
-        <div className="fixed bottom-0 left-0 right-0 z-10 flex h-full w-full flex-col items-center justify-center bg-neutral-900 bg-opacity-90 align-middle">
-          <CreateGame />
+        <Link href={"/createGame"}>
           <button
-            className="text-l mt-2 text-neutral-300 hover:underline"
-            onClick={handleCancelCreateGame}
+            // onClick={handleCreateGameShow}
+            className="flex h-20 min-h-20 w-full items-center justify-center gap-2 rounded-xl bg-violet-600 p-2 align-middle hover:bg-violet-500 active:bg-violet-800"
           >
-            Avbryt
+            OPPRETT LEK
+            <AddCircleOutlineRoundedIcon />
           </button>
-        </div>
-      )}
+        </Link>
+        {!!children && (
+          <div className="mb-0 flex h-full w-full flex-col justify-start rounded-2xl bg-neutral-900 p-4 align-middle">
+            {children}
+          </div>
+        )}
+      </section>
     </>
   );
 };
