@@ -18,10 +18,6 @@ For å bruke create funksjoner i front end, se [createGame](/src/pages/createGam
 
 # Frontend tutorial
 
-Komponenter:
-Gå til [local](http://localhost:3000/components) for å se alle komponenter som er tilgjengelig.
-Helst bruk layout som gjort i [gamePage](/src/pages/createGame.tsx) for å lage nye sider.
-
 Routing:
 bruk
 const router = useRouter();
@@ -30,6 +26,24 @@ eller
 <Link> tag for å navigere mellom sider.</Link>
 
 se [create game ](/src/pages/createGame.tsx) for på useRouter og se [navigationBar](/src/components/navigationBar.tsx) for Link. Merk at herf samsvarer med navnet på filen.
+
+backendQuery
+
+```javascript
+const categoriesQuery = api.category.getAll.useQuery();
+
+const useGameMutation = api.gameRouter.create.useMutation();
+
+const game = await useGameMutation.mutateAsync(input);
+```
+
+Dette er sånn dere henter og oppdatere data fra backend. Se [create game ](/src/pages/createGame.tsx) for eksempel.
+
+# komponent bibliotek for front-end
+
+Komponenter:
+Gå til [local](http://localhost:3000/components) for å se alle komponenter som er tilgjengelig.
+Helst bruk layout som gjort i [gamePage](/src/pages/createGame.tsx) for å lage nye sider.
 
 # database i prisma
 
@@ -40,8 +54,6 @@ Du kan se databasen i prisma studio ved å kjøre "npx prisma studio" i terminal
 Hvis noen andre gjør endringer i databasen, kjør "npx primsa pull".
 
 Ved enringer kjør "npx prisma generate" for å oppdatere prisma rekksriving fra databasen.
-
-# komponent bibliotek
 
 https://ui.shadcn.com/
 
@@ -56,3 +68,7 @@ Alle urler som skal være tilgjengelig uten autentisering må legges til i [midd
 [env](.env): Endre DATABASE_URL til sqlite:./dev.db
 [prisma](/prisma/schema.prisma): Endre providor i til sqlite:./dev.db
 [db](/src/server/db.ts): Kommenter ut linje 19 "adapter: new PrismaPlanetScale(client)," i
+
+```
+
+```

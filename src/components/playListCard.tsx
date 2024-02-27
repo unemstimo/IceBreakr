@@ -1,13 +1,6 @@
+import { Playlist } from "@prisma/client";
 import Image from "next/image";
 import PitBull from "~/assets/images/pitbull.jpeg";
-
-export type Playlist = {
-  id: string;
-  name: string;
-  author: string;
-  numberOfGames: number;
-  description?: string;
-};
 
 const PlayListCard = ({ playlist }: { playlist: Playlist }) => {
   const { name, description } = playlist;

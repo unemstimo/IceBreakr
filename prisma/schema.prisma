@@ -15,24 +15,6 @@ datasource db {
 
 // Les om relasjoner osv
 // https://www.prisma.io/docs/orm/prisma-schema
-//Example
-model User2 {
-  id    String @id
-  name  String
-  posts Post[]
-}
-
-//Example
-model Post {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  author    User2    @relation(fields: [authorId], references: [id])
-  content   String
-  authorId  String
-
-  @@index([authorId])
-}
 
 model User {
   userId          String               @id @unique
@@ -56,7 +38,7 @@ model Game {
   duration           String
   numberOfPlayers    String
   rules              String
-  description        String
+  description        String?
   user               User                 @relation(fields: [userId], references: [userId])
   categories         Category[]
   playlists          Playlist[]
@@ -71,8 +53,9 @@ model Game {
 
 model Playlist {
   playlistId     Int              @id @unique @default(autoincrement())
-  name           String
+  name           String           @db.VarChar(255)
   userId         String
+  description    String?
   user           User             @relation(fields: [userId], references: [userId])
   games          Game[]
   GameInPlaylist GameInPlaylist[]

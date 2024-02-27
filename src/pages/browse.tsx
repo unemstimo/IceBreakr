@@ -159,24 +159,17 @@ export default function Browse() {
                 <p>Spillkategorier:</p>
                 <div className="flex flex-col gap-2 p-2">
                   {categoryQuery.data?.map((category) => (
-                    // Label
-                    <label
+                    <Checkbox
                       key={category.categoryId}
-                      htmlFor="terms1"
-                      className="flex items-center gap-2 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                    >
-                      <Checkbox
-                        onCheckedChange={(checkedState) => {
-                          const checked = checkedState.valueOf();
-
-                          console.log("checked", checked);
-                          handleCategorySelection22(category);
-                        }}
-                        name={category.name}
-                        checked={gameCategories[category.name] ?? false}
-                      />
-                      <p>{category.name}</p>
-                    </label>
+                      label={category.name}
+                      onCheckedChange={(checkedState) => {
+                        const checked = checkedState.valueOf();
+                        console.log(checked);
+                        handleCategorySelection22(category);
+                      }}
+                      name={category.name}
+                      checked={gameCategories[category.name] ?? false}
+                    />
                   )) ?? null}
                 </div>
               </div>
