@@ -1,4 +1,7 @@
-import { inferProcedureInput, inferProcedureOutput } from "@trpc/server";
+import {
+  type inferProcedureInput,
+  type inferProcedureOutput,
+} from "@trpc/server";
 import { z } from "zod";
 
 import {
@@ -6,7 +9,7 @@ import {
   privateProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
-import { AppRouter } from "../root";
+import { type AppRouter } from "../root";
 
 export type CreateCategory = inferProcedureInput<
   AppRouter["category"]["create"]
