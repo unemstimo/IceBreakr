@@ -12,6 +12,7 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
+import { Checkbox } from "~/components/ui/checkbox";
 
 const ComponentsPage = () => {
   const [input, setInput] = useState("");
@@ -74,6 +75,12 @@ const ComponentsPage = () => {
                 onChange={(e) => setInput(e.target.value)}
               ></Input>
             </div>
+          </div>
+          <div>
+            <h1 className="pb-2">mer input</h1>
+            <Checkbox>
+              <span>Checkbox</span>
+            </Checkbox>
           </div>
         </div>
       </div>
