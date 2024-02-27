@@ -123,7 +123,7 @@ export default function Browse() {
 
       <PageWrapper>
         {/* Left section */}
-        <div className="ml-2 flex h-auto flex-col">
+        <div className="ml-2 flex h-full w-full flex-col">
           <NavigationBar>
             {/* Filters */}
             <div className="mb-2 flex h-fit w-full flex-col justify-start rounded-2xl bg-neutral-900 p-2 align-middle">
@@ -157,7 +157,7 @@ export default function Browse() {
               {/* Category checkboxes */}
               <div className="-m-2 mb-2 mt-2 rounded-xl bg-neutral-800 p-2">
                 <p>Spillkategorier:</p>
-                <div className="flex flex-col gap-2 p-2">
+                <div className="flex flex-col gap-2 p-2 font-normal text-md">
                   {categoryQuery.data?.map((category) => (
                     <Checkbox
                       key={category.categoryId}

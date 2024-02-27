@@ -6,7 +6,7 @@ import { api } from "~/utils/api";
 import { useState } from "react";
 import Link from "next/link";
 
-const MyPlaylists = () => {
+const PlaylistPicker = () => {
   const privatePlaylistQuery = api.playlist.getPlaylistsByUserId.useQuery();
   const myPlaylists = privatePlaylistQuery.data ?? [];
 
@@ -34,12 +34,12 @@ const MyPlaylists = () => {
   };
 
   return (
-    <div className="mb-0 flex h-full w-full flex-col justify-start rounded-2xl bg-neutral-900  align-middle">
+    <div className="mb-0 flex w-[400px] p-4 h-auto flex-col justify-start rounded-2xl bg-neutral-800  align-middle">
       <div className="flex flex-row items-baseline justify-between align-baseline">
         <h2 className="text-2xl font-bold ">Mine Lekelister</h2>
         <Link href="/createPlaylist">
         <button
-          className="text-l text-neutral-500 hover:underline"
+          className="text-md text-neutral-500 hover:underline"
           onClick={() => "TODO: handleAddPlaylist"}
         >
           Lag ny
@@ -50,7 +50,7 @@ const MyPlaylists = () => {
         {myPlaylists?.map((list) => (
           <li key={list.playlistId} className="mb-2 flex h-16">
             <button
-              className="flex h-full w-full items-center justify-between gap-4 rounded-xl border border-neutral-800 p-4 align-middle hover:bg-neutral-700"
+              className="flex h-full w-full items-center justify-between gap-4 rounded-xl border border-neutral-700 p-4 align-middle hover:bg-neutral-700"
               onClick={handlePlaylistClick}
             >
               <div className="flex h-full w-full items-center justify-start gap-4 align-middle">
@@ -62,12 +62,6 @@ const MyPlaylists = () => {
                   </p>
                 </div>
               </div>
-              <button
-                className="w-12"
-                onClick={() => handleShowMorePopupPlaylist(list.playlistId)}
-              >
-                <MoreHorizRoundedIcon />
-              </button>
               {showMorePopupPlaylist?.visible &&
                 showMorePopupPlaylist?.playlistId === list.playlistId && (
                   <div className="absolute right-0 top-0 flex w-48 flex-col items-center justify-center gap-4 rounded-xl bg-neutral-800 px-6 py-4 align-middle">
@@ -114,4 +108,4 @@ const MyPlaylists = () => {
   );
 };
 
-export default MyPlaylists;
+export default PlaylistPicker;

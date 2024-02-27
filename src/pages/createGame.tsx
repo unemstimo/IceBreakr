@@ -136,12 +136,12 @@ const CreateGame = () => {
 
   return (
     <Layout>
-      <div className="w-gull flex w-full justify-center rounded-2xl bg-neutral-900 p-48">
+      <div className="flex w-full rounded-2xl justify-start items-start bg-neutral-900 p-4">
         <form
           onSubmit={handleSubmit}
-          className="flex w-full flex-col items-center justify-center gap-4 align-middle"
+          className="flex text-md font-normal w-full flex-col items-start justify-center gap-4 align-middle"
         >
-          <p className="text-2xl">Opprett ny lek</p>
+          <p className="text-xxl font-bold">Opprett ny lek</p>
           <input
             type="text"
             value={name}
@@ -222,7 +222,11 @@ const CreateGame = () => {
             Opprett Lek
           </button>
           {showError && <p className="text-red-500">Fyll ut alle felt!</p>}
+          <button className="text-neutral-500 hover:underline" type="button" onClick={() => router.back()}>
+            Avbryt
+          </button>
         </form>
+        
       </div>
     </Layout>
   );

@@ -103,7 +103,6 @@ export default function Dashboard() {
       {/* Left section */}
 
       {/* TODO: fjern CretaePlaylistPage herfra og lag den! */}
-      <CreatePlaylistPage />
       <PageWrapper>
         <NavigationBar>
           <MyPlaylists />

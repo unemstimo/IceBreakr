@@ -32,9 +32,11 @@ const config = {
     fontSize: {
       xs: ["0.75rem", "1rem"],
       sm: ["0.875rem", "1rem"],
-      rg: ["1rem", "1.5rem"],
+      rg: ["1.25rem", "1.75rem"],
       md: ["1.25rem", "1.75rem"],
       lg: ["1.5rem", "2rem"],
+      xl: ["1.75rem", "2.15rem"],
+      xxl: ["2.0rem", "2.30rem"],
     },
     container: {
       center: true,

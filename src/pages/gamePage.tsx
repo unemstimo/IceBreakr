@@ -28,6 +28,7 @@ import { api } from "~/utils/api";
 import { Badge } from "~/components/ui/badge";
 import { Playlist } from "~/server/api/routers/playlist";
 import MyPlaylists from "~/components/myPlaylists";
+import PlaylistPicker from "~/components/playlistPicker";
 
 type Friend = {
   id: string;
@@ -145,6 +146,14 @@ export default function GamePage() {
     console.log("Comment submitted: " + newComment);
   }
 
+  const [showPlaylistPicker, setShowPlaylistPicker] = useState({
+    visible: false,
+  });
+
+  const handleShowPlaylistPicker = () => {
+    setShowPlaylistPicker({ visible: !showPlaylistPicker.visible });
+  }
+
   return (
     <div>
       <Head>
@@ -162,7 +171,7 @@ export default function GamePage() {
           </NavigationBar>
         </div>
         {/* Middle section */}
-        <section className=" flex h-full max-h-screen w-full min-w-[420px] flex-col justify-start overflow-y-auto rounded-2xl bg-neutral-900 p-4 align-middle">
+        <section className="flex h-full max-h-screen w-full min-w-[420px] flex-col justify-start overflow-y-auto rounded-2xl bg-neutral-900 p-4 align-middle">
           <div className="flex justify-between">
             <div className="flex items-center justify-start gap-2 align-middle">
               <Link href="/browse">
@@ -171,10 +180,10 @@ export default function GamePage() {
               <h2 className="text-2xl font-bold ">{name}</h2>
             </div>
             <div className="flex items-center gap-2">
-              <button>
+              <button className="text-neutral-500 hover:underline text-rg">
                 <SignOutButton>logg ut</SignOutButton>
               </button>
-              <button onClick={handleManageAccount}>
+              <button className="text-neutral-500" onClick={handleManageAccount}>
                 <ManageAccountsRoundedIcon />
               </button>
             </div>
@@ -194,11 +203,11 @@ export default function GamePage() {
               <div className=" flex h-full w-full">
                 <div className="mb-4 ml-4 flex h-full flex-col justify-between">
                   <div>
-                    <h1 className="text-6xl">{name}</h1>
-                    <h2 className="text-neutral-400">
+                    <h1 className="text-xxl">{name}</h1>
+                    <h2 className="text-neutral-400 font-normal">
                       {numberOfPlayers} spillere • {duration}
                     </h2>
-                    <p className="font-normal text-neutral-200">
+                    <p className="mt-6 font-normal text-md text-neutral-200">
                       {description}
                     </p>
                   </div>
@@ -217,12 +226,17 @@ export default function GamePage() {
               <StarRoundedIcon />
               {rating}
             </button>
+            <button
+            onClick={handleShowPlaylistPicker}
+            className="absolute text-rg right-4 bottom-4 px-4 py-2 flex min-w-16 items-center justify-center rounded-full bg-violet-500 align-middle">
+              Legg til i lekeliste
+            </button>
           </div>
           {/* Rules */}
           <div className="mt-4 flex h-full w-full items-center justify-start rounded-xl bg-neutral-800 py-2">
             <div className="mb-4 ml-4 h-full w-full">
               <h1 className="text-4xl">Regler</h1>
-              <p className="font-normal text-neutral-400">{rules}</p>
+              <p className="font-normal text-rg text-neutral-400">{rules}</p>
             </div>
           </div>
           {/* Rating section */}
@@ -232,7 +246,7 @@ export default function GamePage() {
               <div>
                 <form
                   onSubmit={handleCommentSubmit}
-                  className="mb-4 flex h-full w-full items-center justify-start gap-4 align-middle"
+                  className="mb-4 font-normal text-rg flex h-full w-full items-center justify-start gap-4 align-middle"
                 >
                   <input
                     type="text"
@@ -243,7 +257,7 @@ export default function GamePage() {
                   />
                   <button
                     type="submit"
-                    className="h-full rounded-full bg-violet-500 px-4 py-1 hover:bg-violet-400 active:bg-violet-600"
+                    className="h-full font-bold rounded-full bg-violet-500 px-4 py-1 hover:bg-violet-400 active:bg-violet-600"
                   >
                     Post
                   </button>
@@ -376,6 +390,14 @@ export default function GamePage() {
             >
               Lukk
             </button>
+          </div>
+        )}
+        {showPlaylistPicker.visible && (
+          <div onClick={()=>{setShowPlaylistPicker({visible: false})}}
+          className="absolute flex justify-center bg-neutral-950/90 items-center h-screen w-screen">
+            <div className="flex-col justify-center items-center align-middle">
+              <PlaylistPicker />
+            </div>
           </div>
         )}
       </PageWrapper>
