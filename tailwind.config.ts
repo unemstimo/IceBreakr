@@ -57,20 +57,14 @@ const config = {
         darker: ["Darker Grotesque", ...fontFamily.sans],
       },
       colors: {
-        // border: "hsl(var(--border))",
         border: colors.neutral["700"],
-        // input: "hsl(var(--input))",
         input: colors.neutral["800"],
         ring: "hsl(var(--ring))",
-        // background: "hsl(var(--background))",
         background: colors.neutral["800"],
-        // foreground: "hsl(var(--foreground))",
         foreground: colors.neutral["700"],
 
         primary: {
-          // DEFAULT: "hsl(var(--primary))",
           DEFAULT: colors.violet["600"],
-          // foreground: "hsl(var(--primary-foreground))",
           foreground: colors.violet["100"],
         },
         secondary: {
@@ -86,15 +80,10 @@ const config = {
           foreground: "hsl(var(--muted-foreground))",
         },
         accent: {
-          // DEFAULT: "hsl(var(--accent))",
           DEFAULT: colors.neutral["700"],
-
-          // foreground: "hsl(var(--accent-foreground))",
           foreground: colors.neutral["100"],
         },
         popover: {
-          // DEFAULT: "hsl(var(--popover))",
-          // DEFAULT: colors.neutral["800"],
           DEFAULT: "hsl(var(--secondary))",
 
           foreground: "hsl(var(--popover-foreground))",

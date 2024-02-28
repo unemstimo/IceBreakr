@@ -44,6 +44,7 @@ Dette er sånn dere henter og oppdatere data fra backend. Se [create game ](/src
 Komponenter:
 Gå til [local](http://localhost:3000/components) for å se alle komponenter som er tilgjengelig.
 Helst bruk layout som gjort i [gamePage](/src/pages/createGame.tsx) for å lage nye sider.
+Alle komponents er stylet med tailwind custom farger. Hvis du vil endre på fargene så må du gjøre det fra tailwind config.![](/tailwind.config.ts)
 
 # database i prisma
 
