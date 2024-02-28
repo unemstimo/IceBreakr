@@ -138,7 +138,7 @@ const CreateGame = () => {
 
   return (
     <Layout>
-      <div className="flex mr-4 w-full rounded-2xl justify-start items-start bg-neutral-900 p-4">
+      <div className="flex w-full rounded-2xl justify-start items-start bg-neutral-900 p-4">
         <form
           onSubmit={handleSubmit}
           className="flex text-md font-normal w-full flex-col items-start justify-center gap-4 align-middle"
@@ -207,7 +207,7 @@ const CreateGame = () => {
             }}
             placeholder="Velg kategori"
           />
-          <div className="flex min-h-12 gap-2">
+          <div className="flex gap-2">
             {categories?.map((category) => (
               <Button
                 size={"sm"}
@@ -222,7 +222,7 @@ const CreateGame = () => {
           </div>
           <div className="flex gap-4">
             <button
-              className=" rounded-full bg-violet-600 px-4 py-2 text-white shadow-lg hover:bg-violet-500 active:bg-violet-800"
+              className=" font-bold rounded-full bg-violet-600 px-4 py-2 text-white shadow-lg hover:bg-violet-500 active:bg-violet-800"
               type="submit"
             >
               Opprett Lek

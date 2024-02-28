@@ -6,6 +6,7 @@ import { Button } from "~/components/ui/button";
 import { type CreatePlaylist } from "~/server/api/routers/playlist";
 import Link from "next/link";
 import { Input } from "@nextui-org/react";
+import { ArrowBackRounded } from "@mui/icons-material";
 
 const CreatePlaylistPage = () => {
   const [playlistName, setPlaylistName] = useState("");
@@ -53,12 +54,15 @@ const CreatePlaylistPage = () => {
 
   return (
     <Layout>
-      <div className="flex w-full justify-center p-48 bg-neutral-900 rounded-2xl">
+      <div className="flex flex-col w-full justify-start p-4 bg-neutral-900 rounded-2xl">
+        <div className="flex align-middle items-center gap-2">
+            <button><ArrowBackRounded onClick={() => router.back()} /></button>
+            <p className="text-xxl font-bold">Lag ny lekeliste</p>
+        </div>
         <form
           onSubmit={handleSubmit}
-          className="flex w-full flex-col items-center justify-center gap-4 align-middle"
+          className="flex text-rg font-normal mt-4 w-full flex-col items-start justify-start gap-4 align-middle"
         >
-          <p className="text-2xl">Lag ny lekeliste</p>
           <input
             type="text"
             value={playlistName}
@@ -66,8 +70,9 @@ const CreatePlaylistPage = () => {
             placeholder="Navn på lekeliste..."
             className="w-full rounded-lg bg-neutral-800 py-2 pl-2 pr-2 text-white focus:outline-none"
           />
+          <div className="flex gap-4">
           <button
-            className="rounded-full bg-violet-600 px-4 py-2 text-white shadow-lg hover:bg-violet-500 active:bg-violet-800"
+            className="rounded-full font-bold bg-violet-600 px-4 py-2 text-white shadow-lg hover:bg-violet-500 active:bg-violet-800"
             type="submit"
           >
             Opprett
@@ -75,6 +80,7 @@ const CreatePlaylistPage = () => {
           <button className="text-neutral-500 hover:underline" type="button" onClick={() => router.back()}>
             Avbryt
           </button>
+          </div>
           {showError && <p className="text-red-500">Du må ha en tittel!</p>}
         </form>
       </div>

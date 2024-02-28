@@ -19,6 +19,7 @@ import { api } from "~/utils/api";
 import CreatePlaylistPage from "./createPlaylist";
 import MyPlaylists from "~/components/myPlaylists";
 import MyFriendsBar from "~/components/myFriendsBar";
+import { Input } from "@nextui-org/react";
 
 type Friend = {
   id: string;
@@ -120,22 +121,17 @@ export default function Dashboard() {
               onSubmit={handleSearchSubmit}
               className="flex w-2/3 items-center overflow-hidden rounded-full bg-neutral-800 p-1 align-middle font-normal text-neutral-600"
             >
-              <button type="submit" className="p-2">
+              <button type="submit" className="pl-2 pt-1 flex align-middle h-full justify-center items-center">
                 <SearchIcon className="text-neutral-500" />
               </button>
-              <input
-                className="w-full bg-neutral-800 py-2 pl-2 pr-2 text-white focus:outline-none"
+              <Input
+                className="w-full text-md bg-neutral-800 text-white focus:outline-none"
                 type="search" // Changed to search to improve semantics
                 placeholder="Søk..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </form>
-            <Link href="/browse">
-              <button className=" rounded-full bg-violet-600 px-4 py-2 text-white shadow-lg hover:bg-violet-500 active:bg-violet-800">
-                Utforsk
-              </button>
-            </Link>
           </div>
           {/* Content section */}
           <div className="mt-4 h-full w-full">
