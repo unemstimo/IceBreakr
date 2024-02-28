@@ -65,7 +65,7 @@ const config = {
         input: colors.neutral["800"],
         ring: "hsl(var(--ring))",
         // background: "hsl(var(--background))",
-        background: colors.neutral["800"],
+        background: colors.neutral["900"],
         // foreground: "hsl(var(--foreground))",
         foreground: colors.neutral["700"],
 

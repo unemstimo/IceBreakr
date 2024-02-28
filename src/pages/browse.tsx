@@ -2,6 +2,7 @@ import Head from "next/head";
 import { useState, useEffect, type FormEvent } from "react";
 
 import SearchIcon from "@mui/icons-material/Search";
+import ArrowBackRounded from "@mui/icons-material/ArrowBackRounded";
 
 import Advertisement from "~/components/advertisement";
 import GameCard from "~/components/gameCard";
@@ -11,6 +12,8 @@ import { api } from "~/utils/api";
 import { type FetchGames } from "~/server/api/routers/game";
 import { Checkbox } from "~/components/ui/checkbox";
 import { type Category } from "~/server/api/routers/category";
+import router from "next/router";
+import MyFriendsBar from "~/components/myFriendsBar";
 
 export default function Browse() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -123,7 +126,7 @@ export default function Browse() {
 
       <PageWrapper>
         {/* Left section */}
-        <div className="ml-2 flex h-full w-full flex-col">
+        <div className="flex h-full max-w-72 flex-col ">
           <NavigationBar>
             {/* Filters */}
             <div className="mb-2 flex h-fit w-full flex-col justify-start rounded-2xl bg-neutral-900 p-2 align-middle">
@@ -204,69 +207,35 @@ export default function Browse() {
         </div>
         {/* Middle section */}
         <section className="flex h-full w-full">
-          <section className="mr-2 flex h-full w-full min-w-[1100px] grow flex-col justify-start rounded-2xl bg-neutral-900 p-4 align-middle">
-            <div className="flex items-center justify-center">
-              {/* make the div 4 columns wide */}
-              <div className="mt-4 grid grid-cols-4 gap-4 overflow-y-auto rounded-xl bg-neutral-900">
-                <div className="col-span-4">
-                  {/* Search section */}
-                  <div className="flex w-full flex-row items-center justify-between align-middle">
-                    <form
-                      onSubmit={handleSearchSubmit}
-                      className="flex items-center overflow-hidden rounded-full bg-neutral-800 p-1 align-middle font-normal text-neutral-600"
-                    >
-                      <button type="submit" className="p-2">
-                        <SearchIcon className="text-neutral-500" />
-                      </button>
-                      <input
-                        className="w-full bg-neutral-800 py-2 pl-2 pr-2 text-white focus:outline-none"
-                        type="search" // Changed to search to improve semantics
-                        placeholder="Søk..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                      />
-                    </form>
-                    <div className="flex items-center justify-start gap-2 align-middle">
-                      <p className="mr-2 font-bold text-neutral-500">
-                        Sorter:{" "}
-                      </p>
-                      <button className=" rounded-full bg-violet-600 px-4 py-2 text-white shadow-lg hover:bg-violet-500 active:bg-violet-800">
-                        Populære
-                      </button>
-                      <button className=" rounded-full bg-violet-600 px-4 py-2 text-white shadow-lg hover:bg-violet-500 active:bg-violet-800">
-                        Nyeste
-                      </button>
-                      <button className=" rounded-full bg-violet-600 px-4 py-2 text-white shadow-lg hover:bg-violet-500 active:bg-violet-800">
-                        Navn
-                      </button>
-                    </div>
-                  </div>
-                  {/* Content section */}
-                  <div className="-mb-2 mt-4 flex w-full justify-start">
-                    <p className="font-normal text-neutral-500">
-                      Viser 0 av 999 leker • Navn A til Æ
-                    </p>
-                  </div>
+          <section className=" flex h-full w-full grow flex-col justify-start rounded-2xl bg-neutral-900 p-4 align-middle">
+            <div className="flex items-center flex-col justify-center">
+              <div className="flex w-full justify-start mb-4 items-center align-middle gap-2">
+                <button onClick={() => router.back()}>
+                <ArrowBackRounded/>
+                  </button> Utforsk alle leker
                 </div>
+              {/* make the div 4 columns wide */}
+              <div className="grid w-full h-full xl:grid-cols-4 lg:grid-cols-2 md:grid-cols-1 gap-4">
                 {/* Map through the filteredGames array to render GameCard components */}
-                {filteredGames.map((game) => (
-                  <GameCard
-                    key={game.gameId}
-                    name={game.name}
-                    duration={game.duration}
-                    // category={"kategori"}
-                    numberOfPlayers={game.numberOfPlayers}
-                    rules={game.rules}
-                    description={game.description}
-                    rating={Math.floor(Math.random() * 5) + 1}
-                    gameId={game.gameId}
-                    userId={game.userId}
-                  />
-                ))}
+                  {filteredGames.map((game) => (
+                    <GameCard
+                      key={game.gameId}
+                      name={game.name}
+                      duration={game.duration}
+                      // category={"kategori"}
+                      numberOfPlayers={game.numberOfPlayers}
+                      rules={game.rules}
+                      description={game.description}
+                      rating={Math.floor(Math.random() * 5) + 1}
+                      gameId={game.gameId}
+                      userId={game.userId}
+                    />
+                  ))}
               </div>
             </div>
           </section>
         </section>
+        <MyFriendsBar />
 
         {/* </div>
       </main> */}

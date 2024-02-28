@@ -35,7 +35,7 @@ const PlaylistPicker = () => {
 
   return (
     <div className="mb-0 flex w-[400px] p-4 h-auto flex-col justify-start rounded-2xl bg-neutral-800  align-middle">
-      <div className="flex flex-row items-baseline justify-between align-baseline">
+      <div className="flex flex-row items-baseline justify-between align-baseline px-6">
         <h2 className="text-2xl font-bold ">Mine Lekelister</h2>
         <Link href="/createPlaylist">
         <button

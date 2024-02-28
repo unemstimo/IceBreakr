@@ -18,7 +18,7 @@ const ComponentsPage = () => {
   const [input, setInput] = useState("");
   return (
     <PageWrapper>
-      <div className="ml-2 flex h-auto flex-col">
+      <div className=" flex h-auto flex-col">
         <NavigationBar>
           <div></div>
         </NavigationBar>

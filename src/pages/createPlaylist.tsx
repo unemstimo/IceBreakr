@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import { Button } from "~/components/ui/button";
 import { type CreatePlaylist } from "~/server/api/routers/playlist";
 import Link from "next/link";
+import { Input } from "@nextui-org/react";
 
 const CreatePlaylistPage = () => {
   const [playlistName, setPlaylistName] = useState("");

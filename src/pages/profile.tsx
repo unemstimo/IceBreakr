@@ -18,6 +18,7 @@ import PageWrapper from "~/components/pageWrapper";
 import NavigationBar from "~/components/navigationBar";
 import MyPlaylists from "~/components/myPlaylists";
 import { api } from "~/utils/api";
+import MyFriendsBar from "~/components/myFriendsBar";
 
 type Friend = {
   id: string;
@@ -90,7 +91,7 @@ export default function Profile() {
         </SignedOut>
         <SignedIn>
           {/* Middle section */}
-          <section className=" flex h-full w-full min-w-[420px] flex-col justify-start rounded-2xl bg-neutral-900 p-4 align-middle">
+          <section className=" flex h-full w-full min-w-[300px] flex-col justify-start rounded-2xl bg-neutral-900 p-4 align-middle">
             <div className="flex justify-between">
               <h2 className="text-2xl font-bold ">Min Profil</h2>
               <div className="flex items-center gap-2">
@@ -115,76 +116,7 @@ export default function Profile() {
               <p>Nylig lekt</p>
             </div>
           </section>
-
-          {/* Right section */}
-          <section className="mr-2 flex w-1/4 min-w-72 flex-col justify-start rounded-2xl align-middle">
-            <div className="mb-2 flex h-fit w-full flex-col justify-center rounded-2xl bg-neutral-900 p-4 align-middle">
-              <div className="flex flex-row items-baseline justify-between align-baseline">
-                <h2 className="text-2xl font-bold ">Venner</h2>
-                <button
-                  className="text-l text-neutral-500 hover:underline"
-                  onClick={handleAddFriend}
-                >
-                  Legg til
-                </button>
-              </div>
-              <ul className="relative mt-5 w-full">
-                {friendsList.map((friend) => (
-                  <li key={friend.id} className="flex h-16">
-                    <button
-                      className="flex h-full w-full items-center justify-between gap-4 rounded-xl p-2 align-middle hover:bg-neutral-700"
-                      onClick={handleFriendsButton}
-                    >
-                      <div className="flex items-center justify-start gap-4 align-middle">
-                        <FaceRoundedIcon /> {friend.name}
-                      </div>
-                      <button
-                        className="w-12"
-                        onClick={() => handleShowMorePopup(friend.id)}
-                      >
-                        <MoreHorizRoundedIcon />
-                      </button>
-                      {showMorePopup.visible &&
-                        showMorePopup.friendId === friend.id && (
-                          <div className="absolute right-0 top-0 flex w-48 flex-col items-center justify-center gap-4 rounded-xl bg-neutral-800 px-6 py-4 align-middle">
-                            {/* Popup content here */}
-                            <p>{friend.name}</p>
-                            <button
-                              onClick={() => handleRemoveFriend(friend.id)}
-                              className="rounded-lg bg-red-500 px-4 py-1 hover:bg-red-400 active:bg-red-600"
-                            >
-                              {" "}
-                              Fjern
-                            </button>
-                            <button
-                              onClick={() => handleShowMorePopup(friend.id)}
-                            >
-                              <p className="absolute right-2 top-1 text-neutral-400 hover:underline">
-                                <CloseRoundedIcon />
-                              </p>
-                            </button>
-                          </div>
-                        )}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-              {friendsList.length === 0 && (
-                <div className="font-normal text-neutral-400">
-                  <p>Ingen venner enda 😭</p>
-                  <div className="flex gap-1">
-                    <p>Fiks det ved å</p>
-                    <button
-                      onClick={handleAddFriend}
-                      className="font-bold text-violet-400 hover:text-violet-300"
-                    >
-                      legge til en venn
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          </section>
+          <MyFriendsBar/>
         </SignedIn>
         {showManageAccount.visible && (
           <div className="absolute left-0 top-0 flex h-full w-full flex-col items-center justify-center bg-neutral-900 bg-opacity-90 p-24 align-middle">
