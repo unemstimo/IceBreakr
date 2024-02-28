@@ -12,6 +12,7 @@ import { v4 as uuid } from "uuid";
 import { useUser } from "@clerk/nextjs";
 import { currentUser } from "@clerk/nextjs";
 import PeopleAltRoundedIcon from '@mui/icons-material/PeopleAltRounded';
+import PersonAddRoundedIcon from '@mui/icons-material/PersonAddRounded';
 
 import FaceRoundedIcon from "@mui/icons-material/FaceRounded";
 import PlayCircleOutlineRoundedIcon from "@mui/icons-material/PlayCircleOutlineRounded";
@@ -67,11 +68,15 @@ const MyFriendsBar = () => {
 
   return (
     <>
-      <section className="flex w-1/4 xl:min-w-72 flex-col justify-start rounded-2xl align-middle">
+      <section className="flex md:w-1/4 xl:min-w-72 w-20 flex-col justify-start rounded-2xl align-middle">
           <div className="flex h-fit w-full flex-col justify-center rounded-2xl bg-background p-4 align-middle">
-            <div className="flex xl:flex-row w-full px-6  flex-col xl:items-baseline items-center justify-between xl:align-baseline align-middle">
+            <div className="flex xl:flex-row w-full flex-col xl:items-baseline items-center justify-between xl:align-baseline align-middle">
               <h2 className="text-2xl xl:block hidden font-bold ">Venner</h2>
-              <div className="h-full w-full flex align-middle items-center justify-center xl:hidden"><PeopleAltRoundedIcon/></div>
+              <div className="h-full w-full flex align-middle items-center justify-center xl:hidden">
+                <button className="flex md:h-full md:w-full h-12 w-12 items-center lg:justify-start justify-center gap-4 rounded-xl p-2 align-middle hover:bg-neutral-700">
+                  <PeopleAltRoundedIcon/><p className="hidden md:flex">Venner</p>
+                  </button>
+              </div>
               <button
                 className="text-rg text-neutral-500 hover:underline xl:w-auto w-full mt-2 "
                 onClick={handleAddFriend}
@@ -120,7 +125,7 @@ const MyFriendsBar = () => {
                 </li>
               ))}
             </ul>
-            
+
             {friendsList.length === 0 && (
               <div className="text-rg font-normal text-neutral-400">
                 <p className="xl:block hidden">Ingen venner enda 😭</p>
@@ -128,33 +133,31 @@ const MyFriendsBar = () => {
                   <p className="xl:block hidden">Fiks det ved å</p>
                   <button
                     onClick={handleAddFriend}
-                    className="font-bold text-violet-400 hover:text-violet-300 xl:w-auto w-full xl:mt-0 mt-4"
+                    className="xl:block hidden font-bold text-violet-400 hover:text-violet-300 xl:w-auto w-full xl:mt-0 mt-4"
                   >
-                    <p className="xl:block hidden">legge til en venn</p>
-                    <p className="xl:hidden block text-xxl">😭</p>
+                    <p>legge til en venn</p>
+                  </button>
+                  <button
+                        className="xl:hidden flex justify-center items-center gap-2 align-middle relative text-rg text-neutral-500 hover:bg-green-600 hover:text-white rounded-xl bg-background md:w-full h-12 w-12 mt-2 "
+                        onClick={handleAddFriend}
+                      >
+                        <p className="hidden md:flex">Legg til</p><PersonAddRoundedIcon/>
                   </button>
                 </div>
               </div>
             )}
           </div>
-          <div className="mt-2">
-          <button
-                className="xl:hidden block relative text-rg text-neutral-500 hover:bg-green-600 hover:text-white rounded-xl bg-background w-full h-12 mt-2 "
-                onClick={handleAddFriend}
-              >
-                <AddCircleOutlineRoundedIcon/>
-          </button>
-          </div>
+          
           
           <ul className="relative mt-4 w-full text-rg xl:hidden block rounded-xl bg-background">
               {friendsList.map((friend) => (
                 <li key={friend.id} className="flex h-16 w-full justify-center align-middle items-center">
                   <button
-                    className="flex px-4 h-full w-full items-center justify-start gap-4 rounded-xl align-middle hover:bg-foreground"
+                    className="flex px-4 h-full w-full items-center md:justify-start justify-center gap-4 rounded-xl align-middle hover:bg-foreground"
                     onClick={handleFriendsButton}
                   >
-                    <div className="flex items-center justify-start gap-4 align-middle">
-                      <FaceRoundedIcon />{friend.name.split(" ")[1]}
+                    <div className="flex items-center md:justify-start justify-center gap-4 align-middle">
+                      <FaceRoundedIcon /><p className="hidden md:flex ">{friend.name.split(" ")[1]}</p>
                     </div>
                     
                   </button>

@@ -11,6 +11,7 @@ const MyPlaylists = () => {
   const privatePlaylistQuery = api.playlist.getPlaylistsByUserId.useQuery();
   const myPlaylists = privatePlaylistQuery.data ?? [];
 
+
   const handlePlaylistClick = (playlistId: number) => {
     console.log("Playlist ",playlistId,"clicked");
   };
@@ -33,9 +34,10 @@ const MyPlaylists = () => {
     console.log("Delete playlist ",playlistId);
     
   }
+
   return (
-    <div className="mb-0 flex h-full w-full flex-col justify-start rounded-2xl bg-neutral-900  align-middle">
-      <div className="flex px-6 flex-row items-baseline justify-between align-baseline">
+    <div className="mb-0 hidden md:flex h-full w-full flex-col justify-start rounded-2xl bg-neutral-900  align-middle">
+      <div className="flex flex-row items-baseline justify-between align-baseline">
         <h2 className="text-2xl font-bold ">Mine Lekelister</h2>
         <Link href="/createPlaylist">
         <button
