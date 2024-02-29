@@ -62,10 +62,12 @@ const config = {
         // border: "hsl(var(--border))",
         border: colors.neutral["700"],
         // input: "hsl(var(--input))",
-        input: colors.neutral["800"],
+        // input: colors.neutral["800"],
+        input: colors.violet["700"],
         ring: "hsl(var(--ring))",
         // background: "hsl(var(--background))",
         background: colors.neutral["900"],
+        backgroundInput: colors.neutral["800"],
         // foreground: "hsl(var(--foreground))",
         foreground: colors.neutral["700"],
 

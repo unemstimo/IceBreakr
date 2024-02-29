@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import NavigationBar from "~/components/navigationBar";
 import PageWrapper from "~/components/pageWrapper";
 import { Button } from "~/components/ui/button";
-import { Combobox, ComboxOption } from "~/components/ui/combox";
+import { Combobox } from "~/components/ui/combox";
 import { Input } from "~/components/ui/input";
 import {
   Select,
@@ -29,11 +29,11 @@ const ComponentsPage = () => {
           <div>
             <h1 className="pb-2">buttons</h1>
             <div className="flex gap-2">
-              <Button>Button</Button>
-              <Button variant="secondary">Button</Button>
-              <Button variant="destructive">Button</Button>
-              <Button variant="outline">Button</Button>
-              <Button variant="link">Button</Button>
+              <Button>Prim Button</Button>
+              <Button variant="secondary">secondary</Button>
+              <Button variant="destructive">destructive</Button>
+              <Button variant="outline">outline</Button>
+              <Button variant="link">link Button</Button>
             </div>
           </div>
           <div>
@@ -78,9 +78,7 @@ const ComponentsPage = () => {
           </div>
           <div>
             <h1 className="pb-2">mer input</h1>
-            <Checkbox>
-              <span>Checkbox</span>
-            </Checkbox>
+            <Checkbox label="Click me"></Checkbox>
           </div>
         </div>
       </div>
