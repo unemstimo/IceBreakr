@@ -4,12 +4,14 @@ import Link from "next/link";
 import PageWrapper from "~/components/pageWrapper";
 import NavigationBar from "~/components/navigationBar";
 import { useRouter } from "next/router";
+import MyFriendsBar from "./myFriendsBar";
 type ChildrenType = {
   children: React.ReactNode;
   navbarChildren?: React.ReactNode;
+  friendsbarChildren?: React.ReactNode;
 };
 
-const Layout = ({ children, navbarChildren }: ChildrenType) => {
+const Layout = ({ children, navbarChildren}: ChildrenType) => {
   const router = useRouter();
   return (
     <>
@@ -24,6 +26,7 @@ const Layout = ({ children, navbarChildren }: ChildrenType) => {
       <PageWrapper>
         <NavigationBar>{navbarChildren}</NavigationBar>
         {children}
+        <MyFriendsBar/>
       </PageWrapper>
     </>
   );

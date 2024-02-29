@@ -4,6 +4,7 @@ import { useState, type FormEvent } from "react";
 import { v4 as uuid } from "uuid";
 import Advertisement from "~/components/advertisement";
 import { useUser } from "@clerk/nextjs";
+import { currentUser } from "@clerk/nextjs";
 
 import FaceRoundedIcon from "@mui/icons-material/FaceRounded";
 import SearchIcon from "@mui/icons-material/Search";
@@ -17,6 +18,8 @@ import { api } from "~/utils/api";
 
 import CreatePlaylistPage from "./createPlaylist";
 import MyPlaylists from "~/components/myPlaylists";
+import MyFriendsBar from "~/components/myFriendsBar";
+import { Input } from "@nextui-org/react";
 
 type Friend = {
   id: string;
@@ -26,6 +29,8 @@ type Friend = {
 // TODO: Replace with actual data from the backend
 
 export default function Dashboard() {
+  const currentuser = currentUser;
+
   const user = useUser();
   const [searchTerm, setSearchTerm] = useState("");
   const { isSignedIn } = useUser();
@@ -103,41 +108,35 @@ export default function Dashboard() {
       {/* Left section */}
 
       {/* TODO: fjern CretaePlaylistPage herfra og lag den! */}
-      <CreatePlaylistPage />
       <PageWrapper>
         <NavigationBar>
           <MyPlaylists />
         </NavigationBar>
 
         {/* Middle section */}
-        <section className="flex h-screen max-h-screen w-full min-w-[420px] flex-col justify-start overflow-y-auto rounded-2xl bg-neutral-900 p-4 align-middle">
+        <section className="flex h-full w-full  flex-col justify-start overflow-hidden rounded-2xl bg-neutral-900 p-4 pr-4 align-middle">
           {/* Search section */}
           <div className="flex w-full flex-row items-center justify-between align-middle">
             <form
               onSubmit={handleSearchSubmit}
               className="flex w-2/3 items-center overflow-hidden rounded-full bg-neutral-800 p-1 align-middle font-normal text-neutral-600"
             >
-              <button type="submit" className="p-2">
+              <button type="submit" className="pl-2 pt-1 flex align-middle h-full justify-center items-center">
                 <SearchIcon className="text-neutral-500" />
               </button>
-              <input
-                className="w-full bg-neutral-800 py-2 pl-2 pr-2 text-white focus:outline-none"
+              <Input
+                className="w-full text-md bg-neutral-800 text-white focus:outline-none"
                 type="search" // Changed to search to improve semantics
                 placeholder="Søk..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </form>
-            <Link href="/browse">
-              <button className=" rounded-full bg-violet-600 px-4 py-2 text-white shadow-lg hover:bg-violet-500 active:bg-violet-800">
-                Utforsk
-              </button>
-            </Link>
           </div>
           {/* Content section */}
           <div className="mt-4 h-full w-full">
-            <h3>Lekelister for {user.user?.username}</h3>
-            <div className="flex gap-6">
+            <h3 className="mb-2">Mine lekelister</h3>
+            <div className="grid xl:grid-cols-4 lg:grid-cols-3 grid-cols-2 gap-4 ">
               {allPlaylists?.map((playlist) => {
                 return (
                   <PlayListCard key={playlist.playlistId} playlist={playlist} />
@@ -152,78 +151,7 @@ export default function Dashboard() {
           </div>
         </section>
 
-        {/* Right section */}
-        <section className="mr-2 flex w-1/4 min-w-72 flex-col justify-start rounded-2xl align-middle">
-          <div className="flex h-fit w-full flex-col justify-center rounded-2xl bg-neutral-900 p-4 align-middle">
-            <div className="flex flex-row items-baseline justify-between align-baseline">
-              <h2 className="text-2xl font-bold ">Venner</h2>
-              <button
-                className="text-l text-neutral-500 hover:underline"
-                onClick={handleAddFriend}
-              >
-                Legg til
-              </button>
-            </div>
-            <ul className="relative mt-5 w-full">
-              {friendsList.map((friend) => (
-                <li key={friend.id} className="flex h-16">
-                  <button
-                    className="flex h-full w-full items-center justify-between gap-4 rounded-xl p-2 align-middle hover:bg-neutral-700"
-                    onClick={handleFriendsButton}
-                  >
-                    <div className="flex items-center justify-start gap-4 align-middle">
-                      <FaceRoundedIcon /> {friend.name}
-                    </div>
-                    <button
-                      className="w-12"
-                      onClick={() => handleShowMorePopup(friend.id)}
-                    >
-                      <MoreHorizRoundedIcon />
-                    </button>
-                    {showMorePopup.visible &&
-                      showMorePopup.friendId === friend.id && (
-                        <div className="absolute right-0 top-0 flex w-48 flex-col items-center justify-center gap-4 rounded-xl bg-neutral-800 px-6 py-4 align-middle">
-                          {/* Popup content here */}
-                          <p>{friend.name}</p>
-                          <button
-                            onClick={() => handleRemoveFriend(friend.id)}
-                            className="rounded-lg bg-red-500 px-4 py-1 hover:bg-red-400 active:bg-red-600"
-                          >
-                            {" "}
-                            Fjern
-                          </button>
-                          <button
-                            onClick={() => handleShowMorePopup(friend.id)}
-                          >
-                            <p className="absolute right-2 top-1 text-neutral-400 hover:underline">
-                              <CloseRoundedIcon />
-                            </p>
-                          </button>
-                        </div>
-                      )}
-                  </button>
-                </li>
-              ))}
-            </ul>
-            {friendsList.length === 0 && (
-              <div className="font-normal text-neutral-400">
-                <p>Ingen venner enda 😭</p>
-                <div className="flex gap-1">
-                  <p>Fiks det ved å</p>
-                  <button
-                    onClick={handleAddFriend}
-                    className="font-bold text-violet-400 hover:text-violet-300"
-                  >
-                    legge til en venn
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        </section>
-
-        {/* </div>
-      </main> */}
+        <MyFriendsBar/>
       </PageWrapper>
     </div>
   );

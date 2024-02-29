@@ -6,14 +6,12 @@ import { api } from "~/utils/api";
 import { useState } from "react";
 import Link from "next/link";
 
-
-const MyPlaylists = () => {
+const PlaylistPicker = () => {
   const privatePlaylistQuery = api.playlist.getPlaylistsByUserId.useQuery();
   const myPlaylists = privatePlaylistQuery.data ?? [];
 
-
-  const handlePlaylistClick = (playlistId: number) => {
-    console.log("Playlist ",playlistId,"clicked");
+  const handlePlaylistClick = () => {
+    console.log("Playlist clicked");
   };
 
   const handleShowMorePopupPlaylist = (playlistId: number) => {
@@ -29,30 +27,31 @@ const MyPlaylists = () => {
     visible: false,
     playlistId: 0,
   });
-
-  const handleDeletePlaylist = (playlistId: number) => {
-    console.log("Delete playlist ",playlistId);
-    
-  }
+  
+  const handleDeletePlaylist = () => {
+    console.log("Delete playlist");
+    api.playlist.delete.useMutation()
+  };
 
   return (
-    <div className="mb-0 hidden md:flex h-full w-full flex-col justify-start rounded-2xl bg-neutral-900  align-middle">
-      <div className="flex flex-row items-baseline justify-between align-baseline">
+    <div className="mb-0 flex w-[400px] p-4 h-auto flex-col justify-start rounded-2xl bg-neutral-800  align-middle">
+      <div className="flex flex-row items-baseline justify-between align-baseline px-6">
         <h2 className="text-2xl font-bold ">Mine Lekelister</h2>
         <Link href="/createPlaylist">
         <button
-          className="text-rg text-neutral-500 hover:underline"
+          className="text-md text-neutral-500 hover:underline"
+          onClick={() => "TODO: handleAddPlaylist"}
         >
           Lag ny
         </button>
         </Link>
       </div>
-      <ul className=" mt-5 w-full">
+      <ul className="relative mt-5 w-full">
         {myPlaylists?.map((list) => (
-          <li key={list.playlistId} className="relative mb-2 flex h-16">
+          <li key={list.playlistId} className="mb-2 flex h-16">
             <button
-              className="flex h-full w-full items-center justify-between gap-4 rounded-xl border border-neutral-800 p-4 align-middle hover:bg-neutral-700"
-              onClick={() => handlePlaylistClick(list.playlistId)}
+              className="flex h-full w-full items-center justify-between gap-4 rounded-xl border border-neutral-700 p-4 align-middle hover:bg-neutral-700"
+              onClick={handlePlaylistClick}
             >
               <div className="flex h-full w-full items-center justify-start gap-4 align-middle">
                 <PlayCircleOutlineRoundedIcon />
@@ -63,20 +62,14 @@ const MyPlaylists = () => {
                   </p>
                 </div>
               </div>
-              <button
-                className="w-12 h-full align-middle items-center -mt-2"
-                onClick={() => handleShowMorePopupPlaylist(list.playlistId)}
-              >
-                <MoreHorizRoundedIcon />
-              </button>
               {showMorePopupPlaylist?.visible &&
                 showMorePopupPlaylist?.playlistId === list.playlistId && (
-                  <div className="text-rg absolute flex -ml-4 z-10 w-full align-middle items-center justify-between px-4 h-full bg-background rounded-xl">
+                  <div className="absolute right-0 top-0 flex w-48 flex-col items-center justify-center gap-4 rounded-xl bg-neutral-800 px-6 py-4 align-middle">
                     {/* Popup content here */}
                     <p>{list.name}</p>
                     <button
-                      onClick={() => handleDeletePlaylist(list.playlistId)}
-                      className="rounded-lg bg-red-500 h-12 px-4 py-1 hover:bg-red-400 active:bg-red-600"
+                      onClick={handleDeletePlaylist}
+                      className="rounded-lg bg-red-500 px-4 py-1 hover:bg-red-400 active:bg-red-600"
                     >
                       {" "}
                       Slett
@@ -86,7 +79,7 @@ const MyPlaylists = () => {
                         handleShowMorePopupPlaylist(list.playlistId)
                       }
                     >
-                      <p className="absolute right-2 inset-y-4 text-neutral-400 hover:underline">
+                      <p className="absolute right-2 top-1 text-neutral-400 hover:underline">
                         <CloseRoundedIcon />
                       </p>
                     </button>
@@ -98,18 +91,16 @@ const MyPlaylists = () => {
       </ul>
 
       {myPlaylists.length === 0 && (
-        <div className="font-normal text-rg text-neutral-400">
+        <div className="font-normal text-neutral-400">
           <p>Ingen lekelister enda 🧐</p>
           <div className="flex gap-1">
             <p>Fiks det ved å</p>
-            <Link href="/createPlaylist">
             <button
               onClick={() => console.log("TODO: handleAddPlaylist")}
               className="font-bold text-violet-400 hover:text-violet-300"
             >
               lage en lekeliste
             </button>
-            </Link>
           </div>
         </div>
       )}
@@ -117,4 +108,4 @@ const MyPlaylists = () => {
   );
 };
 
-export default MyPlaylists;
+export default PlaylistPicker;
