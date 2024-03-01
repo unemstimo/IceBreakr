@@ -70,6 +70,8 @@ model GameInPlaylist {
   playlist   Playlist @relation(fields: [playlistId], references: [playlistId])
 
   @@id([gameId, playlistId])
+  @@index([gameId])
+  @@index([playlistId])
 }
 
 model Category {
@@ -86,6 +88,8 @@ model GameInCategory {
   category   Category @relation(fields: [categoryId], references: [categoryId])
 
   @@id([categoryId, gameId])
+  @@index([categoryId])
+  @@index([gameId])
 }
 
 model UserFavouritedGame {
@@ -95,6 +99,8 @@ model UserFavouritedGame {
   game   Game   @relation(fields: [gameId], references: [gameId])
 
   @@id([userId, gameId])
+  @@index([userId])
+  @@index([gameId])
 }
 
 model UserReportedGame {
@@ -105,6 +111,8 @@ model UserReportedGame {
   game   Game    @relation(fields: [gameId], references: [gameId])
 
   @@id([userId, gameId])
+  @@index([userId])
+  @@index([gameId])
 }
 
 model GameRating {
@@ -112,10 +120,13 @@ model GameRating {
   userId             String
   gameId             Int
   starRating         Int
-  reviewText         String
+  description        String?
   user               User                 @relation(fields: [userId], references: [userId])
   game               Game                 @relation(fields: [gameId], references: [gameId])
   UserReportedRating UserReportedRating[]
+
+  @@index([userId])
+  @@index([gameId])
 }
 
 model UserReportedRating {
@@ -126,4 +137,6 @@ model UserReportedRating {
   rating     GameRating @relation(fields: [ratingId], references: [ratingId])
 
   @@id([reporterId, ratingId])
+  @@index([reporterId])
+  @@index([ratingId])
 }

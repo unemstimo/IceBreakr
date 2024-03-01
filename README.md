@@ -41,6 +41,7 @@ Dette er sånn dere henter og oppdatere data fra backend. Se [create game ](/src
 
 # komponent bibliotek for front-end
 
+https://ui.shadcn.com/
 Komponenter:
 Gå til [local](http://localhost:3000/components) for å se alle komponenter som er tilgjengelig.
 Helst bruk layout som gjort i [gamePage](/src/pages/createGame.tsx) for å lage nye sider.
@@ -55,8 +56,6 @@ Du kan se databasen i prisma studio ved å kjøre "npx prisma studio" i terminal
 Hvis noen andre gjør endringer i databasen, kjør "npx primsa pull".
 
 Ved enringer kjør "npx prisma generate" for å oppdatere prisma rekksriving fra databasen.
-
-https://ui.shadcn.com/
 
 # authentication
 
