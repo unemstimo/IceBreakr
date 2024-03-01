@@ -2,8 +2,6 @@ import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
 import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
 import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
-import { useState } from "react";
-import CreateGame from "./CreateGame";
 import SearchIcon from "@mui/icons-material/Search";
 import { usePathname } from "next/navigation";
 import classNames from "classnames";
@@ -13,20 +11,11 @@ type NavigationBarProps = {
   children: React.ReactNode | React.ReactElement[];
 };
 const NavigationBar = ({ children }: NavigationBarProps) => {
-  const [showCreateGame, setShowCreateGame] = useState(false);
-  const handleCreateGameShow = () => {
-    setShowCreateGame(true);
-  };
-
-  const handleCancelCreateGame = () => {
-    setShowCreateGame(false);
-  };
-
   const currentPath = usePathname();
 
   return (
     <>
-      <section className="flex h-full w-1/4 min-w-72 flex-col justify-start gap-4 rounded-2xl p-0 align-middle">
+      <section className="flex h-full md:w-full max-w-72 w-20 flex-col justify-start gap-4 rounded-2xl p-0 align-middle">
         <div className="flex h-fit w-full flex-col justify-center gap-2 rounded-2xl bg-neutral-900 p-4 align-middle">
           <SignedOut>
             <SignInButton>
@@ -43,60 +32,62 @@ const NavigationBar = ({ children }: NavigationBarProps) => {
             <Link href={"/profile"} className="h-full w-full">
               <button
                 className={classNames(
-                  "flex h-full w-full items-center justify-start gap-4 rounded-xl p-2 align-middle hover:bg-neutral-700",
+                  "flex h-full w-full items-center md:justify-start justify-center gap-4 rounded-xl p-2 align-middle hover:bg-neutral-700",
                   { "bg-neutral-700": currentPath === "/profile" },
                 )}
               >
-                <UserButton /> Min Profil
+                <UserButton /> <p className="hidden md:block">Min Profil</p>
               </button>
             </Link>
           </SignedIn>
           <Link href={"/dashboard"} className="h-full w-full">
             <button
               className={classNames(
-                "flex h-full w-full items-center justify-start gap-4 rounded-xl p-2 align-middle hover:bg-neutral-700",
+                "flex md:h-full md:w-full w-12 h-12 items-center md:justify-start justify-center gap-4 rounded-xl p-2 align-middle hover:bg-neutral-700",
                 { "bg-neutral-700": currentPath === "/dashboard" },
               )}
             >
               <HomeRoundedIcon />
-              Hjem
+              <p className="hidden md:block">Hjem</p>
             </button>
           </Link>
           <Link href={"/browse"} className="h-full w-full">
             <button
               className={classNames(
-                "flex h-full w-full items-center justify-start gap-4 rounded-xl p-2 align-middle hover:bg-neutral-700",
+                "flex -mb-2 md:mb-0 md:h-full md:w-full w-12 h-12 items-center md:justify-start justify-center gap-4 rounded-xl p-2 align-middle hover:bg-neutral-700",
                 { "bg-neutral-700": currentPath === "/browse" },
               )}
             >
               <SearchIcon />
-              Utforsk
+              <p className="hidden md:block">Utforsk</p>
+            </button>
+          </Link>
+          <Link href={"/components"}>
+            <button
+              className={classNames(
+                "md:flex hidden h-full w-full items-center justify-start gap-4 rounded-xl p-2 align-middle hover:bg-neutral-700",
+                { "bg-neutral-700": currentPath === "/components" },
+              )}
+            >
+              Components (dev)
             </button>
           </Link>
         </div>
-        <button
-          onClick={handleCreateGameShow}
-          className="flex h-20 min-h-20 w-full items-center justify-center gap-2 rounded-xl bg-violet-600 p-2 align-middle hover:bg-violet-500 active:bg-violet-800"
-        >
-          OPPRETT LEK
-          <AddCircleOutlineRoundedIcon />
-        </button>
-        <div className="mb-0 flex h-full w-full flex-col justify-start rounded-2xl bg-neutral-900 p-4 align-middle">
-          {children}
-        </div>
-      </section>
-
-      {showCreateGame && (
-        <div className="fixed z-10 left-0 right-0 bottom-0 flex h-full w-full flex-col items-center justify-center bg-neutral-900 bg-opacity-90 align-middle">
-          <CreateGame />
+        <Link href={"/createGame"}>
           <button
-            className="text-l mt-2 text-neutral-300 hover:underline"
-            onClick={handleCancelCreateGame}
+            // onClick={handleCreateGameShow}
+            className="flex h-20 min-h-20 w-full items-center justify-center gap-2 rounded-2xl bg-violet-600 p-2 align-middle hover:bg-violet-500 active:bg-violet-800"
           >
-            Avbryt
+            <p className="hidden md:block">OPPRETT LEK</p>
+            <AddCircleOutlineRoundedIcon />
           </button>
-        </div>
-      )}
+        </Link>
+        {!!children && (
+          <div className="mb-0 flex h-full w-full flex-col justify-start rounded-2xl bg-neutral-900 p-4 align-middle">
+            {children}
+          </div>
+        )}
+      </section>
     </>
   );
 };
