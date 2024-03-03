@@ -154,7 +154,9 @@ export default function GamePage() {
   const handleShowPlaylistPicker = () => {
     setShowPlaylistPicker({ visible: !showPlaylistPicker.visible });
   }
-
+  const handleGoBack = () => {
+    router.back();
+  };
   return (
     <div>
       <Head>
@@ -174,9 +176,9 @@ export default function GamePage() {
         <section className="flex h-full max-h-screen w-full min-w-[420px] flex-col justify-start overflow-y-auto rounded-2xl bg-neutral-900 p-4 align-middle">
           <div className="flex justify-between">
             <div className="flex items-center justify-start gap-2 align-middle">
-              <Link href="/browse">
+              <button onClick={handleGoBack}>
                 <ArrowBackRoundedIcon />
-              </Link>
+              </button>
               <h2 className="text-2xl font-bold ">{name}</h2>
             </div>
             <div className="flex items-center gap-2">
