@@ -14,6 +14,8 @@ import router from "next/router";
 import MyFriendsBar from "~/components/myFriendsBar";
 import FilterAltRoundedIcon from "@mui/icons-material/FilterAltRounded";
 import { Input } from "~/components/ui/input";
+import { useToast } from "~/components/ui/use-toast";
+import { ToastAction } from "~/components/ui/toast";
 
 export default function Browse() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -109,6 +111,8 @@ export default function Browse() {
   const playerButtons = ["2", "3", "4", "5", "6", "7+"];
   const durationButtons = ["10 min", "20 min", "30 min", "40 min+"];
 
+  const { toast } = useToast();
+
   return (
     <div>
       <Head>
@@ -122,6 +126,21 @@ export default function Browse() {
       <PageWrapper>
         {/* Left section */}
         <NavigationBar>
+          {/* TODO: add use toast */}
+          {/* <button
+            onClick={() => {
+              console.log("toast");
+              toast({
+                title: "Scheduled: Catch up",
+                description: "Friday, February 10, 2023 at 5:57 PM",
+                action: (
+                  <ToastAction altText="Try again">Try again</ToastAction>
+                ),
+              });
+            }}
+          >
+            use toast
+          </button> */}
           <button
             // onClick={handleCreateGameShow}
             className="flex h-12 w-12 items-center justify-center gap-2 rounded-xl p-2 align-middle hover:bg-neutral-600 active:bg-violet-500 md:hidden"
