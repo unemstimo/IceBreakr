@@ -72,21 +72,6 @@ export default function GamePage() {
     commentID: number | null;
   }>({ visible: false, commentID: null });
 
-  const [showMorePopupPlaylist, setShowMorePopupPlaylist] = useState<{
-    visible: boolean;
-    playlistId: string | null;
-  }>({
-    visible: false,
-    playlistId: null,
-  });
-
-  const handleShowMorePopupPlaylist = (playlistId: string | null) => {
-    setShowMorePopupPlaylist({
-      playlistId,
-      visible: !showMorePopupPlaylist.visible,
-    });
-  };
-
   const [showManageAccount, setShowManageAccount] = useState({
     visible: false,
   });
@@ -126,17 +111,10 @@ export default function GamePage() {
     },
   );
 
-  const ratingRandom = ratingQuery.data
+  const ratingRandom = !!ratingQuery.data?.length
     ? ratingQuery.data?.reduce((acc, curr) => acc + curr.starRating, 0) /
       (ratingQuery.data?.length ?? 1)
-    : 5;
-
-  useEffect(() => {
-    if (ratingQuery.data) {
-      console.log(ratingQuery.data);
-    }
-    console.log("Rating query: ", ratingQuery.data);
-  }, [ratingQuery]);
+    : 0;
 
   const handleCommentSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -145,7 +123,7 @@ export default function GamePage() {
     }
 
     try {
-      useRating.mutate({
+      await useRating.mutateAsync({
         gameId: gameQuery.data?.gameId,
         starRating: rating,
         description: comment,
