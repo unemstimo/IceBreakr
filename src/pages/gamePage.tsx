@@ -58,8 +58,6 @@ export default function GamePage() {
   const category = "Kortspill";
   const rating = Math.floor(Math.random() * 5) + 1;
 
-  const [friendsList, setFriendsList] = useState<Friend[]>([]);
-
   const [comments, setComments] = useState([
     {
       id: uuid(),
@@ -77,41 +75,10 @@ export default function GamePage() {
 
   const [newComment, setNewComment] = useState("");
 
-  const [showMorePopup, setShowMorePopup] = useState<{
-    visible: boolean;
-    friendId: string | null;
-  }>({ visible: false, friendId: null });
-
   const [showMorePopupComment, setShowMorePopupComment] = useState<{
     visible: boolean;
     commentID: string | null;
   }>({ visible: false, commentID: null });
-
-  const handleShowMorePopup = (friendId: string | null) => {
-    setShowMorePopup({ visible: !showMorePopup.visible, friendId });
-  };
-
-  const handleAddFriend = () => {
-    const newID = uuid();
-    console.log("Add Friend");
-    const newFriend = { id: newID, name: "Friend " + newID.slice(0, 4) };
-    setFriendsList([...friendsList, newFriend]);
-  };
-
-  const handleRemoveFriend = (friendId: string) => {
-    console.log("Remove Friend");
-    const newFriendsList = friendsList.filter(
-      (friend) => friend.id !== friendId,
-    );
-    setFriendsList(newFriendsList);
-    handleShowMorePopup(null);
-  };
-
-  const handleFriendsButton = () => {
-    console.log("Friend clicked");
-  };
-
-  const [playlists, setPlaylists] = useState<Playlist[]>([]);
 
   const [showMorePopupPlaylist, setShowMorePopupPlaylist] = useState<{
     visible: boolean;
@@ -153,8 +120,10 @@ export default function GamePage() {
 
   const handleShowPlaylistPicker = () => {
     setShowPlaylistPicker({ visible: !showPlaylistPicker.visible });
-  }
-
+  };
+  const handleGoBack = () => {
+    router.back();
+  };
   return (
     <div>
       <Head>
@@ -166,24 +135,26 @@ export default function GamePage() {
       </Head>
 
       <PageWrapper>
-
-          <NavigationBar>
-            <MyPlaylists />
-          </NavigationBar>
+        <NavigationBar>
+          <MyPlaylists />
+        </NavigationBar>
         {/* Middle section */}
         <section className="flex h-full max-h-screen w-full min-w-[420px] flex-col justify-start overflow-y-auto rounded-2xl bg-neutral-900 p-4 align-middle">
           <div className="flex justify-between">
             <div className="flex items-center justify-start gap-2 align-middle">
-              <Link href="/browse">
+              <button onClick={handleGoBack}>
                 <ArrowBackRoundedIcon />
-              </Link>
+              </button>
               <h2 className="text-2xl font-bold ">{name}</h2>
             </div>
             <div className="flex items-center gap-2">
-              <button className="text-neutral-500 hover:underline text-rg">
+              <button className="text-rg text-neutral-500 hover:underline">
                 <SignOutButton>logg ut</SignOutButton>
               </button>
-              <button className="text-neutral-500" onClick={handleManageAccount}>
+              <button
+                className="text-neutral-500"
+                onClick={handleManageAccount}
+              >
                 <ManageAccountsRoundedIcon />
               </button>
             </div>
@@ -204,10 +175,10 @@ export default function GamePage() {
                 <div className="mb-4 ml-4 flex h-full flex-col justify-between">
                   <div>
                     <h1 className="text-xxl">{name}</h1>
-                    <h2 className="text-neutral-400 font-normal">
+                    <h2 className="font-normal text-neutral-400">
                       {numberOfPlayers} spillere • {duration}
                     </h2>
-                    <p className="mt-6 font-normal text-md text-neutral-200">
+                    <p className="mt-6 text-md font-normal text-neutral-200">
                       {description}
                     </p>
                   </div>
@@ -228,27 +199,36 @@ export default function GamePage() {
             </button>
             <div className="relative">
               <button
-              onClick={handleShowPlaylistPicker}
-              className="text-rg mt-4 px-4 py-2 flex min-w-16 items-center justify-center rounded-full bg-violet-500 align-middle">
+                onClick={handleShowPlaylistPicker}
+                className="mt-4 flex min-w-16 items-center justify-center rounded-full bg-violet-500 px-4 py-2 align-middle text-rg"
+              >
                 Legg til i lekeliste
               </button>
               {showPlaylistPicker.visible && (
-              <div 
-              className="absolute z-10 flex justify-center items-center bg-neutral-800 border-8 p-4 rounded-3xl">
-                <div className="flex-col justify-center items-center align-middle">
-                  <PlaylistPicker />
-                  <button className="w-full -mt-4 text-rg hover:underline align-middle text-neutral-500 hover:text-neutral-400" onClick={()=>{setShowPlaylistPicker({visible: false})}} >Avbryt</button>
+                <div className="absolute z-10 flex items-center justify-center rounded-3xl border-8 bg-neutral-800 p-4">
+                  <div className="flex-col items-center justify-center align-middle">
+                    <PlaylistPicker
+                      gameid={gameQuery.data?.gameId ?? 0}
+                      setShowPlaylistPicker={setShowPlaylistPicker}
+                    />
+                    <button
+                      className="-mt-4 w-full align-middle text-rg text-neutral-500 hover:text-neutral-400 hover:underline"
+                      onClick={() => {
+                        setShowPlaylistPicker({ visible: false });
+                      }}
+                    >
+                      Avbryt
+                    </button>
+                  </div>
                 </div>
-              </div>
               )}
             </div>
-            
           </div>
           {/* Rules */}
           <div className="mt-4 flex h-full w-full items-center justify-start rounded-xl bg-neutral-800 py-2">
             <div className="mb-4 ml-4 h-full w-full">
               <h1 className="text-4xl">Regler</h1>
-              <p className="font-normal text-rg text-neutral-400">{rules}</p>
+              <p className="text-rg font-normal text-neutral-400">{rules}</p>
             </div>
           </div>
           {/* Rating section */}
@@ -258,7 +238,7 @@ export default function GamePage() {
               <div>
                 <form
                   onSubmit={handleCommentSubmit}
-                  className="mb-4 font-normal text-rg flex h-full w-full items-center justify-start gap-4 align-middle"
+                  className="mb-4 flex h-full w-full items-center justify-start gap-4 align-middle text-rg font-normal"
                 >
                   <input
                     type="text"
@@ -269,7 +249,7 @@ export default function GamePage() {
                   />
                   <button
                     type="submit"
-                    className="h-full font-bold rounded-full bg-violet-500 px-4 py-1 hover:bg-violet-400 active:bg-violet-600"
+                    className="h-full rounded-full bg-violet-500 px-4 py-1 font-bold hover:bg-violet-400 active:bg-violet-600"
                   >
                     Post
                   </button>
@@ -323,7 +303,7 @@ export default function GamePage() {
           </div>
         </section>
 
-        <MyFriendsBar/>
+        <MyFriendsBar />
 
         {showManageAccount.visible && (
           <div className="absolute left-0 top-0 flex h-full w-full flex-col items-center justify-center bg-neutral-900 bg-opacity-90 p-24 align-middle">
@@ -336,7 +316,6 @@ export default function GamePage() {
             </button>
           </div>
         )}
-        
       </PageWrapper>
     </div>
   );
