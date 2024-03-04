@@ -1,7 +1,5 @@
 import Head from "next/head";
-import { useState, useEffect, type FormEvent } from "react";
-
-import SearchIcon from "@mui/icons-material/Search";
+import { useState, useEffect } from "react";
 import ArrowBackRounded from "@mui/icons-material/ArrowBackRounded";
 
 import Advertisement from "~/components/advertisement";
@@ -15,6 +13,7 @@ import { type Category } from "~/server/api/routers/category";
 import router from "next/router";
 import MyFriendsBar from "~/components/myFriendsBar";
 import FilterAltRoundedIcon from "@mui/icons-material/FilterAltRounded";
+import { Input } from "~/components/ui/input";
 
 export default function Browse() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -28,11 +27,6 @@ export default function Browse() {
   const categoryQuery = api.category.getAll.useQuery();
   const gameQuery = api.gameRouter.getAll.useQuery();
   const games = gameQuery.data ?? [];
-
-  const handleSearchSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    console.log("Search Term:", searchTerm);
-  };
 
   const filterGames = () => {
     const filtered = games.filter((game) => {
@@ -214,12 +208,21 @@ export default function Browse() {
         {/* Middle section */}
         <section className="flex h-full w-full">
           <section className="flex h-full w-full flex-col justify-start rounded-2xl bg-neutral-900 p-4 align-middle">
-            <div className="flex flex-col items-center justify-center">
-              <div className="mb-4 flex w-full items-center justify-start gap-2 align-middle">
+            <div className="flex flex-col justify-center gap-6">
+              <div className="flex w-full items-center justify-start gap-2 align-middle">
                 <button onClick={() => router.back()}>
                   <ArrowBackRounded />
                 </button>{" "}
                 Utforsk alle leker
+              </div>
+              <div className="w-1/3">
+                <Input
+                  className="w-full bg-neutral-800 text-md text-white focus:outline-none"
+                  type="search" // Changed to search to improve semantics
+                  placeholder="Søk..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
               </div>
               {/* make the div 4 columns wide */}
               <div className="grid h-full w-full gap-4 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-4">
