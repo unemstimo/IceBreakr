@@ -27,7 +27,7 @@ const PlayListCard = ({
           >
             {name}
           </h3>
-          <p className="text-neutral-400"> {description}</p>
+          <p className="text-neutral-400 text-sm"> {description}</p>
         </div>
       </section>
     </Link>

@@ -3,17 +3,20 @@ import { useRouter } from "next/router";
 import Image from "next/image";
 import ArrowBackRounded from "@mui/icons-material/ArrowBackRounded";
 import Advertisement from "~/components/advertisement";
-import GameCard from "~/components/gameCard";
+import GameCardHorizontal from "~/components/GameCardHorizontal";
 import PageWrapper from "~/components/pageWrapper";
 import NavigationBar from "~/components/navigationBar";
 import { api } from "~/utils/api";
 import MyFriendsBar from "~/components/myFriendsBar";
 import FilterAltRoundedIcon from "@mui/icons-material/FilterAltRounded";
 import PitBull from "~/assets/images/pitbull.jpeg";
+import { useUser } from "@clerk/nextjs";
+import GameCard from "~/components/gameCard";
 
 export default function ListPage() {
   const router = useRouter();
   const { playlistId } = router.query;
+  const currentUser = useUser();
 
   // Fetch data based on playlistId using useQuery
   const playlistQuery = api.playlist.getPlaylistById.useQuery(

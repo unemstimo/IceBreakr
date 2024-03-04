@@ -6,6 +6,7 @@ import { api } from "~/utils/api";
 import { Dispatch, SetStateAction, useState } from "react";
 import Link from "next/link";
 import { useToast } from "./ui/use-toast";
+import { SignedIn, SignedOut, SignInButton } from "@clerk/nextjs"
 
 type PlaylistPickerProps = {
   gameid: number;
@@ -65,7 +66,8 @@ const PlaylistPicker = ({
     <div className="mb-0 flex h-auto w-[400px] flex-col justify-start rounded-2xl bg-neutral-800 p-4  align-middle">
       <div className="flex flex-row items-baseline justify-between px-6 align-baseline">
         <h2 className="text-2xl font-bold ">Mine Lekelister</h2>
-        <Link href="/createPlaylist">
+        <SignedIn>
+          <Link href="/createPlaylist">
           <button
             className="text-md text-neutral-500 hover:underline"
             onClick={() => "TODO: handleAddPlaylist"}
@@ -73,6 +75,8 @@ const PlaylistPicker = ({
             Lag ny
           </button>
         </Link>
+        </SignedIn>
+
       </div>
       <ul className="relative mt-5 w-full">
         {myPlaylists?.map((list) => (
@@ -123,12 +127,24 @@ const PlaylistPicker = ({
           <p>Ingen lekelister enda 🧐</p>
           <div className="flex gap-1">
             <p>Fiks det ved å</p>
-            <button
+            <SignedIn>
+              <button
               onClick={() => console.log("TODO: handleAddPlaylist")}
               className="font-bold text-violet-400 hover:text-violet-300"
-            >
-              lage en lekeliste
-            </button>
+              >
+                lage en lekeliste
+              </button>
+            </SignedIn>
+            <SignedOut>
+            <SignInButton>
+              <button
+                className="font-bold text-violet-400 hover:text-violet-300"
+              >
+                logge inn
+              </button>
+            </SignInButton>
+            </SignedOut>
+            
           </div>
         </div>
       )}

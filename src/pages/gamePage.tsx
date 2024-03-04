@@ -1,9 +1,15 @@
 import Head from "next/head";
-import { useState, type FormEvent, useEffect } from "react";
+import { useState } from "react";
 import { v4 as uuid } from "uuid";
 import Image from "next/image";
 
-import { SignOutButton, UserButton, UserProfile } from "@clerk/nextjs";
+import {
+  SignOutButton,
+  SignedIn,
+  UserButton,
+  UserProfile,
+  useUser,
+} from "@clerk/nextjs";
 
 import MoreHorizRoundedIcon from "@mui/icons-material/MoreHorizRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
@@ -33,9 +39,9 @@ import { Button } from "~/components/ui/button";
 // type Game = inferProcedureOutput<AppRouter["gameRouter"]["getGameById"]>;
 
 export default function GamePage() {
-  const [searchTerm, setSearchTerm] = useState("");
   const router = useRouter();
   const { gameId } = router.query;
+  const userId = useUser().user?.id;
   // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
   // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
   const gameQuery = api.gameRouter.getGameById.useQuery(
@@ -48,24 +54,6 @@ export default function GamePage() {
   const duration = gameQuery.data?.duration ?? "";
   const description = gameQuery.data?.description ?? "";
   const rules = gameQuery.data?.rules ?? "";
-  // TODO add ratings and categories to game via relations
-  const category = "Kortspill";
-  // get avarage rating
-
-  const [comments, setComments] = useState([
-    {
-      id: uuid(),
-      author: "Trond",
-      comment: "Dette var en kul lek!",
-      rating: 4,
-    },
-    {
-      id: uuid(),
-      author: "Mats",
-      comment: "Dette var en DRITT lek!",
-      rating: 1,
-    },
-  ]);
 
   const [showMorePopupComment, setShowMorePopupComment] = useState<{
     visible: boolean;
@@ -101,6 +89,7 @@ export default function GamePage() {
   const [comment, setComment] = useState("");
   const [rating, setRating] = useState<number>();
   const useRating = api.rating.create.useMutation();
+  const useDeleteRating = api.rating.delete.useMutation();
 
   const ratingQuery = api.rating.getRatingsByGameId.useQuery(
     {
@@ -136,6 +125,15 @@ export default function GamePage() {
     }
   };
 
+  const handleDeleteComment = async (ratingId: number) => {
+    try {
+      await useDeleteRating.mutateAsync({ ratingId });
+      await ratingQuery.refetch();
+    } catch (e) {
+      console.error("Error deleting rating: ", e);
+    }
+  };
+
   return (
     <div>
       <Head>
@@ -159,17 +157,19 @@ export default function GamePage() {
               </button>
               <h2 className="text-2xl font-bold ">{name}</h2>
             </div>
-            <div className="flex items-center gap-2">
-              {/* <button className="text-rg text-neutral-500 hover:underline"> */}
-              <SignOutButton>logg ut</SignOutButton>
-              {/* </button> */}
-              <button
-                className="text-neutral-500"
-                onClick={handleManageAccount}
-              >
-                <ManageAccountsRoundedIcon />
-              </button>
-            </div>
+            <SignedIn>
+              <div className="flex items-center gap-2">
+                {/* <button className="text-rg text-neutral-500 hover:underline"> */}
+                <SignOutButton>logg ut</SignOutButton>
+                {/* </button> */}
+                <button
+                  className="text-neutral-500"
+                  onClick={handleManageAccount}
+                >
+                  <ManageAccountsRoundedIcon />
+                </button>
+              </div>
+            </SignedIn>
           </div>
           {/* Title, image section */}
           <div className="relative mt-4 flex h-full w-full flex-col items-start justify-start rounded-xl bg-neutral-800 p-4">
@@ -311,9 +311,18 @@ export default function GamePage() {
                             onClick={() => 1}
                             className="rounded-lg bg-red-500 px-4 py-1 hover:bg-red-400 active:bg-red-600"
                           >
-                            {" "}
                             Rapporter
                           </button>
+                          {userId === comment.user.userId && (
+                            <Button
+                              onClick={() =>
+                                handleDeleteComment(comment.ratingId)
+                              }
+                              variant={"destructive"}
+                            >
+                              Slett
+                            </Button>
+                          )}
                           <button
                             onClick={() => {
                               if (comment.ratingId) {

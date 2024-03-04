@@ -77,12 +77,15 @@ const MyFriendsBar = () => {
                   <PeopleAltRoundedIcon/><p className="hidden md:flex">Venner</p>
                   </button>
               </div>
-              <button
+              <SignedIn>
+                <button
                 className="text-rg text-neutral-500 hover:underline xl:w-auto w-full mt-2 "
                 onClick={handleAddFriend}
               >
                 <p className="xl:block hidden">Legg til</p>
               </button>
+              </SignedIn>
+              
             </div>
             <ul className="relative mt-2 w-full text-rg xl:block hidden">
               {friendsList.map((friend) => (
@@ -131,18 +134,31 @@ const MyFriendsBar = () => {
                 <p className="xl:block hidden">Ingen venner enda 😭</p>
                 <div className="flex gap-1 xl:w-auto w-full">
                   <p className="xl:block hidden">Fiks det ved å</p>
-                  <button
+                  <SignedIn>
+                    <button
                     onClick={handleAddFriend}
                     className="xl:block hidden font-bold text-violet-400 hover:text-violet-300 xl:w-auto w-full xl:mt-0 mt-4"
-                  >
-                    <p>legge til en venn</p>
-                  </button>
-                  <button
-                        className="xl:hidden flex justify-center items-center gap-2 align-middle relative text-rg text-neutral-500 hover:bg-green-600 hover:text-white rounded-xl bg-background md:w-full h-12 w-12 mt-2 "
-                        onClick={handleAddFriend}
+                    >
+                      <p>legge til en venn</p>
+                    </button>
+                    <button
+                          className="xl:hidden flex justify-center items-center gap-2 align-middle relative text-rg text-neutral-500 hover:bg-green-600 hover:text-white rounded-xl bg-background md:w-full h-12 w-12 mt-2 "
+                          onClick={handleAddFriend}
+                        >
+                          <p className="hidden md:flex">Legg til</p><PersonAddRoundedIcon/>
+                    </button>
+                  </SignedIn>
+                  <SignedOut>
+                    <SignInButton>
+                      <button
+                        className="font-bold text-violet-400 hover:text-violet-300"
                       >
-                        <p className="hidden md:flex">Legg til</p><PersonAddRoundedIcon/>
-                  </button>
+                        logge inn
+                      </button>
+                    </SignInButton>
+                  </SignedOut>
+                  
+                  
                 </div>
               </div>
             )}
