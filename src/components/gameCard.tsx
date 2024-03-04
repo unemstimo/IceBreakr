@@ -16,26 +16,17 @@ export type Game = {
   rating: number;
 };
 
-const GameCard = ({
-  gameId,
-  userId,
-  name,
-  duration,
-  numberOfPlayers,
-  rules,
-  description,
-  rating,
-}: Game) => {
+const GameCard = ({ gameId, name, description, rating }: Game) => {
   // Prepare the game object from props
 
   // Generate query string
 
   return (
     <Link href={`/gamePage?gameId=${gameId}`} passHref>
-      <div className="relative text-rg flex w-full h-full max-h-80 xl:min-h-60 min-w-36 max-w-full md:max-w-full cursor-pointer flex-col rounded-xl bg-neutral-800 p-4">
-        <div className="relative align-top flex h-full w-full flex-col overflow-clip">
+      <div className="relative flex h-full max-h-80 w-full min-w-36 max-w-full cursor-pointer flex-col rounded-xl bg-neutral-800 p-4 text-rg md:max-w-full xl:min-h-60">
+        <div className="relative flex h-full w-full flex-col overflow-clip align-top">
           <Image
-            className="h-auto w-full rounded-lg xl:flex hidden"
+            className="hidden h-auto w-full rounded-lg xl:flex"
             src={Placeholder}
             alt="Game Image"
             width={200}
@@ -46,10 +37,12 @@ const GameCard = ({
             {description}
           </p>
         </div>
-        <button className="absolute right-3 top-3 flex xl:min-w-16 w-14 items-center justify-center rounded-full bg-violet-500 align-middle">
-          <StarRoundedIcon />
-          {rating}
-        </button>
+        {rating > 0 && (
+          <div className="absolute right-3 top-3 flex w-14 items-center justify-center rounded-full bg-violet-500 align-middle xl:min-w-16">
+            <StarRoundedIcon />
+            {rating}
+          </div>
+        )}
       </div>
     </Link>
   );

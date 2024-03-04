@@ -45,15 +45,36 @@ export const gameRouter = createTRPCRouter({
     }),
 
   getAll: publicProcedure.query(({ ctx }) => {
-    return ctx.db.game.findMany({
-      include: {
-        GameInCategory: {
+    return (
+      ctx.db.game
+        .findMany({
           include: {
-            category: true,
+            GameInCategory: {
+              include: {
+                category: true,
+              },
+            },
+            ratings: true,
           },
-        },
-      },
-    });
+        })
+        // Calculate average rating and remove rating objects from the response
+        .then((games) => {
+          return games.map((game) => {
+            const totalScore = game.ratings.reduce(
+              (acc, rating) => acc + rating.starRating,
+              0,
+            );
+            const averageScore =
+              game.ratings.length > 0 ? totalScore / game.ratings.length : 0;
+            delete (game as Partial<typeof game>).ratings;
+
+            return {
+              ...game,
+              averageRating: averageScore,
+            };
+          });
+        })
+    );
   }),
 
   getGameById: publicProcedure

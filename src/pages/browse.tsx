@@ -66,6 +66,7 @@ export default function Browse() {
 
   useEffect(() => {
     filterGames();
+    console.log("useEffect", games);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [numberOfPlayers, gameCategories, duration, games, searchTerm]);
 
@@ -255,7 +256,7 @@ export default function Browse() {
                     numberOfPlayers={game.numberOfPlayers}
                     rules={game.rules}
                     description={game.description ?? ""}
-                    rating={Math.floor(Math.random() * 5) + 1}
+                    rating={game.averageRating}
                     gameId={game.gameId}
                     userId={game.userId}
                   />
