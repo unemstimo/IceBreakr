@@ -47,13 +47,16 @@ const MyPlaylists = () => {
     <div className="mb-0 hidden md:flex h-full w-full flex-col justify-start rounded-2xl bg-neutral-900  align-middle">
       <div className="flex flex-row items-baseline justify-between align-baseline">
         <h2 className="text-2xl font-bold ">Mine Lekelister</h2>
-        <Link href="/createPlaylist">
-        <button
-          className="text-rg text-neutral-500 hover:underline"
-        >
-          Lag ny
-        </button>
-        </Link>
+        <SignedIn>
+          <Link href="/createPlaylist">
+          <button
+            className="text-rg text-neutral-500 hover:underline"
+          >
+            Lag ny
+          </button>
+          </Link>
+        </SignedIn>
+        
       </div>
       <ul className=" mt-5 w-full">
         {myPlaylists?.map((list) => (
