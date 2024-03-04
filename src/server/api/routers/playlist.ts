@@ -52,17 +52,44 @@ export const playlistRouter = createTRPCRouter({
   getPlaylistById: publicProcedure
     .input(z.object({ id: z.number() }))
     .query(async ({ ctx, input }) => {
-      return ctx.db.playlist.findFirst({
-        where: { playlistId: input.id },
-        include: {
-          GameInPlaylist: {
-            include: {
-              game: true,
+      return ctx.db.playlist
+        .findFirst({
+          where: { playlistId: input.id },
+          include: {
+            GameInPlaylist: {
+              include: {
+                game: {
+                  include: {
+                    ratings: true,
+                  },
+                },
+              },
             },
+            user: true,
           },
-          user: true,
-        },
-      });
+        })
+        .then((playlist) => {
+          const ratedGames = playlist?.GameInPlaylist.map((game) => {
+            const totalScore = game.game.ratings.reduce(
+              (acc, rating) => acc + rating.starRating,
+              0,
+            );
+            const averageScore =
+              game.game.ratings.length > 0
+                ? totalScore / game.game.ratings.length
+                : 0;
+            delete (game.game as Partial<typeof game.game>).ratings;
+
+            return {
+              ...game.game,
+              averageRating: averageScore,
+            };
+          });
+          return {
+            ...playlist,
+            GameInPlaylist: ratedGames,
+          };
+        });
     }),
 
   getPlaylistsByUserId: privateProcedure.query(({ ctx }) => {
