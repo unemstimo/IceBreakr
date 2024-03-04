@@ -1,16 +1,14 @@
 import Head from "next/head";
 import { useState } from "react";
-import { v4 as uuid } from "uuid";
 import Image from "next/image";
-
+import Placeholder from "~/assets/images/placeholder.png";
 import {
   SignOutButton,
-  SignedIn,
+  SignedIn as SignedIn,
   UserButton,
   UserProfile,
   useUser,
 } from "@clerk/nextjs";
-
 import MoreHorizRoundedIcon from "@mui/icons-material/MoreHorizRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import ManageAccountsRoundedIcon from "@mui/icons-material/ManageAccountsRounded";
@@ -18,7 +16,6 @@ import PageWrapper from "~/components/pageWrapper";
 import NavigationBar from "~/components/navigationBar";
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
 import { useRouter } from "next/router";
-import Placeholder from "~/assets/images/placeholder.png";
 import StarRoundedIcon from "@mui/icons-material/StarRounded";
 import { api } from "~/utils/api";
 import { Badge } from "~/components/ui/badge";
@@ -36,14 +33,10 @@ import MyPlaylists from "~/components/myPlaylists";
 import StarIcon from "@mui/icons-material/Star";
 import { Button } from "~/components/ui/button";
 
-// type Game = inferProcedureOutput<AppRouter["gameRouter"]["getGameById"]>;
-
 export default function GamePage() {
   const router = useRouter();
   const { gameId } = router.query;
   const userId = useUser().user?.id;
-  // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-  // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
   const gameQuery = api.gameRouter.getGameById.useQuery(
     { id: Number(gameId ?? 1) },
     { enabled: gameId !== undefined },
@@ -178,6 +171,7 @@ export default function GamePage() {
                 <Image
                   className="h-auto w-full rounded-lg"
                   src={Placeholder}
+                  placeholder="blur"
                   alt="Game Image"
                   width={200}
                   height={200}
@@ -283,7 +277,10 @@ export default function GamePage() {
               <ul className="flex w-full flex-col items-center justify-start gap-4 align-middle text-rg">
                 {ratingQuery.data?.map((comment) => (
                   // eslint-disable-next-line react/jsx-key
-                  <li className="relative flex h-full w-full items-center justify-between gap-4 rounded-lg bg-neutral-800 p-4 align-middle">
+                  <li
+                    key={comment.ratingId}
+                    className="relative flex h-full w-full items-center justify-between gap-4 rounded-lg bg-neutral-800 p-4 align-middle"
+                  >
                     <div className="flex h-full items-center gap-4">
                       <UserButton />
                       <div className="flex items-center justify-center rounded-full bg-violet-500 px-3 py-0">

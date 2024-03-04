@@ -65,7 +65,6 @@ export default function Browse() {
 
   useEffect(() => {
     filterGames();
-    console.log("useEffect", games);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [numberOfPlayers, gameCategories, duration, games, searchTerm]);
 
@@ -126,21 +125,17 @@ export default function Browse() {
       <PageWrapper>
         {/* Left section */}
         <NavigationBar>
-          {/* TODO: add use toast */}
-          {/* <button
+          <button
             onClick={() => {
               console.log("toast");
               toast({
                 title: "Scheduled: Catch up",
                 description: "Friday, February 10, 2023 at 5:57 PM",
-                action: (
-                  <ToastAction altText="Try again">Try again</ToastAction>
-                ),
               });
             }}
           >
             use toast
-          </button> */}
+          </button>
           <button
             // onClick={handleCreateGameShow}
             className="flex h-12 w-12 items-center justify-center gap-2 rounded-xl p-2 align-middle hover:bg-neutral-600 active:bg-violet-500 md:hidden"

@@ -61,6 +61,7 @@ const config = {
       colors: {
         border: colors.neutral["700"],
         // input: colors.violet["600"],
+        text: colors.neutral["100"],
         input: colors.neutral["800"],
         ring: colors.violet["600"],
         background: colors.neutral["900"],
