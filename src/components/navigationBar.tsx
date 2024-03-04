@@ -73,15 +73,30 @@ const NavigationBar = ({ children }: NavigationBarProps) => {
             </button>
           </Link>
         </div>
+        <SignedIn>
         <Link href={"/createGame"}>
           <button
             // onClick={handleCreateGameShow}
             className="flex h-20 min-h-20 w-full items-center justify-center gap-2 rounded-2xl bg-violet-600 p-2 align-middle hover:bg-violet-500 active:bg-violet-800"
-          >
+          > 
             <p className="hidden md:block">OPPRETT LEK</p>
             <AddCircleOutlineRoundedIcon />
           </button>
         </Link>
+        </SignedIn>
+        <SignedOut>
+        <SignInButton>
+          <button
+              // onClick={handleCreateGameShow}
+              className="flex h-20 min-h-20 w-full flex-col items-center justify-center gap-1 rounded-2xl bg-violet-600 p-10 align-middle hover:bg-violet-500 active:bg-violet-800"
+            > 
+              <p className="text-s"> Logg inn for å </p>
+              <div>
+                <p className="hidden md:block">OPPRETTE LEK</p>
+              </div>
+            </button>
+        </SignInButton>
+        </SignedOut>
         {!!children && (
           <div className="mb-0 flex h-full w-full flex-col justify-start rounded-2xl bg-neutral-900 p-4 align-middle">
             {children}

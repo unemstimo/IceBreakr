@@ -147,6 +147,7 @@ export default function GamePage() {
               </button>
               <h2 className="text-2xl font-bold ">{name}</h2>
             </div>
+            <SignedIn>
             <div className="flex items-center gap-2">
               <button className="text-rg text-neutral-500 hover:underline">
                 <SignOutButton>logg ut</SignOutButton>
@@ -158,6 +159,7 @@ export default function GamePage() {
                 <ManageAccountsRoundedIcon />
               </button>
             </div>
+            </SignedIn>
           </div>
           {/* Title, image section */}
           <div className="relative mt-4 flex h-full w-full flex-col items-start justify-start rounded-xl bg-neutral-800 p-4">

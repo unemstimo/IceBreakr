@@ -20,6 +20,7 @@ import CreatePlaylistPage from "./createPlaylist";
 import MyPlaylists from "~/components/myPlaylists";
 import MyFriendsBar from "~/components/myFriendsBar";
 import { Input } from "@nextui-org/react";
+import { SignedIn } from "@clerk/nextjs";
 
 type Friend = {
   id: string;
@@ -150,7 +151,7 @@ export default function Dashboard() {
             <Advertisement />
           </div>
         </section>
-
+        
         <MyFriendsBar/>
       </PageWrapper>
     </div>
