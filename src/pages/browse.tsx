@@ -15,7 +15,6 @@ import MyFriendsBar from "~/components/myFriendsBar";
 import FilterAltRoundedIcon from "@mui/icons-material/FilterAltRounded";
 import { Input } from "~/components/ui/input";
 import { useToast } from "~/components/ui/use-toast";
-import { ToastAction } from "~/components/ui/toast";
 
 export default function Browse() {
   const [searchTerm, setSearchTerm] = useState("");
