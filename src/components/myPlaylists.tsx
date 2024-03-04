@@ -5,6 +5,7 @@ import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import { api } from "~/utils/api";
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import {
   SignInButton,
   SignOutButton,
@@ -18,11 +19,9 @@ import {
 const MyPlaylists = () => {
   const privatePlaylistQuery = api.playlist.getPlaylistsByUserId.useQuery();
   const myPlaylists = privatePlaylistQuery.data ?? [];
+  const router = useRouter();
 
 
-  const handlePlaylistClick = (playlistId: number) => {
-    console.log("Playlist ",playlistId,"clicked");
-  };
 
   const handleShowMorePopupPlaylist = (playlistId: number) => {
     setShowMorePopupPlaylist({
@@ -43,6 +42,10 @@ const MyPlaylists = () => {
     
   }
 
+  const handlePlaylistClick = (playlistId: number) => {
+    router.push(`/playlistPage?playlistId=${playlistId}`);
+  };
+
   return (
     <div className="mb-0 hidden md:flex h-full w-full flex-col justify-start rounded-2xl bg-neutral-900  align-middle">
       <div className="flex flex-row items-baseline justify-between align-baseline">
@@ -61,19 +64,20 @@ const MyPlaylists = () => {
       <ul className=" mt-5 w-full">
         {myPlaylists?.map((list) => (
           <li key={list.playlistId} className="relative mb-2 flex h-16">
-            <button
-              className="flex h-full w-full items-center justify-between gap-4 rounded-xl border border-neutral-800 p-4 align-middle hover:bg-neutral-700"
-              onClick={() => handlePlaylistClick(list.playlistId)}
-            >
-              <div className="flex h-full w-full items-center justify-start gap-4 align-middle">
-                <PlayCircleOutlineRoundedIcon />
-                <div className="flex flex-col items-start justify-start align-middle text-nowrap  text-md">
-                  <p className="-mb-2">{list.name}</p>
-                  <p className="font-normal text-neutral-400">
-                    {list.GameInPlaylist.length} leker 
-                  </p>
+            <div className="flex h-full w-full items-center justify-between gap-4 rounded-xl border border-neutral-800 p-4 align-middle hover:bg-neutral-700">
+              <button
+                className="flex h-full w-full items-center justify-between gap-4  p-4 align-middle hover:bg-neutral-700"
+                onClick={() => handlePlaylistClick(list.playlistId)}> 
+                <div className="flex h-full w-full items-center justify-start gap-4 align-middle">
+                  <PlayCircleOutlineRoundedIcon />
+                  <div className="flex flex-col items-start justify-start align-middle text-nowrap  text-md">
+                    <p className="-mb-2">{list.name}</p>
+                    <p className="font-normal text-neutral-400">
+                      {list.GameInPlaylist.length} leker 
+                    </p>
+                  </div>
                 </div>
-              </div>
+              </button>
               <button
                 className="w-12 h-full align-middle items-center -mt-2"
                 onClick={() => handleShowMorePopupPlaylist(list.playlistId)}
@@ -103,7 +107,7 @@ const MyPlaylists = () => {
                     </button>
                   </div>
                 )}
-            </button>
+            </div>
           </li>
         ))}
       </ul>
