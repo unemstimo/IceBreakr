@@ -66,6 +66,7 @@ export default function Browse() {
 
   useEffect(() => {
     filterGames();
+    console.log("useEffect", games);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [numberOfPlayers, gameCategories, duration, games, searchTerm]);
 
