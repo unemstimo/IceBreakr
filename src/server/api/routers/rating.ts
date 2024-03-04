@@ -23,12 +23,6 @@ export const ratingRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      console.log("input her a ", {
-        userId: ctx.userId,
-        gameId: input.gameId,
-        starRating: input.starRating,
-        description: input.description,
-      });
       return ctx.db.gameRating.create({
         data: {
           userId: ctx.userId,
