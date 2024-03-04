@@ -6,6 +6,14 @@ import { api } from "~/utils/api";
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import {
+  SignInButton,
+  SignOutButton,
+  SignedIn,
+  SignedOut,
+  UserButton,
+  UserProfile,
+} from "@clerk/nextjs";
 
 
 const MyPlaylists = () => {
@@ -42,13 +50,16 @@ const MyPlaylists = () => {
     <div className="mb-0 hidden md:flex h-full w-full flex-col justify-start rounded-2xl bg-neutral-900  align-middle">
       <div className="flex flex-row items-baseline justify-between align-baseline">
         <h2 className="text-2xl font-bold ">Mine Lekelister</h2>
-        <Link href="/createPlaylist">
-        <button
-          className="text-rg text-neutral-500 hover:underline"
-        >
-          Lag ny
-        </button>
-        </Link>
+        <SignedIn>
+          <Link href="/createPlaylist">
+          <button
+            className="text-rg text-neutral-500 hover:underline"
+          >
+            Lag ny
+          </button>
+          </Link>
+        </SignedIn>
+        
       </div>
       <ul className=" mt-5 w-full">
         {myPlaylists?.map((list) => (
@@ -106,6 +117,16 @@ const MyPlaylists = () => {
           <p>Ingen lekelister enda 🧐</p>
           <div className="flex gap-1">
             <p>Fiks det ved å</p>
+            <SignedOut>
+            <SignInButton>
+              <button
+                className="font-bold text-violet-400 hover:text-violet-300"
+              >
+                logge inn
+              </button>
+            </SignInButton>
+            </SignedOut>
+            <SignedIn> 
             <Link href="/createPlaylist">
             <button
               onClick={() => console.log("TODO: handleAddPlaylist")}
@@ -114,6 +135,7 @@ const MyPlaylists = () => {
               lage en lekeliste
             </button>
             </Link>
+          </SignedIn>
           </div>
         </div>
       )}
