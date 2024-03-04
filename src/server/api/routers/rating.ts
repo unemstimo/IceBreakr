@@ -23,6 +23,12 @@ export const ratingRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      console.log("input her a ", {
+        userId: ctx.userId,
+        gameId: input.gameId,
+        starRating: input.starRating,
+        description: input.description,
+      });
       return ctx.db.gameRating.create({
         data: {
           userId: ctx.userId,
@@ -36,11 +42,13 @@ export const ratingRouter = createTRPCRouter({
   getAll: publicProcedure.query(({ ctx }) => {
     return ctx.db.gameRating.findMany();
   }),
+
   getRatingsByGameId: publicProcedure
     .input(z.object({ gameId: z.number() }))
     .query(async ({ ctx, input }) => {
       return ctx.db.gameRating.findMany({
         where: { gameId: input.gameId },
+        include: { user: true },
       });
     }),
 

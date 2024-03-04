@@ -1,40 +1,35 @@
 import Head from "next/head";
-import { useState, type FormEvent } from "react";
+import { useState, type FormEvent, useEffect } from "react";
 import { v4 as uuid } from "uuid";
 import Image from "next/image";
 
-import {
-  SignInButton,
-  SignOutButton,
-  SignedIn,
-  SignedOut,
-  UserButton,
-  UserProfile,
-} from "@clerk/nextjs";
+import { SignOutButton, UserButton, UserProfile } from "@clerk/nextjs";
 
-import FaceRoundedIcon from "@mui/icons-material/FaceRounded";
-import PlayCircleOutlineRoundedIcon from "@mui/icons-material/PlayCircleOutlineRounded";
 import MoreHorizRoundedIcon from "@mui/icons-material/MoreHorizRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import ManageAccountsRoundedIcon from "@mui/icons-material/ManageAccountsRounded";
 import PageWrapper from "~/components/pageWrapper";
 import NavigationBar from "~/components/navigationBar";
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import Placeholder from "~/assets/images/placeholder.png";
 import StarRoundedIcon from "@mui/icons-material/StarRounded";
 import { api } from "~/utils/api";
 import { Badge } from "~/components/ui/badge";
-import { Playlist } from "~/server/api/routers/playlist";
-import MyPlaylists from "~/components/myPlaylists";
 import PlaylistPicker from "~/components/playlistPicker";
 import MyFriendsBar from "~/components/myFriendsBar";
+import { Input } from "~/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "~/components/ui/select";
+import MyPlaylists from "~/components/myPlaylists";
+import StarIcon from "@mui/icons-material/Star";
+import { Button } from "~/components/ui/button";
 
-type Friend = {
-  id: string;
-  name: string;
-};
 // type Game = inferProcedureOutput<AppRouter["gameRouter"]["getGameById"]>;
 
 export default function GamePage() {
@@ -47,7 +42,6 @@ export default function GamePage() {
     { id: Number(gameId ?? 1) },
     { enabled: gameId !== undefined },
   );
-  console.log(gameQuery.data);
 
   const name = gameQuery.data?.name ?? "";
   const numberOfPlayers = gameQuery.data?.numberOfPlayers ?? "";
@@ -56,7 +50,7 @@ export default function GamePage() {
   const rules = gameQuery.data?.rules ?? "";
   // TODO add ratings and categories to game via relations
   const category = "Kortspill";
-  const rating = Math.floor(Math.random() * 5) + 1;
+  // get avarage rating
 
   const [comments, setComments] = useState([
     {
@@ -73,11 +67,9 @@ export default function GamePage() {
     },
   ]);
 
-  const [newComment, setNewComment] = useState("");
-
   const [showMorePopupComment, setShowMorePopupComment] = useState<{
     visible: boolean;
-    commentID: string | null;
+    commentID: number | null;
   }>({ visible: false, commentID: null });
 
   const [showMorePopupPlaylist, setShowMorePopupPlaylist] = useState<{
@@ -103,16 +95,12 @@ export default function GamePage() {
     setShowManageAccount({ visible: !showManageAccount.visible });
   };
 
-  const handleMoreCommentButton = (commentID: string | null) => {
+  const handleMoreCommentButton = (commentID: number | null) => {
     setShowMorePopupComment({
       commentID,
       visible: !showMorePopupComment.visible,
     });
   };
-
-  function handleCommentSubmit(_event: FormEvent<HTMLFormElement>): void {
-    console.log("Comment submitted: " + newComment);
-  }
 
   const [showPlaylistPicker, setShowPlaylistPicker] = useState({
     visible: false,
@@ -124,6 +112,52 @@ export default function GamePage() {
   const handleGoBack = () => {
     router.back();
   };
+
+  const [comment, setComment] = useState("");
+  const [rating, setRating] = useState<number>();
+  const useRating = api.rating.create.useMutation();
+
+  const ratingQuery = api.rating.getRatingsByGameId.useQuery(
+    {
+      gameId: gameQuery.data?.gameId ?? -1,
+    },
+    {
+      enabled: gameQuery.data?.gameId !== undefined,
+    },
+  );
+
+  const ratingRandom = ratingQuery.data
+    ? ratingQuery.data?.reduce((acc, curr) => acc + curr.starRating, 0) /
+      (ratingQuery.data?.length ?? 1)
+    : 5;
+
+  useEffect(() => {
+    if (ratingQuery.data) {
+      console.log(ratingQuery.data);
+    }
+    console.log("Rating query: ", ratingQuery.data);
+  }, [ratingQuery]);
+
+  const handleCommentSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (comment === "" || !rating || !gameQuery.data?.gameId) {
+      return;
+    }
+
+    try {
+      useRating.mutate({
+        gameId: gameQuery.data?.gameId,
+        starRating: rating,
+        description: comment,
+      });
+      setComment("");
+      setRating(undefined);
+      await ratingQuery.refetch();
+    } catch (e) {
+      console.error("Error submitting rating: ", e);
+    }
+  };
+
   return (
     <div>
       <Head>
@@ -149,9 +183,9 @@ export default function GamePage() {
             </div>
             <SignedIn>
             <div className="flex items-center gap-2">
-              <button className="text-rg text-neutral-500 hover:underline">
-                <SignOutButton>logg ut</SignOutButton>
-              </button>
+              {/* <button className="text-rg text-neutral-500 hover:underline"> */}
+              <SignOutButton>logg ut</SignOutButton>
+              {/* </button> */}
               <button
                 className="text-neutral-500"
                 onClick={handleManageAccount}
@@ -197,7 +231,7 @@ export default function GamePage() {
             </div>
             <button className="absolute right-4 top-4 flex min-w-16 items-center justify-center rounded-full bg-violet-500 align-middle">
               <StarRoundedIcon />
-              {rating}
+              {ratingRandom}
             </button>
             <div className="relative">
               <button
@@ -242,46 +276,61 @@ export default function GamePage() {
                   onSubmit={handleCommentSubmit}
                   className="mb-4 flex h-full w-full items-center justify-start gap-4 align-middle text-rg font-normal"
                 >
-                  <input
-                    type="text"
-                    value={searchTerm}
-                    onChange={(e) => setNewComment(e.target.value)}
-                    placeholder="Skriv din kommentar her..."
-                    className="w-full rounded-full bg-neutral-800 py-2 pl-3 pr-3 text-white focus:outline-none"
+                  <Input
+                    value={comment}
+                    onChange={(event) => setComment(event.target.value)}
                   />
-                  <button
-                    type="submit"
-                    className="h-full rounded-full bg-violet-500 px-4 py-1 font-bold hover:bg-violet-400 active:bg-violet-600"
+                  <Select
+                    value={rating ? String(rating) : undefined}
+                    onValueChange={(val) => {
+                      setRating(Number(val));
+                    }}
                   >
-                    Post
-                  </button>
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue placeholder="Rating" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {[1, 2, 3, 4, 5].map((_, i) => (
+                        <SelectItem key={i} value={String(i + 1)}>
+                          <div key={i} className="ietms-center flex gap-2">
+                            <p>{i + 1}</p>
+                            <StarIcon className="text-white" />
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  <Button type="submit">Post</Button>
                 </form>
               </div>
               <ul className="flex w-full flex-col items-center justify-start gap-4 align-middle text-rg">
-                {comments.map((comment) => (
+                {ratingQuery.data?.map((comment) => (
                   // eslint-disable-next-line react/jsx-key
                   <li className="relative flex h-full w-full items-center justify-between gap-4 rounded-lg bg-neutral-800 p-4 align-middle">
                     <div className="flex h-full items-center gap-4">
                       <UserButton />
                       <div className="flex items-center justify-center rounded-full bg-violet-500 px-3 py-0">
                         <StarRoundedIcon />
-                        {comment.rating}
+                        {comment.starRating}
                       </div>
                       <div className="flex flex-col items-start justify-start">
-                        <h2 className="-mb-1">{comment.author}</h2>
+                        <h2 className="-mb-1">{comment.user.username}</h2>
                         <p className="-mt-1 font-normal text-neutral-400">
-                          {comment.comment}
+                          {comment.description}
                         </p>
                       </div>
                     </div>
-                    <button onClick={() => handleMoreCommentButton(comment.id)}>
+                    <button
+                      onClick={() => handleMoreCommentButton(comment.ratingId)}
+                    >
                       <MoreHorizRoundedIcon />
                     </button>
                     {showMorePopupComment.visible &&
-                      showMorePopupComment.commentID === comment.id && (
+                      showMorePopupComment.commentID === comment.ratingId && (
                         <div className="absolute right-0 top-0 flex h-full w-full flex-row items-center justify-center gap-4 rounded-xl bg-neutral-700 px-6 py-4 align-middle">
                           {/* Popup content here */}
-                          <p>{comment.author}</p>
+                          <p>{comment.user.username}</p>
                           <button
                             onClick={() => 1}
                             className="rounded-lg bg-red-500 px-4 py-1 hover:bg-red-400 active:bg-red-600"
@@ -290,7 +339,11 @@ export default function GamePage() {
                             Rapporter
                           </button>
                           <button
-                            onClick={() => handleMoreCommentButton(comment.id)}
+                            onClick={() => {
+                              if (comment.ratingId) {
+                                handleMoreCommentButton(comment.ratingId);
+                              }
+                            }}
                           >
                             <p className="absolute right-2 top-1 text-neutral-400 hover:underline">
                               <CloseRoundedIcon />
