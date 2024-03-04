@@ -5,6 +5,14 @@ import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import { api } from "~/utils/api";
 import { useState } from "react";
 import Link from "next/link";
+import {
+  SignInButton,
+  SignOutButton,
+  SignedIn,
+  SignedOut,
+  UserButton,
+  UserProfile,
+} from "@clerk/nextjs";
 
 
 const MyPlaylists = () => {
@@ -102,6 +110,16 @@ const MyPlaylists = () => {
           <p>Ingen lekelister enda 🧐</p>
           <div className="flex gap-1">
             <p>Fiks det ved å</p>
+            <SignedOut>
+            <SignInButton>
+              <button
+                className="font-bold text-violet-400 hover:text-violet-300"
+              >
+                logge inn
+              </button>
+            </SignInButton>
+            </SignedOut>
+            <SignedIn> 
             <Link href="/createPlaylist">
             <button
               onClick={() => console.log("TODO: handleAddPlaylist")}
@@ -110,6 +128,7 @@ const MyPlaylists = () => {
               lage en lekeliste
             </button>
             </Link>
+          </SignedIn>
           </div>
         </div>
       )}
