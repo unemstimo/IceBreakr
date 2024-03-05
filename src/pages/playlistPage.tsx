@@ -1,6 +1,6 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useState } from "react";
 import Image from 'next/image';
 import SearchIcon from "@mui/icons-material/Search";
 import ArrowBackRounded from "@mui/icons-material/ArrowBackRounded";
@@ -15,7 +15,6 @@ import Placeholder from "~/assets/images/placeholder.png";
 import { Description } from "@radix-ui/react-dialog";
 import PitBull from "~/assets/images/pitbull.jpeg";
 import { SignedIn, useUser } from "@clerk/nextjs";
-import AddIcon from '@mui/icons-material/Add';
 import Link from "next/link";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 
@@ -23,10 +22,12 @@ export default function ListPage() {
   const router = useRouter();
   const { playlistId } = router.query;
   const currentUser = useUser();
+  const [error, setError] = useState<string | null>(null);
+  const playlistIdNumber = parseInt(playlistId as string, 10);
 
   // Fetch data based on playlistId using useQuery
   const playlistQuery = api.playlist.getPlaylistById.useQuery(
-    {id: Number(playlistId ?? 1)},
+    { id: playlistIdNumber ?? 1 },
     { enabled: playlistId !== undefined },
   );
   console.log(playlistQuery.data);
@@ -34,6 +35,8 @@ export default function ListPage() {
   const description = playlistQuery.data?.description ?? "";
   const username = playlistQuery.data?.user.username ?? "";
   const userId = playlistQuery.data?.user.userId ?? "";
+  const usePlaylistRelationMutation =
+    api.playlist.removeGameFromPlaylist.useMutation();
 
   const gameInPlaylistData = playlistQuery.data?.GameInPlaylist ?? [];
   const games = [];
@@ -41,7 +44,20 @@ export default function ListPage() {
     games.push(gameInPlaylistData[i]?.game);
   }
   const amountOfGames = games.length;
-
+  
+  const handleDeleteFromPlaylist = async (gameId: number) => {
+    console.log("Removing game from playlist", gameId, playlistIdNumber);
+    try {
+      await usePlaylistRelationMutation.mutateAsync({
+        gameId: gameId,
+        playlistId: playlistIdNumber,
+      });
+      await playlistQuery.refetch();
+    } catch (error) {
+      console.log("Error");
+    }
+  
+  };
 
   return (
     <div>
@@ -103,7 +119,7 @@ export default function ListPage() {
                     <p className="text-neutral-400 font-normal w-full flex">
                       Laget av: {username} • {amountOfGames} leker
                     </p>
-                    <p className="text-neutral-400 mt-6 font-normal text-md text-neutral-200">
+                    <p className="text-neutral-400 mt-6 font-normal text-md">
                       {description}
                     </p>
                   </div>
@@ -120,12 +136,12 @@ export default function ListPage() {
                   <div className="flex-grow justify-normal mr-10">
                     <p className="ml-10 pt-1">Tittel på lek</p>
                   </div>
-                  <div className="flex flex-col justify-center mr-4 w-1/3">
+                  <div className="flex flex-col justify-center -mr-2 w-1/3">
                     <p className="ml-10 leading-tight">
                       Beskrivelse
                     </p>
                   </div>
-                  <div className="flex flex-col justify-center mr-4 w-1/3">
+                  <div className="flex flex-col justify-center mr-12 w-1/3">
                     <p className="text-right">Varighet</p>
                   </div>
                 </div>
@@ -142,6 +158,7 @@ export default function ListPage() {
                       rating={Math.floor(Math.random() * 5) + 1}
                       gameId={game?.gameId ?? 0}
                       userId={game?.userId ?? ""}
+                      onDelete={() => handleDeleteFromPlaylist(game?.gameId ?? 0)}
                     />
                   ))
                 ) : (
@@ -149,7 +166,7 @@ export default function ListPage() {
                     {currentUser.isSignedIn && currentUser.user.id === userId ? (
                       <Link href="/browse">
                         <div className="flex flex-row justify-center hover:bg-neutral-800 w-full h-20 p-6 rounded-lg">
-                          <p className="justify-center -mt-1 mr-4">Legg til spill til spilleliste</p>
+                          <p className="justify-center -mt-1 mr-4">Legg til spill i spilleliste</p>
                           <AddCircleOutlineIcon />
                         </div>
                       </Link>

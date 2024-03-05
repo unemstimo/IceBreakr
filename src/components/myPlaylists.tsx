@@ -20,6 +20,7 @@ const MyPlaylists = () => {
   const privatePlaylistQuery = api.playlist.getPlaylistsByUserId.useQuery();
   const myPlaylists = privatePlaylistQuery.data ?? [];
   const router = useRouter();
+  const deletePlaylist = api.playlist.delete.useMutation();
 
 
 
@@ -37,10 +38,21 @@ const MyPlaylists = () => {
     playlistId: 0,
   });
 
-  const handleDeletePlaylist = (playlistId: number) => {
-    console.log("Delete playlist ",playlistId);
-    
-  }
+  const handleDeletePlaylist = async (playlistId: number) => {
+    console.log("Removing game from playlist", playlistId);
+    try {
+      await deletePlaylist.mutateAsync({
+        id: playlistId,
+      });
+      await privatePlaylistQuery.refetch();
+      /* setShowPlaylistPicker({ visible: false }); */
+    } catch (error) {
+      /* toast({
+        description: "Error deleting game to playlist.",
+      }); */
+      console.log("Error");
+    }
+  };
 
   const handlePlaylistClick = (playlistId: number) => {
     router.push(`/playlistPage?playlistId=${playlistId}`);
