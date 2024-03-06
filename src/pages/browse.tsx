@@ -91,14 +91,6 @@ export default function Browse() {
     }
   };
 
-  const handleCategorySelection = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    setGameCategories({
-      ...gameCategories,
-      [event.target.name]: event.target.checked,
-    });
-  };
   const handleCategorySelection22 = (category: Category) => {
     setGameCategories({
       ...gameCategories,

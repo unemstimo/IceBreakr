@@ -17,48 +17,50 @@ datasource db {
 // https://www.prisma.io/docs/orm/prisma-schema
 
 model User {
-  userId          String               @id @unique
-  username        String               @unique
-  mail            String               @unique
-  administrator   Boolean
-  games           Game[]
-  playlists       Playlist[]
-  reportedGames   UserReportedGame[]
-  reportedRatings UserReportedRating[]
-  favouritedGames UserFavouritedGame[]
-  GameRating      GameRating[]
+  userId               String                 @id @unique
+  username             String                 @unique
+  mail                 String                 @unique
+  administrator        Boolean
+  games                Game[]
+  playlists            Playlist[]
+  reportedGames        UserReportedGame[]
+  reportedRatings      UserReportedRating[]
+  UserFavouritedGame   UserFavoriteGame[]
+  GameRating           GameRating[]
+  UserFavoritePlaylist UserFavoritePlaylist[]
 
   @@index([userId])
 }
 
 model Game {
-  gameId             Int                  @id @unique @default(autoincrement())
+  gameId             Int                @id @unique @default(autoincrement())
   userId             String
   name               String
   duration           String
   numberOfPlayers    String
   rules              String
   description        String?
-  user               User                 @relation(fields: [userId], references: [userId])
+  user               User               @relation(fields: [userId], references: [userId])
   categories         Category[]
   playlists          Playlist[]
   ratings            GameRating[]
   GameInCategory     GameInCategory[]
   GameInPlaylist     GameInPlaylist[]
-  UserFavouritedGame UserFavouritedGame[]
+  UserFavouritedGame UserFavoriteGame[]
   UserReportedGame   UserReportedGame[]
 
   @@index([userId])
 }
 
 model Playlist {
-  playlistId     Int              @id @unique @default(autoincrement())
-  name           String           @db.VarChar(255)
-  userId         String
-  description    String?
-  user           User             @relation(fields: [userId], references: [userId])
-  games          Game[]
-  GameInPlaylist GameInPlaylist[]
+  playlistId           Int                    @id @unique @default(autoincrement())
+  name                 String                 @db.VarChar(255)
+  userId               String
+  description          String?
+  user                 User                   @relation(fields: [userId], references: [userId])
+  games                Game[]
+  GameInPlaylist       GameInPlaylist[]
+  UserFavoritePlaylist UserFavoritePlaylist[]
 
   @@index([userId])
 }
@@ -92,7 +94,7 @@ model GameInCategory {
   @@index([gameId])
 }
 
-model UserFavouritedGame {
+model UserFavoriteGame {
   userId String
   gameId Int
   user   User   @relation(fields: [userId], references: [userId])
@@ -101,6 +103,17 @@ model UserFavouritedGame {
   @@id([userId, gameId])
   @@index([userId])
   @@index([gameId])
+}
+
+model UserFavoritePlaylist {
+  userId     String
+  playlistId Int
+  user       User     @relation(fields: [userId], references: [userId])
+  playlist   Playlist @relation(fields: [playlistId], references: [playlistId])
+
+  @@id([userId, playlistId])
+  @@index([userId])
+  @@index([playlistId])
 }
 
 model UserReportedGame {
@@ -125,7 +138,7 @@ model GameRating {
   game               Game                 @relation(fields: [gameId], references: [gameId])
   UserReportedRating UserReportedRating[]
 
-  // @@index([userId])
+  @@index([userId])
   @@index([gameId])
 }
 
