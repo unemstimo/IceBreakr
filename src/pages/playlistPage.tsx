@@ -30,8 +30,8 @@ export default function ListPage() {
   );
   const name = playlistQuery.data?.name ?? "";
   const description = playlistQuery.data?.description ?? "";
-  const username = playlistQuery.data?.user.username ?? "";
-  const userId = playlistQuery.data?.user.userId ?? "";
+  const username = playlistQuery.data?.user?.username ?? "";
+  const userId = playlistQuery.data?.user?.userId ?? "";
   const usePlaylistRelationMutation =
     api.playlist.removeGameFromPlaylist.useMutation();
 
@@ -84,7 +84,7 @@ export default function ListPage() {
 
         {/* Middle section */}
         <section className="flex h-full w-full flex-col">
-          <section className="-mb-4 flex h-full w-full  flex-col justify-start rounded-t-2xl border-b-2 bg-gradient-to-b from-violet-900 to-[#1b181f] p-4 align-middle">
+          <section className=" flex h-full w-full  flex-col justify-start rounded-t-2xl bg-gradient-to-b from-violet-900 to-[#1b181f] p-4 align-middle">
             <div className="flex flex-col items-center justify-center">
               <div className="mb-4 flex w-full items-center justify-start gap-2 align-middle">
                 <button onClick={() => router.back()}>
@@ -142,7 +142,7 @@ export default function ListPage() {
                 {/* Game list */}
                 {Array.isArray(games) && games.length > 0 ? (
                   games.map((game) => (
-                    <GameCard
+                    <GameCardHorizontal
                       key={game?.gameId} // Optional chaining used here
                       name={game?.name ?? ""}
                       duration={game?.duration ?? ""}
@@ -153,6 +153,7 @@ export default function ListPage() {
                       gameId={game?.gameId ?? 0} // Assuming gameId is a number, provide a default value if necessary
                       userId={game?.userId ?? ""}
                       playlistId={playlistIdNumber}
+                      playlistUserId={userId}
                       onDelete={() => handleDeleteFromPlaylist(game?.gameId ?? 0)}
                     />
                   ))
