@@ -60,8 +60,8 @@ export default function Dashboard() {
           </div>
           {/* Content section */}
           <div className="mt-4 h-full w-full">
-            <h3 className="mb-2">Mine lekelister</h3>
-            <div className="grid grid-cols-2 gap-4 lg:grid-cols-3 xl:grid-cols-4">
+            <h3 className="mb-2">Lekelister for deg</h3>
+            <div className="grid xl:grid-cols-4 lg:grid-cols-3 grid-cols-2 gap-4">
               {allPlaylists?.map((playlist) => (
                 <div key={playlist.playlistId} className="h-full w-full">
                   <PlayListCard playlist={playlist} />
