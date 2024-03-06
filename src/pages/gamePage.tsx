@@ -241,6 +241,7 @@ export default function GamePage() {
           <div className="mt-4 flex h-full w-full items-center justify-start rounded-xl py-2">
             <div className="mb-4 ml-0 mr-0 w-full">
               <h1 className="text-4xl mb-2 text-neutral-500">Kommentarer</h1>
+              <SignedIn>
               <div>
                 <form
                   onSubmit={handleCommentSubmit}
@@ -274,6 +275,7 @@ export default function GamePage() {
                   <Button type="submit">Post</Button>
                 </form>
               </div>
+              </SignedIn>
               <ul className="flex w-full flex-col items-center justify-start gap-4 align-middle text-rg">
                 {ratingQuery.data?.map((comment) => (
                   // eslint-disable-next-line react/jsx-key
