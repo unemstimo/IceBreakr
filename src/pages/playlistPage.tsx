@@ -30,7 +30,6 @@ export default function ListPage() {
     { id: playlistIdNumber ?? 1 },
     { enabled: playlistId !== undefined },
   );
-  console.log(playlistQuery.data);
   const name = playlistQuery.data?.name ?? "";
   const description = playlistQuery.data?.description ?? "";
   const username = playlistQuery.data?.user.username ?? "";
@@ -137,7 +136,7 @@ export default function ListPage() {
                     <p className="ml-10 pt-1">Tittel på lek</p>
                   </div>
                   <div className="flex flex-col justify-center -mr-2 w-1/3">
-                    <p className="ml-10 leading-tight">
+                    <p className="ml-16 leading-tight">
                       Beskrivelse
                     </p>
                   </div>
@@ -157,7 +156,9 @@ export default function ListPage() {
                       description={game?.description ?? ""}
                       rating={Math.floor(Math.random() * 5) + 1}
                       gameId={game?.gameId ?? 0}
+                      playlistUserId={userId}
                       userId={game?.userId ?? ""}
+                      playlistId={playlistIdNumber}
                       onDelete={() => handleDeleteFromPlaylist(game?.gameId ?? 0)}
                     />
                   ))
