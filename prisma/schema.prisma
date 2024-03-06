@@ -125,7 +125,7 @@ model GameRating {
   game               Game                 @relation(fields: [gameId], references: [gameId])
   UserReportedRating UserReportedRating[]
 
-  @@index([userId])
+  // @@index([userId])
   @@index([gameId])
 }
 

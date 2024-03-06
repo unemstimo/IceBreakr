@@ -1,6 +1,5 @@
 import Head from "next/head";
-import { useState, type FormEvent } from "react";
-import { v4 as uuid } from "uuid";
+import { useState } from "react";
 import {
   SignInButton,
   SignOutButton,
@@ -8,59 +7,15 @@ import {
   SignedOut,
   UserProfile,
 } from "@clerk/nextjs";
-
-import FaceRoundedIcon from "@mui/icons-material/FaceRounded";
-import PlayCircleOutlineRoundedIcon from "@mui/icons-material/PlayCircleOutlineRounded";
-import MoreHorizRoundedIcon from "@mui/icons-material/MoreHorizRounded";
-import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import ManageAccountsRoundedIcon from "@mui/icons-material/ManageAccountsRounded";
 import PageWrapper from "~/components/pageWrapper";
 import NavigationBar from "~/components/navigationBar";
 import MyPlaylists from "~/components/myPlaylists";
-import { api } from "~/utils/api";
 import MyFriendsBar from "~/components/myFriendsBar";
 
-type Friend = {
-  id: string;
-  name: string;
-};
-
 export default function Profile() {
-  const [searchTerm, setSearchTerm] = useState("");
-
   // TODO: implement this
   // const myPlaylistsQuery = api.playlist.getPlaylistsByUserId.useQuery();
-
-  const [friendsList, setFriendsList] = useState<Friend[]>([]);
-
-  const [showMorePopup, setShowMorePopup] = useState<{
-    visible: boolean;
-    friendId: string | null;
-  }>({ visible: false, friendId: null });
-
-  const handleShowMorePopup = (friendId: string | null) => {
-    setShowMorePopup({ visible: !showMorePopup.visible, friendId });
-  };
-
-  const handleAddFriend = () => {
-    const newID = uuid();
-    console.log("Add Friend");
-    const newFriend = { id: newID, name: "Friend " + newID.slice(0, 4) };
-    setFriendsList([...friendsList, newFriend]);
-  };
-
-  const handleRemoveFriend = (friendId: string) => {
-    console.log("Remove Friend");
-    const newFriendsList = friendsList.filter(
-      (friend) => friend.id !== friendId,
-    );
-    setFriendsList(newFriendsList);
-    handleShowMorePopup(null);
-  };
-
-  const handleFriendsButton = () => {
-    console.log("Friend clicked");
-  };
 
   const [showManageAccount, setShowManageAccount] = useState({
     visible: false,
@@ -116,7 +71,7 @@ export default function Profile() {
               <p>Nylig lekt</p>
             </div>
           </section>
-          <MyFriendsBar/>
+          <MyFriendsBar />
         </SignedIn>
         {showManageAccount.visible && (
           <div className="absolute left-0 top-0 flex h-full w-full flex-col items-center justify-center bg-neutral-900 bg-opacity-90 p-24 align-middle">

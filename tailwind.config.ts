@@ -60,12 +60,12 @@ const config = {
       },
       colors: {
         border: colors.neutral["700"],
+        // input: colors.violet["600"],
+        text: colors.neutral["100"],
         input: colors.neutral["800"],
-        ring: "hsl(var(--ring))",
-        // background: "hsl(var(--background))",
+        ring: colors.violet["600"],
         background: colors.neutral["900"],
         backgroundInput: colors.neutral["800"],
-        // foreground: "hsl(var(--foreground))",
         foreground: colors.neutral["700"],
 
         primary: {
@@ -89,7 +89,8 @@ const config = {
           foreground: colors.neutral["100"],
         },
         popover: {
-          DEFAULT: "hsl(var(--secondary))",
+          // DEFAULT: "hsl(var(--secondary))",
+          DEFAULT: colors.neutral["800"],
 
           foreground: "hsl(var(--popover-foreground))",
         },

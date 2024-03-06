@@ -4,7 +4,7 @@ import { userRouter } from "./routers/user";
 import { gameRouter } from "./routers/game";
 import { categoryRouter } from "./routers/category";
 import { playlistRouter } from "./routers/playlist";
-import { ratingRouter } from "./routers/comment";
+import { ratingRouter } from "./routers/rating";
 
 /**
  * This is the primary router for your server.
