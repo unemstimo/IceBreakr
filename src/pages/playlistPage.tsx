@@ -1,7 +1,7 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import Image from 'next/image';
+import Image from "next/image";
 import SearchIcon from "@mui/icons-material/Search";
 import ArrowBackRounded from "@mui/icons-material/ArrowBackRounded";
 import Advertisement from "~/components/advertisement";
@@ -14,13 +14,17 @@ import FilterAltRoundedIcon from "@mui/icons-material/FilterAltRounded";
 import PitBull from "~/assets/images/pitbull.jpeg";
 import { SignedIn, useUser } from "@clerk/nextjs";
 import Link from "next/link";
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 
-export default function ListPage() {
+type ListPageProps = {
+  pageName?: string;
+};
+
+export default function ListPage({ pageName }: ListPageProps) {
   const router = useRouter();
   const { playlistId } = router.query;
   const currentUser = useUser();
-  const [error, setError] = useState<string | null>(null);
+
   const playlistIdNumber = parseInt(playlistId as string, 10);
 
   // Fetch data based on playlistId using useQuery
@@ -38,7 +42,7 @@ export default function ListPage() {
   const gameInPlaylistData = playlistQuery.data?.GameInPlaylist ?? [];
   const games = gameInPlaylistData;
   const amountOfGames = games.length;
-  
+
   const handleDeleteFromPlaylist = async (gameId: number) => {
     console.log("Removing game from playlist", gameId, playlistIdNumber);
     try {
@@ -50,13 +54,12 @@ export default function ListPage() {
     } catch (error) {
       console.log("Error");
     }
-  
   };
 
   return (
     <div>
       <Head>
-        <title>Dashboard | IceBreakr</title>
+        <title>{pageName ?? "Playlist"} | IceBreakr</title>
         <meta
           name="dashboard"
           content="Learn more about what IceBreakr offers."
@@ -113,7 +116,7 @@ export default function ListPage() {
                     <p className="font-normal text-neutral-400">
                       Laget av: {username} • {amountOfGames} leker
                     </p>
-                    <p className="text-neutral-400 mt-6 font-normal text-md">
+                    <p className="mt-6 text-md font-normal text-neutral-400">
                       {description}
                     </p>
                   </div>
@@ -122,20 +125,18 @@ export default function ListPage() {
             </div>
           </section>
           {/* List section */}
-          <section className="flex h-full w-full flex-col  justify-start rounded-b-2xl p-4 align-middle bg-gradient-to-b from-[#1b181f] to-neutral-900">
-            <div className="flex items-center flex-col justify-center">
-              <div className="grid w-full h-full gap-4 -mt-10">
+          <section className="flex h-full w-full flex-col  justify-start rounded-b-2xl bg-gradient-to-b from-[#1b181f] to-neutral-900 p-4 align-middle">
+            <div className="flex flex-col items-center justify-center">
+              <div className="-mt-10 grid h-full w-full gap-4">
                 {/* Header for game list */}
-                <div className="relative h-10 align-top flex w-full flex-row border-b-2 border-neutral-800">
-                  <div className="flex-grow justify-normal mr-10">
+                <div className="relative flex h-10 w-full flex-row border-b-2 border-neutral-800 align-top">
+                  <div className="mr-10 flex-grow justify-normal">
                     <p className="ml-10 pt-1">Tittel på lek</p>
                   </div>
-                  <div className="flex flex-col justify-center -mr-2 w-1/3">
-                    <p className="ml-16 leading-tight">
-                      Beskrivelse
-                    </p>
+                  <div className="-mr-2 flex w-1/3 flex-col justify-center">
+                    <p className="ml-16 leading-tight">Beskrivelse</p>
                   </div>
-                  <div className="flex flex-col justify-center mr-12 w-1/3">
+                  <div className="mr-12 flex w-1/3 flex-col justify-center">
                     <p className="text-right">Varighet</p>
                   </div>
                 </div>
@@ -154,21 +155,28 @@ export default function ListPage() {
                       userId={game?.userId ?? ""}
                       playlistId={playlistIdNumber}
                       playlistUserId={userId}
-                      onDelete={() => handleDeleteFromPlaylist(game?.gameId ?? 0)}
+                      onDelete={() =>
+                        handleDeleteFromPlaylist(game?.gameId ?? 0)
+                      }
                     />
                   ))
                 ) : (
                   <>
-                    {currentUser.isSignedIn && currentUser.user.id === userId ? (
+                    {currentUser.isSignedIn &&
+                    currentUser.user.id === userId ? (
                       <Link href="/browse">
-                        <div className="flex flex-row justify-center hover:bg-neutral-800 w-full h-20 p-6 rounded-lg">
-                          <p className="justify-center -mt-1 mr-4">Legg til spill i spilleliste</p>
+                        <div className="flex h-20 w-full flex-row justify-center rounded-lg p-6 hover:bg-neutral-800">
+                          <p className="-mt-1 mr-4 justify-center">
+                            Legg til spill i spilleliste
+                          </p>
                           <AddCircleOutlineIcon />
                         </div>
                       </Link>
                     ) : (
-                      <div className="flex flex-row justify-center w-full h-20 p-6 rounded-lg">
-                        <p className="justify-center -mt-1 mr-4">Ingen spill i spillelisten</p>
+                      <div className="flex h-20 w-full flex-row justify-center rounded-lg p-6">
+                        <p className="-mt-1 mr-4 justify-center">
+                          Ingen spill i spillelisten
+                        </p>
                       </div>
                     )}
                   </>
