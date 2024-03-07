@@ -160,7 +160,7 @@ const CreateGame = () => {
             max="40"
             value={players}
             onChange={handlePlayerCountChange}
-            placeholder="Antall spillere..."
+            placeholder="Minst antall spillere..."
             className="w-full rounded-lg bg-neutral-800 py-2 pl-2 pr-2 text-white focus:outline-none"
           />
 
