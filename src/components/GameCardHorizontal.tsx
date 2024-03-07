@@ -8,7 +8,11 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import QueueIcon from '@mui/icons-material/Queue';
 import { useUser } from "@clerk/nextjs";
-
+import StarBorderIcon from '@mui/icons-material/StarBorder'; 
+import StarIcon from '@mui/icons-material/Star'; 
+import { useRouter } from "next/router";
+import { api } from "~/utils/api";
+import { useToast } from "~/components/ui/use-toast";
 
 export type Game = {
   gameId: number;
@@ -40,6 +44,20 @@ const GameCardHorizontal = ({
   const [showDeleteButton, setShowDeleteButton] = useState(false);
   const popupRef = useRef<HTMLDivElement>(null);
   const currentUser = useUser();
+  const router = useRouter();
+  const [isFavorite, setIsFavorite] = useState(false);
+  const favoriteQuery = api.favorite.getUserFavoriteGames.useQuery();
+  const { toast } = useToast();
+
+  useEffect(() => {
+    if (favoriteQuery.data) {
+      const favoriteGames = favoriteQuery.data.map(game => game.gameId);
+      setIsFavorite(favoriteGames.includes(gameId));
+    }
+  }, [favoriteQuery.data, gameId]);
+
+  const AddToFavoriteMutation = api.favorite.addGame.useMutation();
+  const RemoveFromFavoriteMutation = api.favorite.removeGame.useMutation();
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -90,6 +108,50 @@ const GameCardHorizontal = ({
     console.log("handleAddToQueue button pressed")
   }
 
+  function handleFavoritePressed(e: React.MouseEvent<HTMLButtonElement>) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    // Call TRPC mutation function to add or remove game from favorites
+    if (!isFavorite) {
+      handleAddToFavorite();
+    } else {
+      handleDeleteFromFavorite();
+    }
+  }
+  
+  const handleAddToFavorite = async () => {
+    try {
+      await AddToFavoriteMutation.mutateAsync({
+        gameId: gameId
+      });
+      await favoriteQuery.refetch();
+      setIsFavorite(true); // Update isFavorite after adding to favorites
+      toast({
+        title: "Lagt til i favoritter",
+        description: "Lek er nå lagt til i dine favoritter",
+      });
+    } catch (error) {
+      console.log("Error");
+    }
+  };
+  
+  const handleDeleteFromFavorite = async () => {
+    try {
+      await RemoveFromFavoriteMutation.mutateAsync({
+        gameId: gameId
+      });
+      await favoriteQuery.refetch();
+      setIsFavorite(false); // Update isFavorite after removing from favorites
+      toast({
+        title: "Fjernet fra favoritter",
+        description: "Lek er nå fjernet fra dine favoritter",
+      });
+    } catch (error) {
+      console.log("Error");
+    }
+  };
+
   return (
     <Link href={`/gamePage?gameId=${gameId}`} passHref>
       <div className="relative text-rg flex w-full cursor-pointer flex-row rounded-lg hover:bg-neutral-800 p-2">
@@ -121,11 +183,28 @@ const GameCardHorizontal = ({
       { showDeleteButton && (
         <div
           ref={popupRef}
-          className="absolute bottom-12 right-4 text-right flex flex-col items-start px-4 h-32 w-52  rounded-xl bg-gradient-to-b from-neutral-800 to-[#1b181f]"
+          className="absolute bottom-12 right-4 text-right flex flex-col items-start px-4 h-44 w-52  rounded-xl bg-gradient-to-b from-neutral-800 to-[#1b181f]"
         >
           {/* Popup content here */}
+          { !isFavorite && (
+          <button onClick={handleFavoritePressed} className="w-full">
+            <div className="pl-3 pr-5 py-3 mt-3 mb-1 w-full hover:bg-neutral-700 rounded-lg ">
+              <p className="text-sm text-left">
+                <StarBorderIcon className="mr-2" /> Legg til i favoritter
+              </p>
+            </div>
+          </button>
+          )} { isFavorite && (
+            <button onClick={handleFavoritePressed} className="w-full">
+            <div className="pl-3 pr-5 py-3 mt-3 mb-1 w-full hover:bg-neutral-700 rounded-lg ">
+              <p className="text-sm text-left">
+                <StarIcon className="mr-2" /> Fjern fra favoritter
+              </p>
+            </div>
+          </button>
+          )}
           <button onClick={handleAddToQueue} className="w-full">
-            <div className="pl-3 pr-5 py-3 mt-4 mb-1 w-full hover:bg-neutral-700 rounded-lg ">
+            <div className="pl-3 pr-5 py-3 mb-1 w-full hover:bg-neutral-700 rounded-lg ">
               <p className="text-sm text-left">
                 <QueueIcon className="mr-2" /> Legg til i kø
               </p>
