@@ -19,9 +19,12 @@ export default function Home() {
     { enabled: user.user?.id !== undefined },
   );
 
+  const queueQuery = api.playlist.getQueuePlaylist.useQuery();
+  const useQueueMutation = api.playlist.createQueue.useMutation();
+
   useEffect(() => {
-    if (!user.isSignedIn) router.push("/dashboard");
-    if (isLoading) return;
+    if (isLoading || queueQuery.isLoading) return;
+
     if (!user.isSignedIn) {
       router.push("/dashboard");
     } else if (
@@ -35,11 +38,21 @@ export default function Home() {
         administrator: false,
       };
       useUserMuation.mutate(input);
+    } else if (queueQuery.isSuccess && queueQuery.data?.length === 0) {
+      useQueueMutation.mutate();
     } else {
-      console.log("redirect else");
       router.push("/dashboard");
     }
-  }, [isLoading, isSuccess, router, useUserMuation, user, userDb]);
+  }, [
+    isLoading,
+    isSuccess,
+    router,
+    useUserMuation,
+    user,
+    userDb,
+    queueQuery,
+    useQueueMutation,
+  ]);
 
   return (
     <div className="flex h-full w-full items-center justify-center">

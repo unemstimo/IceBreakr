@@ -28,6 +28,7 @@ model User {
   UserFavouritedGame   UserFavoriteGame[]
   GameRating           GameRating[]
   UserFavoritePlaylist UserFavoritePlaylist[]
+  createdAt            DateTime               @default(now())
 
   @@index([userId])
 }
@@ -48,6 +49,7 @@ model Game {
   GameInPlaylist     GameInPlaylist[]
   UserFavouritedGame UserFavoriteGame[]
   UserReportedGame   UserReportedGame[]
+  createdAt          DateTime           @default(now())
 
   @@index([userId])
 }
@@ -57,12 +59,15 @@ model Playlist {
   name                 String                 @db.VarChar(255)
   userId               String
   description          String?
+  isQueue              Boolean?               @default(false)
   user                 User                   @relation(fields: [userId], references: [userId])
   games                Game[]
   GameInPlaylist       GameInPlaylist[]
   UserFavoritePlaylist UserFavoritePlaylist[]
+  createdAt            DateTime               @default(now())
 
   @@index([userId])
+  @@index([isQueue])
 }
 
 model GameInPlaylist {
@@ -70,6 +75,7 @@ model GameInPlaylist {
   playlistId Int
   game       Game     @relation(fields: [gameId], references: [gameId])
   playlist   Playlist @relation(fields: [playlistId], references: [playlistId])
+  createdAt  DateTime @default(now())
 
   @@id([gameId, playlistId])
   @@index([gameId])
@@ -81,6 +87,7 @@ model Category {
   name           String
   games          Game[]
   GameInCategory GameInCategory[]
+  createdAt      DateTime         @default(now())
 }
 
 model GameInCategory {
@@ -88,6 +95,7 @@ model GameInCategory {
   categoryId Int
   game       Game     @relation(fields: [gameId], references: [gameId])
   category   Category @relation(fields: [categoryId], references: [categoryId])
+  createdAt  DateTime @default(now())
 
   @@id([categoryId, gameId])
   @@index([categoryId])
@@ -95,10 +103,11 @@ model GameInCategory {
 }
 
 model UserFavoriteGame {
-  userId String
-  gameId Int
-  user   User   @relation(fields: [userId], references: [userId])
-  game   Game   @relation(fields: [gameId], references: [gameId])
+  userId    String
+  gameId    Int
+  user      User     @relation(fields: [userId], references: [userId])
+  game      Game     @relation(fields: [gameId], references: [gameId])
+  createdAt DateTime @default(now())
 
   @@id([userId, gameId])
   @@index([userId])
@@ -110,6 +119,7 @@ model UserFavoritePlaylist {
   playlistId Int
   user       User     @relation(fields: [userId], references: [userId])
   playlist   Playlist @relation(fields: [playlistId], references: [playlistId])
+  createdAt  DateTime @default(now())
 
   @@id([userId, playlistId])
   @@index([userId])
@@ -117,11 +127,12 @@ model UserFavoritePlaylist {
 }
 
 model UserReportedGame {
-  userId String
-  gameId Int
-  reason String?
-  user   User    @relation(fields: [userId], references: [userId])
-  game   Game    @relation(fields: [gameId], references: [gameId])
+  userId    String
+  gameId    Int
+  reason    String?
+  user      User     @relation(fields: [userId], references: [userId])
+  game      Game     @relation(fields: [gameId], references: [gameId])
+  createdAt DateTime @default(now())
 
   @@id([userId, gameId])
   @@index([userId])
@@ -137,6 +148,7 @@ model GameRating {
   user               User                 @relation(fields: [userId], references: [userId])
   game               Game                 @relation(fields: [gameId], references: [gameId])
   UserReportedRating UserReportedRating[]
+  createdAt          DateTime             @default(now())
 
   @@index([userId])
   @@index([gameId])
@@ -148,6 +160,7 @@ model UserReportedRating {
   reason     String?
   user       User       @relation(fields: [reporterId], references: [userId])
   rating     GameRating @relation(fields: [ratingId], references: [ratingId])
+  createdAt  DateTime   @default(now())
 
   @@id([reporterId, ratingId])
   @@index([reporterId])

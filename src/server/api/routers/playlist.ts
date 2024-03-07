@@ -9,6 +9,7 @@ import {
   publicProcedure,
 } from "~/server/api/trpc";
 import { type AppRouter } from "../root";
+import { i } from "vitest/dist/reporters-1evA5lom";
 
 export type CreatePlaylist = inferProcedureInput<
   AppRouter["playlist"]["create"]
@@ -138,6 +139,46 @@ export const playlistRouter = createTRPCRouter({
             gameId: input.gameId,
             playlistId: input.playlistId,
           },
+        },
+      });
+    }),
+
+  getQueuePlaylist: privateProcedure.query(({ ctx }) => {
+    return ctx.db.playlist.findMany({
+      where: { userId: ctx.userId, isQueue: true },
+    });
+  }),
+
+  createQueue: privateProcedure.mutation(async ({ ctx }) => {
+    // check if queue playlist already exists
+    const queuePlaylist = await ctx.db.playlist.findFirst({
+      where: { userId: ctx.userId, isQueue: true },
+    });
+    if (queuePlaylist) {
+      return queuePlaylist;
+    }
+    return ctx.db.playlist.create({
+      data: {
+        name: "Queue",
+        userId: ctx.userId,
+        isQueue: true,
+      },
+    });
+  }),
+
+  addGameToQueue: privateProcedure
+    .input(z.object({ gameId: z.number().min(1) }))
+    .mutation(async ({ ctx, input }) => {
+      const queuePlaylist = await ctx.db.playlist.findFirst({
+        where: { userId: ctx.userId, isQueue: true },
+      });
+      if (!queuePlaylist) {
+        return null;
+      }
+      return ctx.db.gameInPlaylist.create({
+        data: {
+          playlistId: queuePlaylist.playlistId,
+          gameId: input.gameId,
         },
       });
     }),
