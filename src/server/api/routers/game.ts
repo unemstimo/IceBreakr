@@ -54,6 +54,14 @@ export const gameRouter = createTRPCRouter({
             },
           },
           ratings: true,
+          UserFavouritedGame: {
+            select: {
+              userId: true
+            },
+            where: {
+              userId: ctx.session?.userId ?? ""
+            }
+          }
         },
       })
       .then((games) => {
@@ -92,6 +100,9 @@ export const gameRouter = createTRPCRouter({
   getGameByUserId: privateProcedure.query(({ ctx }) => {
     return ctx.db.game.findMany({
       where: { userId: ctx.userId },
+      include: {  
+        UserFavouritedGame: true
+      }
     });
   }),
 });

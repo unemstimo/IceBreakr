@@ -32,6 +32,7 @@ import {
 import MyPlaylists from "~/components/myPlaylists";
 import StarIcon from "@mui/icons-material/Star";
 import { Button } from "~/components/ui/button";
+import StarBorderIcon from '@mui/icons-material/StarBorder';
 
 export default function GamePage() {
   const router = useRouter();
@@ -203,13 +204,18 @@ export default function GamePage() {
               <StarRoundedIcon />
               {ratingRandom}
             </button>
-            <div className="relative">
-              <button
-                onClick={handleShowPlaylistPicker}
-                className="mt-4 flex min-w-16 items-center justify-center rounded-full bg-violet-500 px-4 py-2 align-middle text-rg"
-              >
-                Legg til i lekeliste
-              </button>
+            <div className="relative flex-col">
+              <div className="flex">
+                <button
+                  onClick={handleShowPlaylistPicker}
+                  className="mt-4 flex min-w-16 items-center justify-center rounded-full bg-violet-500 px-4 py-2 align-middle text-rg"
+                >
+                  Legg til i lekeliste
+                </button>
+                <button className="ml-6 mt-2">
+                  <StarBorderIcon />
+                </button>
+              </div>
               {showPlaylistPicker.visible && (
                 <div className="absolute z-10 flex items-center justify-center rounded-3xl border-8 bg-neutral-800 p-4">
                   <div className="flex-col items-center justify-center align-middle">

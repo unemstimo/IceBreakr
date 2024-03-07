@@ -237,6 +237,7 @@ export default function Browse() {
                   <GameCard
                     key={game.gameId}
                     name={game.name}
+                    refetchGames={()=> gameQuery.refetch()}
                     duration={game.duration}
                     // category={"kategori"}
                     numberOfPlayers={game.numberOfPlayers}
@@ -245,6 +246,7 @@ export default function Browse() {
                     rating={game.averageRating}
                     gameId={game.gameId}
                     userId={game.userId}
+                    isFavorite={game.UserFavouritedGame.length > 0}
                   />
                 ))}
               </div>

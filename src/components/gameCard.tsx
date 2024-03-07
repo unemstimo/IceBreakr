@@ -7,6 +7,8 @@ import StarBorderIcon from '@mui/icons-material/StarBorder';
 import StarIcon from '@mui/icons-material/Star';
 import { api } from "~/utils/api";
 import { useRouter } from "next/router";
+import { getQueryKey } from "@trpc/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 
 
 export type Game = {
@@ -18,19 +20,14 @@ export type Game = {
   rules: string;
   description: string;
   rating: number;
+  isFavorite: boolean;
+  refetchGames: VoidFunction;
 };
 
-const GameCard = ({ gameId, name, description, rating }: Game) => {
+const GameCard = ({ gameId, name, description, rating, isFavorite, refetchGames}: Game) => {
   const router = useRouter();
-  const [isFavorite, setIsFavorite] = useState(false);
-  const favoriteQuery = api.favorite.getUserFavoriteGames.useQuery();
-
-  useEffect(() => {
-    if (favoriteQuery.data) {
-      const favoriteGames = favoriteQuery.data.map(game => game.gameId);
-      setIsFavorite(favoriteGames.includes(gameId));
-    }
-  }, [favoriteQuery.data]);
+  const queryClient = useQueryClient();
+  const postListKey = getQueryKey(api.gameRouter.getAll, undefined, "query");
 
   const AddToFavoriteMutation = api.favorite.addGame.useMutation();
   const RemoveFromFavoriteMutation = api.favorite.removeGame.useMutation();
@@ -39,23 +36,20 @@ const GameCard = ({ gameId, name, description, rating }: Game) => {
     e.preventDefault();
     e.stopPropagation();
     
-    // Toggle isFavorite state
-    setIsFavorite(prevIsFavorite => !prevIsFavorite);
-    
     // Call TRPC mutation function to add or remove game from favorites
     if (!isFavorite) {
       handleAddToFavorite();
     } else {
       handleDeleteFromFavorite();
     }
+    refetchGames()
   }
 
   const handleAddToFavorite = async () => {
     try {
       await AddToFavoriteMutation.mutateAsync({
         gameId: gameId
-      });
-      await favoriteQuery.refetch();
+      })
     } catch (error) {
       console.log("Error");
     }
@@ -65,8 +59,7 @@ const GameCard = ({ gameId, name, description, rating }: Game) => {
     try {
       await RemoveFromFavoriteMutation.mutateAsync({
         gameId: gameId
-      });
-      await favoriteQuery.refetch();
+      })    
     } catch (error) {
       console.log("Error");
     }
