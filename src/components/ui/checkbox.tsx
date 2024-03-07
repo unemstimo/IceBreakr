@@ -21,7 +21,15 @@ const Checkbox = forwardRef<
   if (!!label) {
     return (
       <div className="flex items-center space-x-2">
-        <Checkbox id={label} />
+        <Checkbox
+          ref={ref}
+          className={cn(
+            "peer h-5 w-5 shrink-0 rounded-sm border border-primary  bg-secondary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground",
+            className,
+          )}
+          {...props}
+          id={label}
+        />
         <label
           htmlFor={label}
           className="leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"

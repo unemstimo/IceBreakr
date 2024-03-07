@@ -37,7 +37,8 @@ export default function Dashboard() {
 
         {/* Middle section */}
         <section className="flex h-full w-full  flex-col justify-start overflow-hidden rounded-2xl bg-neutral-900 p-4 pr-4 align-middle">
-          {/* Search section */}
+          {/* Search section 
+          
           <div className="flex w-full flex-row items-center justify-between align-middle">
             <form
               onSubmit={handleSearchSubmit}
@@ -57,7 +58,8 @@ export default function Dashboard() {
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </form>
-          </div>
+          </div>*/}
+          
           {/* Content section */}
           <div className="mt-4 h-full w-full">
             <h3 className="mb-2">Lekelister for deg</h3>
