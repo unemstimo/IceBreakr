@@ -29,6 +29,7 @@ model User {
   GameRating           GameRating[]
   UserFavoritePlaylist UserFavoritePlaylist[]
   createdAt            DateTime               @default(now())
+  GameInUserQueue      GameInUserQueue[]
 
   @@index([userId])
 }
@@ -50,6 +51,7 @@ model Game {
   UserFavouritedGame UserFavoriteGame[]
   UserReportedGame   UserReportedGame[]
   createdAt          DateTime           @default(now())
+  GameInUserQueue    GameInUserQueue[]
 
   @@index([userId])
 }
@@ -165,4 +167,19 @@ model UserReportedRating {
   @@id([reporterId, ratingId])
   @@index([reporterId])
   @@index([ratingId])
+}
+
+model GameInUserQueue {
+  queuedId   Int    @id @unique @default(autoincrement())
+  gameId     Int
+  userId     String
+  TimePlayed Int?
+  user       User   @relation(fields: [userId], references: [userId])
+  game       Game   @relation(fields: [gameId], references: [gameId])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([gameId])
 }
