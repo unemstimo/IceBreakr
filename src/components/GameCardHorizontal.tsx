@@ -171,7 +171,7 @@ const GameCardHorizontal = ({
           </p>
         </div>
         <div className="flex flex-col justify-center w-1/6">
-          <p className="text-right">{duration}</p>
+          <p className="text-right">{duration} min</p>
         </div>
       </div>
       <button

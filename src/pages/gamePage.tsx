@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Placeholder from "~/assets/images/placeholder.png";
 import {
@@ -32,7 +32,10 @@ import {
 import MyPlaylists from "~/components/myPlaylists";
 import StarIcon from "@mui/icons-material/Star";
 import { Button } from "~/components/ui/button";
-import StarBorderIcon from '@mui/icons-material/StarBorder';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import { useToast } from "~/components/ui/use-toast";
 
 export default function GamePage() {
   const router = useRouter();
@@ -42,6 +45,8 @@ export default function GamePage() {
     { id: Number(gameId ?? 1) },
     { enabled: gameId !== undefined },
   );
+  const [isFavorite, setIsFavorite] = useState(false);
+  const favoriteQuery = api.favorite.getUserFavoriteGames.useQuery();
 
   const name = gameQuery.data?.name ?? "";
   const numberOfPlayers = gameQuery.data?.numberOfPlayers ?? "";
@@ -57,6 +62,15 @@ export default function GamePage() {
   const [showManageAccount, setShowManageAccount] = useState({
     visible: false,
   });
+
+  useEffect(() => {
+    if (favoriteQuery.data && gameId) {
+      const isGameFavorite = favoriteQuery.data.find(game => game.gameId === Number(gameId));
+      setIsFavorite(!!isGameFavorite);
+    }
+  }, [favoriteQuery.data, gameId]);
+  
+  
 
   const handleManageAccount = () => {
     setShowManageAccount({ visible: !showManageAccount.visible });
@@ -84,6 +98,9 @@ export default function GamePage() {
   const [rating, setRating] = useState<number>();
   const useRating = api.rating.create.useMutation();
   const useDeleteRating = api.rating.delete.useMutation();
+  const AddToFavoriteMutation = api.favorite.addGame.useMutation();
+  const RemoveFromFavoriteMutation = api.favorite.removeGame.useMutation();
+  const { toast } = useToast();
 
   const ratingQuery = api.rating.getRatingsByGameId.useQuery(
     {
@@ -127,6 +144,37 @@ export default function GamePage() {
       console.error("Error deleting rating: ", e);
     }
   };
+
+  const handleFavoritePressed = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+  
+    try {
+      if (!isFavorite) {
+        await AddToFavoriteMutation.mutateAsync({
+          gameId: Number(gameId)
+        });
+        toast({
+          title: "Lagt til i favoritter",
+          description: "Lek er nå lagt til i dine favoritter",
+        });
+      } else {
+        await RemoveFromFavoriteMutation.mutateAsync({
+          gameId: Number(gameId)
+        });
+        toast({
+          title: "Fjernet fra favoritter",
+          description: "Lek er nå fjernet fra dine favoritter",
+        });
+      }
+      gameQuery.refetch();
+      favoriteQuery.refetch();
+    } catch (error) {
+      console.log("Error:", error);
+    }
+  };
+  
+  
 
   return (
     <div>
@@ -200,20 +248,31 @@ export default function GamePage() {
                 </div>
               </div>
             </div>
-            <button className="absolute right-4 top-4 flex min-w-16 items-center justify-center rounded-full bg-violet-500 align-middle">
+            <button className="absolute right-4 top-4 flex min-w-16 justify-center rounded-full bg-violet-500 align-middle">
               <StarRoundedIcon />
               {ratingRandom}
             </button>
-            <div className="relative flex-col">
-              <div className="flex">
+            <div className="relative flex-row w-full">
+              <div className="flex flex-grow w-full p-2">
                 <button
                   onClick={handleShowPlaylistPicker}
                   className="mt-4 flex min-w-16 items-center justify-center rounded-full bg-violet-500 px-4 py-2 align-middle text-rg"
                 >
                   Legg til i lekeliste
                 </button>
-                <button className="ml-6 mt-2">
-                  <StarBorderIcon />
+                <button
+                  onClick={handleFavoritePressed}
+                  className="mb-1 ml-[500px] flex min-w-16 items-end px-4 align-middle text-rg hover:underline"
+                >
+                  {isFavorite ? (
+                    <>
+                      <h1><CheckCircleIcon style={{ color: '#51ed42', fontSize: 32 }} /></h1>
+                    </>
+                  ) : (
+                    <>
+                      <AddCircleOutlineIcon style={{ fontSize: 32 }} />
+                    </>
+                  )}
                 </button>
               </div>
               {showPlaylistPicker.visible && (
