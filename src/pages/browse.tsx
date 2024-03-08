@@ -1,21 +1,16 @@
-import Head from "next/head";
 import { useState, useEffect } from "react";
 import ArrowBackRounded from "@mui/icons-material/ArrowBackRounded";
-
 import Advertisement from "~/components/advertisement";
 import GameCard from "~/components/gameCard";
-import PageWrapper from "~/components/pageWrapper";
-import NavigationBar from "~/components/navigationBar";
 import { api } from "~/utils/api";
 import { type FetchGames } from "~/server/api/routers/game";
 import { Checkbox } from "~/components/ui/checkbox";
 import { type Category } from "~/server/api/routers/category";
 import router from "next/router";
-import MyFriendsBar from "~/components/myFriendsBar";
 import FilterAltRoundedIcon from "@mui/icons-material/FilterAltRounded";
 import { Input } from "~/components/ui/input";
 import { useToast } from "~/components/ui/use-toast";
-import { number } from "zod";
+import Layout from "~/components/layout";
 
 export default function Browse() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -108,18 +103,9 @@ export default function Browse() {
   const { toast } = useToast();
 
   return (
-    <div>
-      <Head>
-        <title>Dashboard | IceBreakr</title>
-        <meta
-          name="dashboard"
-          content="Learn more about what IceBreakr offers."
-        />
-      </Head>
-
-      <PageWrapper>
-        {/* Left section */}
-        <NavigationBar>
+    <Layout
+      navbarChildren={
+        <>
           <button
             onClick={() => {
               console.log("toast");
@@ -211,52 +197,48 @@ export default function Browse() {
               </div>
             </div>
           </div>
-        </NavigationBar>
-        {/* Middle section */}
-        <section className="flex h-full w-full">
-          <section className="flex h-full w-full flex-col justify-start rounded-2xl bg-neutral-900 p-4 align-middle">
-            <div className="flex flex-col justify-center gap-6">
-              <div className="flex w-full items-center justify-start gap-2 align-middle">
-                <button onClick={() => router.back()}>
-                  <ArrowBackRounded />
-                </button>{" "}
-                Utforsk alle leker
-              </div>
-              <div className="w-1/3">
-                <Input
-                  className="w-full bg-neutral-800 text-md text-white focus:outline-none"
-                  type="search" // Changed to search to improve semantics
-                  placeholder="Søk..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div>
-              {/* make the div 4 columns wide */}
-              <div className="grid h-full w-full gap-4 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-4">
-                {/* Map through the filteredGames array to render GameCard components */}
-                {filteredGames.map((game) => (
-                  <GameCard
-                    key={game.gameId}
-                    name={game.name}
-                    duration={game.duration}
-                    // category={"kategori"}
-                    numberOfPlayers={game.numberOfPlayers}
-                    rules={game.rules}
-                    description={game.description ?? ""}
-                    rating={game.averageRating}
-                    gameId={game.gameId}
-                    userId={game.userId}
-                  />
-                ))}
-              </div>
+        </>
+      }
+    >
+      <section className="flex h-full w-full">
+        <section className="flex h-full w-full flex-col justify-start rounded-2xl bg-neutral-900 p-4 align-middle">
+          <div className="flex flex-col justify-center gap-6">
+            <div className="flex w-full items-center justify-start gap-2 align-middle">
+              <button onClick={() => router.back()}>
+                <ArrowBackRounded />
+              </button>{" "}
+              Utforsk alle leker
             </div>
-          </section>
+            <div className="w-1/3">
+              <Input
+                className="w-full bg-neutral-800 text-md text-white focus:outline-none"
+                type="search" // Changed to search to improve semantics
+                placeholder="Søk..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            {/* make the div 4 columns wide */}
+            <div className="grid h-full w-full gap-4 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-4">
+              {/* Map through the filteredGames array to render GameCard components */}
+              {filteredGames.map((game) => (
+                <GameCard
+                  key={game.gameId}
+                  name={game.name}
+                  duration={game.duration}
+                  // category={"kategori"}
+                  numberOfPlayers={game.numberOfPlayers}
+                  rules={game.rules}
+                  description={game.description ?? ""}
+                  rating={game.averageRating}
+                  gameId={game.gameId}
+                  userId={game.userId}
+                />
+              ))}
+            </div>
+          </div>
         </section>
-        <MyFriendsBar />
-
-        {/* </div>
-      </main> */}
-      </PageWrapper>
-    </div>
+      </section>
+    </Layout>
   );
 }

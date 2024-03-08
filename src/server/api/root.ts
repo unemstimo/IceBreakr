@@ -5,6 +5,7 @@ import { gameRouter } from "./routers/game";
 import { categoryRouter } from "./routers/category";
 import { playlistRouter } from "./routers/playlist";
 import { ratingRouter } from "./routers/rating";
+import { queueRouter } from "./routers/queue";
 
 /**
  * This is the primary router for your server.
@@ -17,6 +18,7 @@ export const appRouter = createTRPCRouter({
   category: categoryRouter,
   playlist: playlistRouter,
   rating: ratingRouter,
+  queue: queueRouter,
 });
 
 // export type definition of API
