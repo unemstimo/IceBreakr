@@ -186,7 +186,7 @@ export default function GamePage() {
                   <div>
                     <h1 className="text-xxl">{name}</h1>
                     <h2 className="font-normal text-neutral-400">
-                      {numberOfPlayers} spillere • {duration}
+                      {numberOfPlayers} spillere • {duration} minutter
                     </h2>
                     <p className="mt-6 text-md font-normal text-neutral-200">
                       {description}

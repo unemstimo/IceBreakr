@@ -6,6 +6,7 @@ import { Combobox, type ComboxOption } from "~/components/ui/combox";
 import { Button } from "~/components/ui/button";
 import { CreateGame } from "~/server/api/routers/game";
 import ArrowBackRounded from "@mui/icons-material/ArrowBackRounded";
+import { time } from "console";
 
 
 export type Game = {
@@ -17,13 +18,12 @@ export type Game = {
   description: string;
   rating: number;
 };
-
 const CreateGame = () => {
   const [name, setName] = useState("");
   const [players, setPlayerCount] = useState("");
   const [description, setDescription] = useState("");
   const [rules, setRules] = useState("");
-  const [playtime, setPlayTime] = useState("");
+  const [playtime, setPlayTime] = useState("15");
   const [selectedPlayTime, setSelectedPlayTime] = useState("");
   const [categories, setCategories] = useState<ComboxOption[]>();
   const [selectedCategory, setSelectedCategory] = useState<ComboxOption>();
@@ -155,30 +155,30 @@ const CreateGame = () => {
             className="w-full rounded-lg bg-neutral-800 py-2 pl-2 pr-2 text-white focus:outline-none"
           />
           <input
-            type="text"
+            type="number"
+            min="1"
+            max="40"
             value={players}
             onChange={handlePlayerCountChange}
-            placeholder="Antall spillere..."
+            placeholder="Minst antall spillere..."
             className="w-full rounded-lg bg-neutral-800 py-2 pl-2 pr-2 text-white focus:outline-none"
           />
 
-          <div className="flex items-center justify-start gap-2 align-middle">
-            {/* AI generated snippet*/}
-            {["Kort", "Middels", "Lang", "Sykt lang"].map((time) => (
-              <button
-                key={time}
-                type="button"
-                onClick={() => handlePlayTimeButtonClick(time)}
-                className={`rounded-full px-4 py-2 text-white shadow-lg ${
-                  selectedPlayTime === time
-                    ? "bg-violet-500"
-                    : "bg-neutral-600 hover:bg-neutral-500"
-                }`}
-              >
-                {time}
-              </button>
-            ))}
-          </div>
+          
+          <label htmlFor="time">Estimert varighet: {playtime} </label>
+          <input
+            type="range"
+            id="time"
+            name="time"
+            min="1"
+            max="59"
+
+            value={playtime}
+            onChange={e => setPlayTime(e.target.value)}
+            placeholder="Tidsestimat"
+            className="w-full rounded-lg bg-neutral-800 py-2 pl-2 pr-2 text-white focus:outline-none"
+          />
+          
           <input
             type="text"
             value={description}
