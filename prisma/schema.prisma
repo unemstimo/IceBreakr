@@ -170,12 +170,13 @@ model UserReportedRating {
 }
 
 model GameInUserQueue {
-  queuedId   Int    @id @unique @default(autoincrement())
+  queuedId   Int      @id @unique @default(autoincrement())
   gameId     Int
   userId     String
-  TimePlayed Int?
-  user       User   @relation(fields: [userId], references: [userId])
-  game       Game   @relation(fields: [gameId], references: [gameId])
+  timePlayed Int?
+  queuedAt   DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [userId])
+  game       Game     @relation(fields: [gameId], references: [gameId])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())

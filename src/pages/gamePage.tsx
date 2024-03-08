@@ -1,4 +1,3 @@
-import Head from "next/head";
 import { useState } from "react";
 import Image from "next/image";
 import Placeholder from "~/assets/images/placeholder.png";
@@ -12,15 +11,12 @@ import {
 import MoreHorizRoundedIcon from "@mui/icons-material/MoreHorizRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import ManageAccountsRoundedIcon from "@mui/icons-material/ManageAccountsRounded";
-import PageWrapper from "~/components/pageWrapper";
-import NavigationBar from "~/components/navigationBar";
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
 import { useRouter } from "next/router";
 import StarRoundedIcon from "@mui/icons-material/StarRounded";
 import { api } from "~/utils/api";
 import { Badge } from "~/components/ui/badge";
 import PlaylistPicker from "~/components/playlistPicker";
-import MyFriendsBar from "~/components/myFriendsBar";
 import { Input } from "~/components/ui/input";
 import {
   Select,
@@ -33,13 +29,15 @@ import MyPlaylists from "~/components/myPlaylists";
 import StarIcon from "@mui/icons-material/Star";
 import { Button } from "~/components/ui/button";
 import Layout from "~/components/layout";
+import { useToast } from "~/components/ui/use-toast";
 
 export default function GamePage() {
   const router = useRouter();
-  const { gameId } = router.query;
+  const { gameId: gameIdQuery } = router.query;
+  const gameId = Number(gameIdQuery ?? 1);
   const userId = useUser().user?.id;
   const gameQuery = api.gameRouter.getGameById.useQuery(
-    { id: Number(gameId ?? 1) },
+    { id: gameId },
     { enabled: gameId !== undefined },
   );
 
@@ -128,6 +126,23 @@ export default function GamePage() {
     }
   };
 
+  const useQueueMutation = api.queue.create.useMutation();
+  const { toast } = useToast();
+  const utils = api.useUtils();
+
+  const handleAddToQueue = async () => {
+    if (!gameId) return;
+    try {
+      await useQueueMutation.mutateAsync({ gameId });
+      await utils.queue.getQueue.invalidate();
+    } catch {
+      toast({
+        title: "Obs!",
+        description: "kunne ikke legge til i kø",
+      });
+    }
+  };
+
   return (
     <>
       <Layout navbarChildren={<MyPlaylists />}>
@@ -192,31 +207,31 @@ export default function GamePage() {
               <StarRoundedIcon />
               {ratingCalculated}
             </button>
-            <div className="relative">
-              <button
-                onClick={handleShowPlaylistPicker}
-                className="mt-4 flex min-w-16 items-center justify-center rounded-full bg-violet-500 px-4 py-2 align-middle text-rg"
-              >
-                Legg til i lekeliste
-              </button>
-              {showPlaylistPicker.visible && (
-                <div className="absolute z-10 flex items-center justify-center rounded-3xl border-8 bg-neutral-800 p-4">
-                  <div className="flex-col items-center justify-center align-middle">
-                    <PlaylistPicker
-                      gameid={gameQuery.data?.gameId ?? 0}
-                      setShowPlaylistPicker={setShowPlaylistPicker}
-                    />
-                    <button
-                      className="-mt-4 w-full align-middle text-rg text-neutral-500 hover:text-neutral-400 hover:underline"
-                      onClick={() => {
-                        setShowPlaylistPicker({ visible: false });
-                      }}
-                    >
-                      Avbryt
-                    </button>
+            <div className="flex gap-4 pt-4">
+              <div className="relative">
+                <Button onClick={handleShowPlaylistPicker}>
+                  Legg til i lekeliste
+                </Button>
+                {showPlaylistPicker.visible && (
+                  <div className="absolute z-10 flex items-center justify-center rounded-3xl border-8 bg-neutral-800 p-4">
+                    <div className="flex-col items-center justify-center align-middle">
+                      <PlaylistPicker
+                        gameid={gameQuery.data?.gameId ?? 0}
+                        setShowPlaylistPicker={setShowPlaylistPicker}
+                      />
+                      <button
+                        className="-mt-4 w-full align-middle text-rg text-neutral-500 hover:text-neutral-400 hover:underline"
+                        onClick={() => {
+                          setShowPlaylistPicker({ visible: false });
+                        }}
+                      >
+                        Avbryt
+                      </button>
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
+              <Button onClick={handleAddToQueue}>Legg til i kø</Button>
             </div>
           </div>
           {/* Rules */}
@@ -330,17 +345,17 @@ export default function GamePage() {
         </section>
       </Layout>
 
-      {/* {showManageAccount.visible && (
-            <div className="absolute left-0 top-0 flex h-full w-full flex-col items-center justify-center bg-neutral-900 bg-opacity-90 p-24 align-middle">
-              <UserProfile />
-              <button
-                className="text-l mt-2 text-neutral-300 hover:underline"
-                onClick={handleManageAccount}
-              >
-                Lukk
-              </button>
-            </div>
-          )} */}
+      {showManageAccount.visible && (
+        <div className="absolute left-0 top-0 flex h-full w-full flex-col items-center justify-center bg-neutral-900 bg-opacity-90 p-24 align-middle">
+          <UserProfile />
+          <button
+            className="text-l mt-2 text-neutral-300 hover:underline"
+            onClick={handleManageAccount}
+          >
+            Lukk
+          </button>
+        </div>
+      )}
     </>
   );
 }

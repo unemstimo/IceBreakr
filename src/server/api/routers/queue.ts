@@ -3,9 +3,6 @@ import { z } from "zod";
 import { createTRPCRouter, privateProcedure } from "~/server/api/trpc";
 import { type AppRouter } from "../root";
 
-// export type CreatePlaylist = inferProcedureInput<
-//   AppRouter["playlist"]["create"]
-// >;
 export type Queue = inferProcedureOutput<AppRouter["queue"]["getQueue"]>;
 export type QueueItem = inferProcedureOutput<
   AppRouter["queue"]["getQueueItem"]
@@ -32,7 +29,7 @@ export const queueRouter = createTRPCRouter({
         userId: ctx.userId,
       },
       orderBy: {
-        createdAt: "desc",
+        queuedAt: "desc",
       },
       include: {
         game: true,
@@ -66,7 +63,7 @@ export const queueRouter = createTRPCRouter({
           queuedId: input.queuedId,
         },
         data: {
-          TimePlayed: input.timePlayed,
+          timePlayed: input.timePlayed,
         },
       });
     }),
@@ -81,6 +78,23 @@ export const queueRouter = createTRPCRouter({
       return ctx.db.gameInUserQueue.delete({
         where: {
           queuedId: input.queuedId,
+        },
+      });
+    }),
+
+  reQueue: privateProcedure
+    .input(
+      z.object({
+        queuedId: z.number(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db.gameInUserQueue.update({
+        where: {
+          queuedId: input.queuedId,
+        },
+        data: {
+          queuedAt: new Date(),
         },
       });
     }),
