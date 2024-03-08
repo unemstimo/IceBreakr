@@ -2,13 +2,13 @@ import {
   type inferProcedureOutput,
   type inferProcedureInput,
 } from "@trpc/server";
+import { type AppRouter } from "../root";
 import { z } from "zod";
 import {
   createTRPCRouter,
   privateProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
-import { type AppRouter } from "../root";
 
 export type CreatePlaylist = inferProcedureInput<
   AppRouter["playlist"]["create"]
@@ -52,17 +52,44 @@ export const playlistRouter = createTRPCRouter({
   getPlaylistById: publicProcedure
     .input(z.object({ id: z.number() }))
     .query(async ({ ctx, input }) => {
-      return ctx.db.playlist.findFirst({
-        where: { playlistId: input.id },
-        include: {
-          GameInPlaylist: {
-            include: {
-              game: true,
+      return ctx.db.playlist
+        .findFirst({
+          where: { playlistId: input.id },
+          include: {
+            GameInPlaylist: {
+              include: {
+                game: {
+                  include: {
+                    ratings: true,
+                  },
+                },
+              },
             },
+            user: true,
           },
-          user: true,
-        },
-      });
+        })
+        .then((playlist) => {
+          const ratedGames = playlist?.GameInPlaylist.map((game) => {
+            const totalScore = game.game.ratings.reduce(
+              (acc, rating) => acc + rating.starRating,
+              0,
+            );
+            const averageScore =
+              game.game.ratings.length > 0
+                ? totalScore / game.game.ratings.length
+                : 0;
+            delete (game.game as Partial<typeof game.game>).ratings;
+
+            return {
+              ...game.game,
+              averageRating: averageScore,
+            };
+          });
+          return {
+            ...playlist,
+            GameInPlaylist: ratedGames,
+          };
+        });
     }),
 
   getPlaylistsByUserId: privateProcedure.query(({ ctx }) => {
@@ -114,4 +141,44 @@ export const playlistRouter = createTRPCRouter({
         },
       });
     }),
+
+  // getQueuePlaylist: privateProcedure.query(({ ctx }) => {
+  //   return ctx.db.playlist.findMany({
+  //     where: { userId: ctx.userId, isQueue: true },
+  //   });
+  // }),
+
+  // createQueue: privateProcedure.mutation(async ({ ctx }) => {
+  //   // check if queue playlist already exists
+  //   const queuePlaylist = await ctx.db.playlist.findFirst({
+  //     where: { userId: ctx.userId, isQueue: true },
+  //   });
+  //   if (queuePlaylist) {
+  //     return queuePlaylist;
+  //   }
+  //   return ctx.db.playlist.create({
+  //     data: {
+  //       name: "Queue",
+  //       userId: ctx.userId,
+  //       isQueue: true,
+  //     },
+  //   });
+  // }),
+
+  // addGameToQueue: privateProcedure
+  //   .input(z.object({ gameId: z.number().min(1) }))
+  //   .mutation(async ({ ctx, input }) => {
+  //     const queuePlaylist = await ctx.db.playlist.findFirst({
+  //       where: { userId: ctx.userId, isQueue: true },
+  //     });
+  //     if (!queuePlaylist) {
+  //       return null;
+  //     }
+  //     return ctx.db.gameInPlaylist.create({
+  //       data: {
+  //         playlistId: queuePlaylist.playlistId,
+  //         gameId: input.gameId,
+  //       },
+  //     });
+  //   }),
 });

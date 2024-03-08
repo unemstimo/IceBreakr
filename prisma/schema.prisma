@@ -17,50 +17,59 @@ datasource db {
 // https://www.prisma.io/docs/orm/prisma-schema
 
 model User {
-  userId          String               @id @unique
-  username        String               @unique
-  mail            String               @unique
-  administrator   Boolean
-  games           Game[]
-  playlists       Playlist[]
-  reportedGames   UserReportedGame[]
-  reportedRatings UserReportedRating[]
-  favouritedGames UserFavouritedGame[]
-  GameRating      GameRating[]
+  userId               String                 @id @unique
+  username             String                 @unique
+  mail                 String                 @unique
+  administrator        Boolean
+  games                Game[]
+  playlists            Playlist[]
+  reportedGames        UserReportedGame[]
+  reportedRatings      UserReportedRating[]
+  UserFavouritedGame   UserFavoriteGame[]
+  GameRating           GameRating[]
+  UserFavoritePlaylist UserFavoritePlaylist[]
+  createdAt            DateTime               @default(now())
+  GameInUserQueue      GameInUserQueue[]
 
   @@index([userId])
 }
 
 model Game {
-  gameId             Int                  @id @unique @default(autoincrement())
+  gameId             Int                @id @unique @default(autoincrement())
   userId             String
   name               String
   duration           String
   numberOfPlayers    String
   rules              String
   description        String?
-  user               User                 @relation(fields: [userId], references: [userId])
+  user               User               @relation(fields: [userId], references: [userId])
   categories         Category[]
   playlists          Playlist[]
   ratings            GameRating[]
   GameInCategory     GameInCategory[]
   GameInPlaylist     GameInPlaylist[]
-  UserFavouritedGame UserFavouritedGame[]
+  UserFavouritedGame UserFavoriteGame[]
   UserReportedGame   UserReportedGame[]
+  createdAt          DateTime           @default(now())
+  GameInUserQueue    GameInUserQueue[]
 
   @@index([userId])
 }
 
 model Playlist {
-  playlistId     Int              @id @unique @default(autoincrement())
-  name           String           @db.VarChar(255)
-  userId         String
-  description    String?
-  user           User             @relation(fields: [userId], references: [userId])
-  games          Game[]
-  GameInPlaylist GameInPlaylist[]
+  playlistId           Int                    @id @unique @default(autoincrement())
+  name                 String                 @db.VarChar(255)
+  userId               String
+  description          String?
+  isQueue              Boolean?               @default(false)
+  user                 User                   @relation(fields: [userId], references: [userId])
+  games                Game[]
+  GameInPlaylist       GameInPlaylist[]
+  UserFavoritePlaylist UserFavoritePlaylist[]
+  createdAt            DateTime               @default(now())
 
   @@index([userId])
+  @@index([isQueue])
 }
 
 model GameInPlaylist {
@@ -68,8 +77,11 @@ model GameInPlaylist {
   playlistId Int
   game       Game     @relation(fields: [gameId], references: [gameId])
   playlist   Playlist @relation(fields: [playlistId], references: [playlistId])
+  createdAt  DateTime @default(now())
 
   @@id([gameId, playlistId])
+  @@index([gameId])
+  @@index([playlistId])
 }
 
 model Category {
@@ -77,6 +89,7 @@ model Category {
   name           String
   games          Game[]
   GameInCategory GameInCategory[]
+  createdAt      DateTime         @default(now())
 }
 
 model GameInCategory {
@@ -84,27 +97,48 @@ model GameInCategory {
   categoryId Int
   game       Game     @relation(fields: [gameId], references: [gameId])
   category   Category @relation(fields: [categoryId], references: [categoryId])
+  createdAt  DateTime @default(now())
 
   @@id([categoryId, gameId])
+  @@index([categoryId])
+  @@index([gameId])
 }
 
-model UserFavouritedGame {
-  userId String
-  gameId Int
-  user   User   @relation(fields: [userId], references: [userId])
-  game   Game   @relation(fields: [gameId], references: [gameId])
+model UserFavoriteGame {
+  userId    String
+  gameId    Int
+  user      User     @relation(fields: [userId], references: [userId])
+  game      Game     @relation(fields: [gameId], references: [gameId])
+  createdAt DateTime @default(now())
 
   @@id([userId, gameId])
+  @@index([userId])
+  @@index([gameId])
+}
+
+model UserFavoritePlaylist {
+  userId     String
+  playlistId Int
+  user       User     @relation(fields: [userId], references: [userId])
+  playlist   Playlist @relation(fields: [playlistId], references: [playlistId])
+  createdAt  DateTime @default(now())
+
+  @@id([userId, playlistId])
+  @@index([userId])
+  @@index([playlistId])
 }
 
 model UserReportedGame {
-  userId String
-  gameId Int
-  reason String?
-  user   User    @relation(fields: [userId], references: [userId])
-  game   Game    @relation(fields: [gameId], references: [gameId])
+  userId    String
+  gameId    Int
+  reason    String?
+  user      User     @relation(fields: [userId], references: [userId])
+  game      Game     @relation(fields: [gameId], references: [gameId])
+  createdAt DateTime @default(now())
 
   @@id([userId, gameId])
+  @@index([userId])
+  @@index([gameId])
 }
 
 model GameRating {
@@ -112,10 +146,14 @@ model GameRating {
   userId             String
   gameId             Int
   starRating         Int
-  reviewText         String
+  description        String?
   user               User                 @relation(fields: [userId], references: [userId])
   game               Game                 @relation(fields: [gameId], references: [gameId])
   UserReportedRating UserReportedRating[]
+  createdAt          DateTime             @default(now())
+
+  @@index([userId])
+  @@index([gameId])
 }
 
 model UserReportedRating {
@@ -124,6 +162,25 @@ model UserReportedRating {
   reason     String?
   user       User       @relation(fields: [reporterId], references: [userId])
   rating     GameRating @relation(fields: [ratingId], references: [ratingId])
+  createdAt  DateTime   @default(now())
 
   @@id([reporterId, ratingId])
+  @@index([reporterId])
+  @@index([ratingId])
+}
+
+model GameInUserQueue {
+  queuedId   Int      @id @unique @default(autoincrement())
+  gameId     Int
+  userId     String
+  timePlayed Int?
+  queuedAt   DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [userId])
+  game       Game     @relation(fields: [gameId], references: [gameId])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([gameId])
 }

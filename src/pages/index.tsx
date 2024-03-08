@@ -20,8 +20,8 @@ export default function Home() {
   );
 
   useEffect(() => {
-    if (!user.isSignedIn) router.push("/dashboard");
     if (isLoading) return;
+
     if (!user.isSignedIn) {
       router.push("/dashboard");
     } else if (
@@ -36,7 +36,6 @@ export default function Home() {
       };
       useUserMuation.mutate(input);
     } else {
-      console.log("redirect else");
       router.push("/dashboard");
     }
   }, [isLoading, isSuccess, router, useUserMuation, user, userDb]);

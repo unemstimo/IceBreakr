@@ -1,132 +1,93 @@
-import Head from "next/head";
-import { useState, type FormEvent } from "react";
-import { v4 as uuid } from "uuid";
+import { useState } from "react";
 import Image from "next/image";
-
+import Placeholder from "~/assets/images/placeholder.png";
 import {
-  SignInButton,
   SignOutButton,
-  SignedIn,
-  SignedOut,
+  SignedIn as SignedIn,
   UserButton,
   UserProfile,
+  useUser,
 } from "@clerk/nextjs";
-
-import FaceRoundedIcon from "@mui/icons-material/FaceRounded";
-import PlayCircleOutlineRoundedIcon from "@mui/icons-material/PlayCircleOutlineRounded";
 import MoreHorizRoundedIcon from "@mui/icons-material/MoreHorizRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import ManageAccountsRoundedIcon from "@mui/icons-material/ManageAccountsRounded";
-import PageWrapper from "~/components/pageWrapper";
-import NavigationBar from "~/components/navigationBar";
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
-import Link from "next/link";
 import { useRouter } from "next/router";
-import Placeholder from "~/assets/images/placeholder.png";
 import StarRoundedIcon from "@mui/icons-material/StarRounded";
 import { api } from "~/utils/api";
 import { Badge } from "~/components/ui/badge";
-import { Playlist } from "~/server/api/routers/playlist";
-import MyPlaylists from "~/components/myPlaylists";
 import PlaylistPicker from "~/components/playlistPicker";
-import MyFriendsBar from "~/components/myFriendsBar";
-
-type Friend = {
-  id: string;
-  name: string;
-};
-// type Game = inferProcedureOutput<AppRouter["gameRouter"]["getGameById"]>;
+import { Input } from "~/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "~/components/ui/select";
+import MyPlaylists from "~/components/myPlaylists";
+import StarIcon from "@mui/icons-material/Star";
+import { Button } from "~/components/ui/button";
+import Layout from "~/components/layout";
+import { useToast } from "~/components/ui/use-toast";
 
 export default function GamePage() {
-  const [searchTerm, setSearchTerm] = useState("");
   const router = useRouter();
-  const { gameId } = router.query;
-  // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-  // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+  const { gameId: gameIdQuery } = router.query;
+  const gameId = Number(gameIdQuery ?? 1);
+  const userId = useUser().user?.id;
   const gameQuery = api.gameRouter.getGameById.useQuery(
-    { id: Number(gameId ?? 1) },
+    { id: gameId },
     { enabled: gameId !== undefined },
   );
-  console.log(gameQuery.data);
 
   const name = gameQuery.data?.name ?? "";
   const numberOfPlayers = gameQuery.data?.numberOfPlayers ?? "";
   const duration = gameQuery.data?.duration ?? "";
   const description = gameQuery.data?.description ?? "";
   const rules = gameQuery.data?.rules ?? "";
-  // TODO add ratings and categories to game via relations
-  const category = "Kortspill";
-  const rating = Math.floor(Math.random() * 5) + 1;
-
-  const [friendsList, setFriendsList] = useState<Friend[]>([]);
-
-  const [comments, setComments] = useState([
-    {
-      id: uuid(),
-      author: "Trond",
-      comment: "Dette var en kul lek!",
-      rating: 4,
-    },
-    {
-      id: uuid(),
-      author: "Mats",
-      comment: "Dette var en DRITT lek!",
-      rating: 1,
-    },
-  ]);
-
-  const [newComment, setNewComment] = useState("");
-
-  const [showMorePopup, setShowMorePopup] = useState<{
-    visible: boolean;
-    friendId: string | null;
-  }>({ visible: false, friendId: null });
 
   const [showMorePopupComment, setShowMorePopupComment] = useState<{
     visible: boolean;
-    commentID: string | null;
+    commentID: number | null;
   }>({ visible: false, commentID: null });
 
-  const handleShowMorePopup = (friendId: string | null) => {
-    setShowMorePopup({ visible: !showMorePopup.visible, friendId });
-  };
-
-  const handleAddFriend = () => {
-    const newID = uuid();
-    console.log("Add Friend");
-    const newFriend = { id: newID, name: "Friend " + newID.slice(0, 4) };
-    setFriendsList([...friendsList, newFriend]);
-  };
-
-  const handleRemoveFriend = (friendId: string) => {
-    console.log("Remove Friend");
-    const newFriendsList = friendsList.filter(
-      (friend) => friend.id !== friendId,
-    );
-    setFriendsList(newFriendsList);
-    handleShowMorePopup(null);
-  };
-
-  const handleFriendsButton = () => {
-    console.log("Friend clicked");
-  };
-
-  const [playlists, setPlaylists] = useState<Playlist[]>([]);
-
-  const [showMorePopupPlaylist, setShowMorePopupPlaylist] = useState<{
-    visible: boolean;
-    playlistId: string | null;
-  }>({
-    visible: false,
-    playlistId: null,
-  });
-
-  const handleShowMorePopupPlaylist = (playlistId: string | null) => {
-    setShowMorePopupPlaylist({
-      playlistId,
-      visible: !showMorePopupPlaylist.visible,
+  const handleMoreCommentButton = (commentID: number | null) => {
+    setShowMorePopupComment({
+      commentID,
+      visible: !showMorePopupComment.visible,
     });
   };
+
+  const [showPlaylistPicker, setShowPlaylistPicker] = useState({
+    visible: false,
+  });
+
+  const handleShowPlaylistPicker = () => {
+    setShowPlaylistPicker({ visible: !showPlaylistPicker.visible });
+  };
+  const handleGoBack = () => {
+    router.back();
+  };
+
+  const [comment, setComment] = useState("");
+  const [rating, setRating] = useState<number>();
+  const useRating = api.rating.create.useMutation();
+  const useDeleteRating = api.rating.delete.useMutation();
+
+  const ratingQuery = api.rating.getRatingsByGameId.useQuery(
+    {
+      gameId: gameQuery.data?.gameId ?? -1,
+    },
+    {
+      enabled: gameQuery.data?.gameId !== undefined,
+    },
+  );
+
+  const ratingCalculated = !!ratingQuery.data?.length
+    ? ratingQuery.data?.reduce((acc, curr) => acc + curr.starRating, 0) /
+      (ratingQuery.data?.length ?? 1)
+    : 0;
 
   const [showManageAccount, setShowManageAccount] = useState({
     visible: false,
@@ -136,57 +97,76 @@ export default function GamePage() {
     setShowManageAccount({ visible: !showManageAccount.visible });
   };
 
-  const handleMoreCommentButton = (commentID: string | null) => {
-    setShowMorePopupComment({
-      commentID,
-      visible: !showMorePopupComment.visible,
-    });
+  const handleCommentSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (comment === "" || !rating || !gameQuery.data?.gameId) {
+      return;
+    }
+
+    try {
+      await useRating.mutateAsync({
+        gameId: gameQuery.data?.gameId,
+        starRating: rating,
+        description: comment,
+      });
+      setComment("");
+      setRating(undefined);
+      await ratingQuery.refetch();
+    } catch (e) {
+      console.error("Error submitting rating: ", e);
+    }
   };
 
-  function handleCommentSubmit(_event: FormEvent<HTMLFormElement>): void {
-    console.log("Comment submitted: " + newComment);
-  }
+  const handleDeleteComment = async (ratingId: number) => {
+    try {
+      await useDeleteRating.mutateAsync({ ratingId });
+      await ratingQuery.refetch();
+    } catch (e) {
+      console.error("Error deleting rating: ", e);
+    }
+  };
 
-  const [showPlaylistPicker, setShowPlaylistPicker] = useState({
-    visible: false,
-  });
+  const useQueueMutation = api.queue.create.useMutation();
+  const { toast } = useToast();
+  const utils = api.useUtils();
 
-  const handleShowPlaylistPicker = () => {
-    setShowPlaylistPicker({ visible: !showPlaylistPicker.visible });
-  }
+  const handleAddToQueue = async () => {
+    if (!gameId) return;
+    try {
+      await useQueueMutation.mutateAsync({ gameId });
+      await utils.queue.getQueue.invalidate();
+    } catch {
+      toast({
+        title: "Obs!",
+        description: "kunne ikke legge til i kø",
+      });
+    }
+  };
 
   return (
-    <div>
-      <Head>
-        <title>Dashboard | IceBreakr</title>
-        <meta
-          name="dashboard"
-          content="Learn more about what IceBreakr offers."
-        />
-      </Head>
-
-      <PageWrapper>
-
-          <NavigationBar>
-            <MyPlaylists />
-          </NavigationBar>
-        {/* Middle section */}
+    <>
+      <Layout navbarChildren={<MyPlaylists />}>
         <section className="flex h-full max-h-screen w-full min-w-[420px] flex-col justify-start overflow-y-auto rounded-2xl bg-neutral-900 p-4 align-middle">
           <div className="flex justify-between">
             <div className="flex items-center justify-start gap-2 align-middle">
-              <Link href="/browse">
+              <button onClick={handleGoBack}>
                 <ArrowBackRoundedIcon />
-              </Link>
+              </button>
               <h2 className="text-2xl font-bold ">{name}</h2>
             </div>
-            <div className="flex items-center gap-2">
-              <button className="text-neutral-500 hover:underline text-rg">
+            <SignedIn>
+              <div className="flex items-center gap-2">
+                {/* <button className="text-rg text-neutral-500 hover:underline"> */}
                 <SignOutButton>logg ut</SignOutButton>
-              </button>
-              <button className="text-neutral-500" onClick={handleManageAccount}>
-                <ManageAccountsRoundedIcon />
-              </button>
-            </div>
+                {/* </button> */}
+                <button
+                  className="text-neutral-500"
+                  onClick={handleManageAccount}
+                >
+                  <ManageAccountsRoundedIcon />
+                </button>
+              </div>
+            </SignedIn>
           </div>
           {/* Title, image section */}
           <div className="relative mt-4 flex h-full w-full flex-col items-start justify-start rounded-xl bg-neutral-800 p-4">
@@ -195,6 +175,7 @@ export default function GamePage() {
                 <Image
                   className="h-auto w-full rounded-lg"
                   src={Placeholder}
+                  placeholder="blur"
                   alt="Game Image"
                   width={200}
                   height={200}
@@ -204,10 +185,10 @@ export default function GamePage() {
                 <div className="mb-4 ml-4 flex h-full flex-col justify-between">
                   <div>
                     <h1 className="text-xxl">{name}</h1>
-                    <h2 className="text-neutral-400 font-normal">
-                      {numberOfPlayers} spillere • {duration}
+                    <h2 className="font-normal text-neutral-400">
+                      {numberOfPlayers} spillere • {duration} minutter
                     </h2>
-                    <p className="mt-6 font-normal text-md text-neutral-200">
+                    <p className="mt-6 text-md font-normal text-neutral-200">
                       {description}
                     </p>
                   </div>
@@ -224,31 +205,40 @@ export default function GamePage() {
             </div>
             <button className="absolute right-4 top-4 flex min-w-16 items-center justify-center rounded-full bg-violet-500 align-middle">
               <StarRoundedIcon />
-              {rating}
+              {ratingCalculated}
             </button>
-            <div className="relative">
-              <button
-              onClick={handleShowPlaylistPicker}
-              className="text-rg mt-4 px-4 py-2 flex min-w-16 items-center justify-center rounded-full bg-violet-500 align-middle">
-                Legg til i lekeliste
-              </button>
-              {showPlaylistPicker.visible && (
-              <div 
-              className="absolute z-10 flex justify-center items-center bg-neutral-800 border-8 p-4 rounded-3xl">
-                <div className="flex-col justify-center items-center align-middle">
-                  <PlaylistPicker />
-                  <button className="w-full -mt-4 text-rg hover:underline align-middle text-neutral-500 hover:text-neutral-400" onClick={()=>{setShowPlaylistPicker({visible: false})}} >Avbryt</button>
-                </div>
+            <div className="flex gap-4 pt-4">
+              <div className="relative">
+                <Button onClick={handleShowPlaylistPicker}>
+                  Legg til i lekeliste
+                </Button>
+                {showPlaylistPicker.visible && (
+                  <div className="absolute z-10 flex items-center justify-center rounded-3xl border-8 bg-neutral-800 p-4">
+                    <div className="flex-col items-center justify-center align-middle">
+                      <PlaylistPicker
+                        gameid={gameQuery.data?.gameId ?? 0}
+                        setShowPlaylistPicker={setShowPlaylistPicker}
+                      />
+                      <button
+                        className="-mt-4 w-full align-middle text-rg text-neutral-500 hover:text-neutral-400 hover:underline"
+                        onClick={() => {
+                          setShowPlaylistPicker({ visible: false });
+                        }}
+                      >
+                        Avbryt
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
-              )}
+              <Button onClick={handleAddToQueue}>Legg til i kø</Button>
             </div>
-            
           </div>
           {/* Rules */}
           <div className="mt-4 flex h-full w-full items-center justify-start rounded-xl bg-neutral-800 py-2">
             <div className="mb-4 ml-4 h-full w-full">
               <h1 className="text-4xl">Regler</h1>
-              <p className="font-normal text-rg text-neutral-400">{rules}</p>
+              <p className="text-rg font-normal text-neutral-400">{rules}</p>
             </div>
           </div>
           {/* Rating section */}
@@ -258,57 +248,88 @@ export default function GamePage() {
               <div>
                 <form
                   onSubmit={handleCommentSubmit}
-                  className="mb-4 font-normal text-rg flex h-full w-full items-center justify-start gap-4 align-middle"
+                  className="mb-4 flex h-full w-full items-center justify-start gap-4 align-middle text-rg font-normal"
                 >
-                  <input
-                    type="text"
-                    value={searchTerm}
-                    onChange={(e) => setNewComment(e.target.value)}
-                    placeholder="Skriv din kommentar her..."
-                    className="w-full rounded-full bg-neutral-800 py-2 pl-3 pr-3 text-white focus:outline-none"
+                  <Input
+                    value={comment}
+                    onChange={(event) => setComment(event.target.value)}
                   />
-                  <button
-                    type="submit"
-                    className="h-full font-bold rounded-full bg-violet-500 px-4 py-1 hover:bg-violet-400 active:bg-violet-600"
+                  <Select
+                    value={rating ? String(rating) : undefined}
+                    onValueChange={(val) => {
+                      setRating(Number(val));
+                    }}
                   >
-                    Post
-                  </button>
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue placeholder="Rating" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {[1, 2, 3, 4, 5].map((_, i) => (
+                        <SelectItem key={i} value={String(i + 1)}>
+                          <div key={i} className="ietms-center flex gap-2">
+                            <p>{i + 1}</p>
+                            <StarIcon className="text-white" />
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  <Button type="submit">Post</Button>
                 </form>
               </div>
               <ul className="flex w-full flex-col items-center justify-start gap-4 align-middle text-rg">
-                {comments.map((comment) => (
+                {ratingQuery.data?.map((comment) => (
                   // eslint-disable-next-line react/jsx-key
-                  <li className="relative flex h-full w-full items-center justify-between gap-4 rounded-lg bg-neutral-800 p-4 align-middle">
+                  <li
+                    key={comment.ratingId}
+                    className="relative flex h-full w-full items-center justify-between gap-4 rounded-lg bg-neutral-800 p-4 align-middle"
+                  >
                     <div className="flex h-full items-center gap-4">
                       <UserButton />
                       <div className="flex items-center justify-center rounded-full bg-violet-500 px-3 py-0">
                         <StarRoundedIcon />
-                        {comment.rating}
+                        {comment.starRating}
                       </div>
                       <div className="flex flex-col items-start justify-start">
-                        <h2 className="-mb-1">{comment.author}</h2>
+                        <h2 className="-mb-1">{comment.user.username}</h2>
                         <p className="-mt-1 font-normal text-neutral-400">
-                          {comment.comment}
+                          {comment.description}
                         </p>
                       </div>
                     </div>
-                    <button onClick={() => handleMoreCommentButton(comment.id)}>
+                    <button
+                      onClick={() => handleMoreCommentButton(comment.ratingId)}
+                    >
                       <MoreHorizRoundedIcon />
                     </button>
                     {showMorePopupComment.visible &&
-                      showMorePopupComment.commentID === comment.id && (
+                      showMorePopupComment.commentID === comment.ratingId && (
                         <div className="absolute right-0 top-0 flex h-full w-full flex-row items-center justify-center gap-4 rounded-xl bg-neutral-700 px-6 py-4 align-middle">
                           {/* Popup content here */}
-                          <p>{comment.author}</p>
+                          <p>{comment.user.username}</p>
                           <button
                             onClick={() => 1}
                             className="rounded-lg bg-red-500 px-4 py-1 hover:bg-red-400 active:bg-red-600"
                           >
-                            {" "}
                             Rapporter
                           </button>
+                          {userId === comment.user.userId && (
+                            <Button
+                              onClick={() =>
+                                handleDeleteComment(comment.ratingId)
+                              }
+                              variant={"destructive"}
+                            >
+                              Slett
+                            </Button>
+                          )}
                           <button
-                            onClick={() => handleMoreCommentButton(comment.id)}
+                            onClick={() => {
+                              if (comment.ratingId) {
+                                handleMoreCommentButton(comment.ratingId);
+                              }
+                            }}
                           >
                             <p className="absolute right-2 top-1 text-neutral-400 hover:underline">
                               <CloseRoundedIcon />
@@ -322,22 +343,19 @@ export default function GamePage() {
             </div>
           </div>
         </section>
+      </Layout>
 
-        <MyFriendsBar/>
-
-        {showManageAccount.visible && (
-          <div className="absolute left-0 top-0 flex h-full w-full flex-col items-center justify-center bg-neutral-900 bg-opacity-90 p-24 align-middle">
-            <UserProfile />
-            <button
-              className="text-l mt-2 text-neutral-300 hover:underline"
-              onClick={handleManageAccount}
-            >
-              Lukk
-            </button>
-          </div>
-        )}
-        
-      </PageWrapper>
-    </div>
+      {showManageAccount.visible && (
+        <div className="absolute left-0 top-0 flex h-full w-full flex-col items-center justify-center bg-neutral-900 bg-opacity-90 p-24 align-middle">
+          <UserProfile />
+          <button
+            className="text-l mt-2 text-neutral-300 hover:underline"
+            onClick={handleManageAccount}
+          >
+            Lukk
+          </button>
+        </div>
+      )}
+    </>
   );
 }
