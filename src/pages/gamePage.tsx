@@ -32,6 +32,7 @@ import {
 import MyPlaylists from "~/components/myPlaylists";
 import StarIcon from "@mui/icons-material/Star";
 import { Button } from "~/components/ui/button";
+import Layout from "~/components/layout";
 
 export default function GamePage() {
   const router = useRouter();
@@ -52,14 +53,6 @@ export default function GamePage() {
     visible: boolean;
     commentID: number | null;
   }>({ visible: false, commentID: null });
-
-  const [showManageAccount, setShowManageAccount] = useState({
-    visible: false,
-  });
-
-  const handleManageAccount = () => {
-    setShowManageAccount({ visible: !showManageAccount.visible });
-  };
 
   const handleMoreCommentButton = (commentID: number | null) => {
     setShowMorePopupComment({
@@ -93,10 +86,18 @@ export default function GamePage() {
     },
   );
 
-  const ratingRandom = !!ratingQuery.data?.length
+  const ratingCalculated = !!ratingQuery.data?.length
     ? ratingQuery.data?.reduce((acc, curr) => acc + curr.starRating, 0) /
       (ratingQuery.data?.length ?? 1)
     : 0;
+
+  const [showManageAccount, setShowManageAccount] = useState({
+    visible: false,
+  });
+
+  const handleManageAccount = () => {
+    setShowManageAccount({ visible: !showManageAccount.visible });
+  };
 
   const handleCommentSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -128,20 +129,8 @@ export default function GamePage() {
   };
 
   return (
-    <div>
-      <Head>
-        <title>Dashboard | IceBreakr</title>
-        <meta
-          name="dashboard"
-          content="Learn more about what IceBreakr offers."
-        />
-      </Head>
-
-      <PageWrapper>
-        <NavigationBar>
-          <MyPlaylists />
-        </NavigationBar>
-        {/* Middle section */}
+    <>
+      <Layout navbarChildren={<MyPlaylists />}>
         <section className="flex h-full max-h-screen w-full min-w-[420px] flex-col justify-start overflow-y-auto rounded-2xl bg-neutral-900 p-4 align-middle">
           <div className="flex justify-between">
             <div className="flex items-center justify-start gap-2 align-middle">
@@ -201,7 +190,7 @@ export default function GamePage() {
             </div>
             <button className="absolute right-4 top-4 flex min-w-16 items-center justify-center rounded-full bg-violet-500 align-middle">
               <StarRoundedIcon />
-              {ratingRandom}
+              {ratingCalculated}
             </button>
             <div className="relative">
               <button
@@ -339,21 +328,19 @@ export default function GamePage() {
             </div>
           </div>
         </section>
+      </Layout>
 
-        <MyFriendsBar />
-
-        {showManageAccount.visible && (
-          <div className="absolute left-0 top-0 flex h-full w-full flex-col items-center justify-center bg-neutral-900 bg-opacity-90 p-24 align-middle">
-            <UserProfile />
-            <button
-              className="text-l mt-2 text-neutral-300 hover:underline"
-              onClick={handleManageAccount}
-            >
-              Lukk
-            </button>
-          </div>
-        )}
-      </PageWrapper>
-    </div>
+      {/* {showManageAccount.visible && (
+            <div className="absolute left-0 top-0 flex h-full w-full flex-col items-center justify-center bg-neutral-900 bg-opacity-90 p-24 align-middle">
+              <UserProfile />
+              <button
+                className="text-l mt-2 text-neutral-300 hover:underline"
+                onClick={handleManageAccount}
+              >
+                Lukk
+              </button>
+            </div>
+          )} */}
+    </>
   );
 }

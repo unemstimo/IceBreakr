@@ -1,6 +1,15 @@
+import { type inferProcedureOutput } from "@trpc/server";
 import { z } from "zod";
 import { createTRPCRouter, privateProcedure } from "~/server/api/trpc";
+import { type AppRouter } from "../root";
 
+// export type CreatePlaylist = inferProcedureInput<
+//   AppRouter["playlist"]["create"]
+// >;
+export type Queue = inferProcedureOutput<AppRouter["queue"]["getQueue"]>;
+export type QueueItem = inferProcedureOutput<
+  AppRouter["queue"]["getQueueItem"]
+>;
 export const queueRouter = createTRPCRouter({
   create: privateProcedure
     .input(
@@ -30,6 +39,19 @@ export const queueRouter = createTRPCRouter({
       },
     });
   }),
+
+  getQueueItem: privateProcedure
+    .input(z.object({ queuedId: z.number() }))
+    .query(async ({ ctx, input }) => {
+      return ctx.db.gameInUserQueue.findFirst({
+        where: {
+          queuedId: input.queuedId,
+        },
+        include: {
+          game: true,
+        },
+      });
+    }),
 
   updateTimePlayed: privateProcedure
     .input(
