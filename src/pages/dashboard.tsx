@@ -3,16 +3,16 @@ import { useState, useEffect, type FormEvent } from "react";
 import Advertisement from "~/components/advertisement";
 import SearchIcon from "@mui/icons-material/Search";
 import PlayListCard from "~/components/playListCard";
-import PageWrapper from "~/components/pageWrapper";
-import NavigationBar from "~/components/navigationBar";
 import { api } from "~/utils/api";
 import MyPlaylists from "~/components/myPlaylists";
-import MyFriendsBar from "~/components/myFriendsBar";
 import { Input } from "@nextui-org/react";
+import PageWrapper from "~/components/pageWrapper";
+import NavigationBar from "~/components/navigationBar";
 import React from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import Layout from "~/components/layout";
 
 export default function Dashboard() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -67,20 +67,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div>
-      <Head>
-        <title>Dashboard | IceBreakr</title>
-        <meta
-          name="dashboard"
-          content="Learn more about what IceBreakr offers."
-        />
-      </Head>
-
-      <PageWrapper>
-        <NavigationBar>
-          <MyPlaylists />
-        </NavigationBar>
-
+    <Layout navbarChildren={<MyPlaylists />}>
         {/* Middle section */}
         <section className="flex h-full w-full  flex-col justify-start overflow-hidden rounded-2xl bg-neutral-900 p-4 pr-4 align-middle">
           {/* Search section 
@@ -131,8 +118,6 @@ export default function Dashboard() {
           </div>
         </section>
 
-        <MyFriendsBar />
-      </PageWrapper>
-    </div>
+        </Layout>
   );
 }

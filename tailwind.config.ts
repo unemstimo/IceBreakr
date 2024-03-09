@@ -95,8 +95,8 @@ const config = {
           foreground: "hsl(var(--popover-foreground))",
         },
         card: {
-          DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))",
+          DEFAULT: colors.neutral["900"],
+          foreground: colors.neutral["100"],
         },
       },
       borderRadius: {
