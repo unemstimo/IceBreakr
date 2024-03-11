@@ -150,6 +150,7 @@ const CreateGame = () => {
           <input
             type="text"
             value={name}
+            maxLength={40}
             onChange={handleNameChange}
             placeholder="Navn på lek..."
             className="w-full rounded-lg bg-neutral-800 py-2 pl-2 pr-2 text-white focus:outline-none"
@@ -181,6 +182,7 @@ const CreateGame = () => {
           
           <input
             type="text"
+            maxLength={191}
             value={description}
             onChange={handleDescriptionChange}
             placeholder="Beskrivelse av spill..."

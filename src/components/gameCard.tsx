@@ -40,7 +40,7 @@ const GameCard = ({ gameId, name, description, rating }: Game) => {
         {rating > 0 && (
           <div className="absolute right-3 top-3 flex w-14 items-center justify-center rounded-full bg-violet-500 align-middle xl:min-w-16">
             <StarRoundedIcon />
-            {rating.toFixed(1)}
+            {parseFloat(rating.toFixed(1))}
           </div>
         )}
       </div>
