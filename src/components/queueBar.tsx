@@ -5,6 +5,7 @@ import { api } from "~/utils/api";
 import { type QueueItem } from "~/server/api/routers/queue";
 import { useToast } from "./ui/use-toast";
 import { Button } from "./ui/button";
+import { SignInButton, SignedIn, SignedOut } from "@clerk/nextjs";
 
 const QueueBar = () => {
   const queueQuery = api.queue.getQueue.useQuery();
@@ -34,16 +35,25 @@ const QueueBar = () => {
   return (
     <Card>
       <CardHeader>Min kø</CardHeader>
-      <CardContent className="flex flex-col gap-2">
-        {queueQuery.data?.map((game) => (
-          <QueueGameCard
-            firstInQueue={firstInQueue}
-            key={game.gameId}
-            queueItem={game}
-            refetch={() => queueQuery.refetch()}
-          />
-        ))}
-      </CardContent>
+      <SignedOut>
+        <CardContent className="flex flex-col gap-2">
+          <Button>
+            <SignInButton>Log ind for at se din kø</SignInButton>
+          </Button>
+        </CardContent>
+      </SignedOut>
+      <SignedIn>
+        <CardContent className="flex flex-col gap-2">
+          {queueQuery.data?.map((game) => (
+            <QueueGameCard
+              firstInQueue={firstInQueue}
+              key={game.queuedId}
+              queueItem={game}
+              refetch={() => queueQuery.refetch()}
+            />
+          ))}
+        </CardContent>
+      </SignedIn>
     </Card>
   );
 };

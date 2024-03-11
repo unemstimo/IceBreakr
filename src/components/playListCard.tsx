@@ -10,7 +10,7 @@ const PlayListCard = ({
 
   return (
     <Link href={`/playlistPage?playlistId=${playlistId}`} passHref>
-      <section className="m-0 flex min-w-32 flex-col gap-2 overflow-hidden rounded-xl bg-neutral-800 p-6">
+      <section className="m-0 flex min-w-32 h-56 flex-col gap-2 overflow-hidden rounded-xl bg-neutral-800 p-6">
         <div>
           <Image
             className="rounded-xl object-cover"
