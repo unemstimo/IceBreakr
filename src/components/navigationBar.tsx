@@ -20,7 +20,7 @@ const NavigationBar = ({ children }: NavigationBarProps) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const storedTimeLeft = localStorage.getItem('timeLeft');
+    const storedTimeLeft = localStorage.getItem("timeLeft");
     if (storedTimeLeft !== null) {
       dispatch(setTimeLeft(Number(storedTimeLeft)));
     }
@@ -28,7 +28,7 @@ const NavigationBar = ({ children }: NavigationBarProps) => {
 
   return (
     <>
-      <section className="flex h-full md:w-full max-w-72 w-20 flex-col justify-start gap-4 rounded-2xl p-0 align-middle">
+      <section className="flex h-full w-20 max-w-72 flex-col justify-start gap-4 rounded-2xl p-0 align-middle md:w-full">
         <div className="flex h-fit w-full flex-col justify-center gap-2 rounded-2xl bg-neutral-900 p-4 align-middle">
           <SignedOut>
             <SignInButton>
@@ -45,7 +45,7 @@ const NavigationBar = ({ children }: NavigationBarProps) => {
             <Link href={"/profile"} className="h-full w-full">
               <button
                 className={classNames(
-                  "flex h-full w-full items-center md:justify-start justify-center gap-4 rounded-xl p-2 align-middle hover:bg-neutral-700",
+                  "flex h-full w-full items-center justify-center gap-4 rounded-xl p-2 align-middle hover:bg-neutral-700 md:justify-start",
                   { "bg-neutral-700": currentPath === "/profile" },
                 )}
               >
@@ -56,7 +56,7 @@ const NavigationBar = ({ children }: NavigationBarProps) => {
           <Link href={"/dashboard"} className="h-full w-full">
             <button
               className={classNames(
-                "flex md:h-full md:w-full w-12 h-12 items-center md:justify-start justify-center gap-4 rounded-xl p-2 align-middle hover:bg-neutral-700",
+                "flex h-12 w-12 items-center justify-center gap-4 rounded-xl p-2 align-middle hover:bg-neutral-700 md:h-full md:w-full md:justify-start",
                 { "bg-neutral-700": currentPath === "/dashboard" },
               )}
             >
@@ -67,7 +67,7 @@ const NavigationBar = ({ children }: NavigationBarProps) => {
           <Link href={"/browse"} className="h-full w-full">
             <button
               className={classNames(
-                "flex -mb-2 md:mb-0 md:h-full md:w-full w-12 h-12 items-center md:justify-start justify-center gap-4 rounded-xl p-2 align-middle hover:bg-neutral-700",
+                "-mb-2 flex h-12 w-12 items-center justify-center gap-4 rounded-xl p-2 align-middle hover:bg-neutral-700 md:mb-0 md:h-full md:w-full md:justify-start",
                 { "bg-neutral-700": currentPath === "/browse" },
               )}
             >
@@ -78,7 +78,7 @@ const NavigationBar = ({ children }: NavigationBarProps) => {
           <Link href={"/components"}>
             <button
               className={classNames(
-                "md:flex hidden h-full w-full items-center justify-start gap-4 rounded-xl p-2 align-middle hover:bg-neutral-700",
+                "hidden h-full w-full items-center justify-start gap-4 rounded-xl p-2 align-middle hover:bg-neutral-700 md:flex",
                 { "bg-neutral-700": currentPath === "/components" },
               )}
             >
@@ -89,28 +89,28 @@ const NavigationBar = ({ children }: NavigationBarProps) => {
         {/* Countdown component */}
         <CountdownComponent />
         <SignedIn>
-        <Link href={"/createGame"}>
-          <button
-            // onClick={handleCreateGameShow}
-            className="flex h-20 min-h-20 w-full items-center justify-center gap-2 rounded-2xl bg-violet-600 p-2 align-middle hover:bg-violet-500 active:bg-violet-800"
-          > 
-            <p className="hidden md:block">OPPRETT LEK</p>
-            <AddCircleOutlineRoundedIcon />
-          </button>
-        </Link>
+          <Link href={"/createGame"}>
+            <button
+              // onClick={handleCreateGameShow}
+              className="flex h-20 min-h-20 w-full items-center justify-center gap-2 rounded-2xl bg-violet-600 p-2 align-middle hover:bg-violet-500 active:bg-violet-800"
+            >
+              <p className="hidden md:block">OPPRETT LEK</p>
+              <AddCircleOutlineRoundedIcon />
+            </button>
+          </Link>
         </SignedIn>
         <SignedOut>
-        <SignInButton>
-          <button
+          <SignInButton>
+            <button
               // onClick={handleCreateGameShow}
               className="flex h-20 min-h-20 w-full flex-col items-center justify-center gap-1 rounded-2xl bg-violet-600 p-10 align-middle hover:bg-violet-500 active:bg-violet-800"
-            > 
+            >
               <p className="text-s"> Logg inn for å </p>
               <div>
                 <p className="hidden md:block">OPPRETTE LEK</p>
               </div>
             </button>
-        </SignInButton>
+          </SignInButton>
         </SignedOut>
         {!!children && (
           <div className="mb-0 flex h-full w-full flex-col justify-start rounded-2xl bg-neutral-900 p-4 align-middle">
@@ -123,7 +123,3 @@ const NavigationBar = ({ children }: NavigationBarProps) => {
 };
 
 export default NavigationBar;
-function useState(arg0: boolean): [any, any] {
-  throw new Error("Function not implemented.");
-}
-

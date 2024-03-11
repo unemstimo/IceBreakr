@@ -20,7 +20,7 @@ export default function Home() {
   );
 
   useEffect(() => {
-    if (!user.isSignedIn) {
+    if (user && !user.isSignedIn) {
       router.push("/dashboard");
     } else if (isLoading) return;
     else if (user.isSignedIn && userDb?.userId !== user.user?.id && isSuccess) {
