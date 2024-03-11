@@ -205,7 +205,7 @@ export default function GamePage() {
             </div>
             <button className="absolute right-4 top-4 flex min-w-16 items-center justify-center rounded-full bg-violet-500 align-middle">
               <StarRoundedIcon />
-              {ratingCalculated}
+              {ratingCalculated.toFixed(1)}
             </button>
             <div className="flex gap-4 pt-4">
               <div className="relative">
