@@ -12,6 +12,9 @@ import { Input } from "~/components/ui/input";
 import { useToast } from "~/components/ui/use-toast";
 import Layout from "~/components/layout";
 
+import ballspill  from "~/assets/images/Categories/Ballspill.jpg";
+
+
 export default function Browse() {
   const [searchTerm, setSearchTerm] = useState("");
   const [numberOfPlayers, setNumberOfPlayers] = useState("");
@@ -233,6 +236,7 @@ export default function Browse() {
                   rating={game.averageRating}
                   gameId={game.gameId}
                   userId={game.userId}
+                  photo = {ballspill}
                 />
               ))}
             </div>

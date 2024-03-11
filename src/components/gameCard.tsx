@@ -1,8 +1,9 @@
-import Image from "next/image";
+import Image, { StaticImageData } from "next/image";
 import React from "react";
 import Placeholder from "~/assets/images/placeholder.png";
 import StarRoundedIcon from "@mui/icons-material/StarRounded";
 import Link from "next/link";
+
 
 // export type Game = inferProcedureOutput<AppRouter["gameRouter"]["getGameById"]>;
 export type Game = {
@@ -14,9 +15,10 @@ export type Game = {
   rules: string;
   description: string;
   rating: number;
+  photo: StaticImageData;
 };
 
-const GameCard = ({ gameId, name, description, rating }: Game) => {
+const GameCard = ({ gameId, name, description, rating, photo }: Game) => {
   // Prepare the game object from props
 
   // Generate query string
@@ -27,7 +29,7 @@ const GameCard = ({ gameId, name, description, rating }: Game) => {
         <div className="relative flex h-full w-full flex-col overflow-clip align-top">
           <Image
             className="hidden h-auto w-full rounded-lg xl:flex"
-            src={Placeholder}
+            src={photo}
             alt="Game Image"
             width={200}
             height={200}
