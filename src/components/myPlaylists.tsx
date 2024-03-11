@@ -48,7 +48,7 @@ const MyPlaylists = () => {
   };
 
   return (
-    <div className="mb-0 hidden h-full w-full flex-col justify-start rounded-2xl bg-neutral-900 align-middle  md:flex">
+    <div className="mb-0 max-h-[472px] hidden h-full w-full flex-col justify-start rounded-2xl bg-neutral-900 align-middle  md:flex">
       <div className="flex flex-row items-baseline justify-between align-baseline">
         <h2 className="text-2xl font-bold ">Mine Lekelister</h2>
         <SignedIn>
@@ -59,18 +59,18 @@ const MyPlaylists = () => {
           </Link>
         </SignedIn>
       </div>
-      <ul className=" mt-5 w-full">
+      <ul className=" mt-5 w-full overflow-y-scroll overflow-x-hidden">
         {myPlaylists?.map((list) => (
           <li key={list.playlistId} className="relative mb-2 flex h-16">
-            <div className="flex h-full w-full items-center justify-between gap-4 rounded-xl border border-neutral-800 p-4 align-middle hover:bg-neutral-700">
+            <div className="flex h-full w-full max-w-[95%] items-center justify-between gap-4 rounded-xl border border-neutral-800 p-4 align-middle hover:bg-neutral-700">
               <button
-                className="flex h-full w-full items-center justify-between gap-4  p-4 align-middle hover:bg-neutral-700"
+                className="flex h-full w-full items-center justify-between p-4 align-middle hover:bg-neutral-700"
                 onClick={() => handlePlaylistClick(list.playlistId)}
               >
                 <div className="flex h-full w-full items-center justify-start gap-4 align-middle">
                   <PlayCircleOutlineRoundedIcon />
-                  <div className="flex flex-col items-start justify-start text-nowrap align-middle  text-md">
-                    <p className="-mb-2">{list.name}</p>
+                  <div className="w-[70%] flex flex-col items-start justify-start align-middle text-md">
+                    <p className="w-full -mb-2 truncate text-start">{list.name}</p>
                     <p className="font-normal text-neutral-400">
                       {list.GameInPlaylist.length} leker
                     </p>
@@ -78,16 +78,16 @@ const MyPlaylists = () => {
                 </div>
               </button>
               <button
-                className="-mt-2 h-full w-12 items-center align-middle"
-                onClick={() => handleShowMorePopupPlaylist(list.playlistId)}
-              >
-                <MoreHorizRoundedIcon />
-              </button>
+                  className="-mt-2 h-full align-middle -ml-10"
+                  onClick={() => handleShowMorePopupPlaylist(list.playlistId)}
+                >
+                  <MoreHorizRoundedIcon />
+                </button>
               {showMorePopupPlaylist?.visible &&
                 showMorePopupPlaylist?.playlistId === list.playlistId && (
                   <div className="absolute z-10 -ml-4 flex h-full w-full items-center justify-between rounded-xl bg-background px-4 align-middle text-rg">
                     {/* Popup content here */}
-                    <p>{list.name}</p>
+                    <p className="truncate max-w-[45%]">{list.name}</p>
                     <button
                       onClick={() => handleDeletePlaylist(list.playlistId)}
                       className="h-12 rounded-lg bg-red-500 px-4 py-1 hover:bg-red-400 active:bg-red-600"

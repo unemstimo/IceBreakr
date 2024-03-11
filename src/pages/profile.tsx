@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   SignInButton,
   SignOutButton,
@@ -12,10 +12,28 @@ import PageWrapper from "~/components/pageWrapper";
 import NavigationBar from "~/components/navigationBar";
 import MyPlaylists from "~/components/myPlaylists";
 import MyFriendsBar from "~/components/myFriendsBar";
+import { api } from '~/utils/api';
+import GameCard from '~/components/gameCard';
+import { useToast } from '~/components/ui/use-toast';
+import { type FetchGames } from "~/server/api/routers/game";
+
 
 export default function Profile() {
-  // TODO: implement this
-  // const myPlaylistsQuery = api.playlist.getPlaylistsByUserId.useQuery();
+  const gameQuery = api.gameRouter.getAll.useQuery();
+  const games = gameQuery.data ?? [];
+  const [filteredGames, setFilteredGames] = useState<FetchGames>([]);
+
+  // Filter games to only show favorited games
+  const filterFavoritedGames = () => {
+    const favoritedGames = games.filter((game) => game.UserFavouritedGame.length > 0);
+    setFilteredGames(favoritedGames);
+  };
+
+  useEffect(() => {
+    if (gameQuery.isSuccess) {
+      filterFavoritedGames();
+    }
+  }, [gameQuery.isSuccess]);
 
   const [showManageAccount, setShowManageAccount] = useState({
     visible: false,
@@ -46,7 +64,7 @@ export default function Profile() {
         </SignedOut>
         <SignedIn>
           {/* Middle section */}
-          <section className=" flex h-full w-full min-w-[300px] flex-col justify-start rounded-2xl bg-neutral-900 p-4 align-middle">
+          <section className="flex h-full w-full min-w-[300px] flex-col justify-start rounded-2xl bg-neutral-900 p-4 align-middle">
             <div className="flex justify-between">
               <h2 className="text-2xl font-bold ">Min Profil</h2>
               <div className="flex items-center gap-2">
@@ -59,15 +77,33 @@ export default function Profile() {
               </div>
             </div>
             {/* My games section */}
-            <div className="mt-4 flex h-full w-full items-center justify-center rounded-xl bg-neutral-800">
+            <div className="mt-4 flex h-full w-full items-center justify-center rounded-xl bg-[#1b1a1a]">
               <p>Mine leker</p>
             </div>
             {/* My Favourites section */}
-            <div className="mt-4 flex h-full w-full items-center justify-center rounded-xl bg-neutral-800">
-              <p>Mine favoritter</p>
+            <div className="mt-4 flex h-full w-full items-center flex-col p-4 justify-center rounded-xl bg-[#1b1a1a]">
+              <p className="pb-2">Mine favoritter</p>
+              <div className="grid h-full w-full gap-4 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-4">
+                {filteredGames.map((game) => (
+                  <GameCard
+                    key={game.gameId}
+                    name={game.name}
+                    refetchGames={gameQuery.refetch}
+                    duration={game.duration}
+                    numberOfPlayers={game.numberOfPlayers}
+                    rules={game.rules}
+                    description={game.description ?? ""}
+                    rating={game.averageRating}
+                    gameId={game.gameId}
+                    userId={game.userId}
+                    isFavorite={game.UserFavouritedGame.length > 0}
+                  />
+                ))}
+              </div>
             </div>
+
             {/* My recent section */}
-            <div className="mt-4 flex h-full w-full items-center justify-center rounded-xl bg-neutral-800">
+            <div className="mt-4 flex h-full w-full items-center justify-center rounded-xl bg-[#1b1a1a]">
               <p>Nylig lekt</p>
             </div>
           </section>

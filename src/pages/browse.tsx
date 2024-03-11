@@ -197,48 +197,51 @@ export default function Browse() {
               </div>
             </div>
           </div>
-        </>
-      }
-    >
-      <section className="flex h-full w-full">
-        <section className="flex h-full w-full flex-col justify-start rounded-2xl bg-neutral-900 p-4 align-middle">
-          <div className="flex flex-col justify-center gap-6">
-            <div className="flex w-full items-center justify-start gap-2 align-middle">
-              <button onClick={() => router.back()}>
-                <ArrowBackRounded />
-              </button>{" "}
-              Utforsk alle leker
-            </div>
-            <div className="w-1/3">
-              <Input
-                className="w-full bg-neutral-800 text-md text-white focus:outline-none"
-                type="search" // Changed to search to improve semantics
-                placeholder="Søk..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-            {/* make the div 4 columns wide */}
-            <div className="grid h-full w-full gap-4 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-4">
-              {/* Map through the filteredGames array to render GameCard components */}
-              {filteredGames.map((game) => (
-                <GameCard
-                  key={game.gameId}
-                  name={game.name}
-                  duration={game.duration}
-                  // category={"kategori"}
-                  numberOfPlayers={game.numberOfPlayers}
-                  rules={game.rules}
-                  description={game.description ?? ""}
-                  rating={game.averageRating}
-                  gameId={game.gameId}
-                  userId={game.userId}
+          </>
+        }
+      >
+        {/* Middle section */}
+        <section className="flex h-full w-full">
+          <section className="flex h-full w-full flex-col justify-start rounded-2xl bg-neutral-900 p-4 align-middle">
+            <div className="flex flex-col justify-center gap-6">
+              <div className="flex w-full items-center justify-start gap-2 align-middle">
+                <button onClick={() => router.back()}>
+                  <ArrowBackRounded />
+                </button>{" "}
+                Utforsk alle leker
+              </div>
+              <div className="w-1/3">
+                <Input
+                  className="w-full bg-neutral-800 text-md text-white focus:outline-none"
+                  type="search" // Changed to search to improve semantics
+                  placeholder="Søk..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                 />
-              ))}
+              </div>
+              {/* make the div 4 columns wide */}
+              <div className="grid h-full w-full gap-4 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-4">
+                {/* Map through the filteredGames array to render GameCard components */}
+                {filteredGames.map((game) => (
+                  <GameCard
+                    key={game.gameId}
+                    name={game.name}
+                    refetchGames={()=> gameQuery.refetch()}
+                    duration={game.duration}
+                    // category={"kategori"}
+                    numberOfPlayers={game.numberOfPlayers}
+                    rules={game.rules}
+                    description={game.description ?? ""}
+                    rating={game.averageRating}
+                    gameId={game.gameId}
+                    userId={game.userId}
+                    isFavorite={game.UserFavouritedGame.length > 0}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
+          </section>
         </section>
-      </section>
-    </Layout>
+      </Layout>
   );
 }

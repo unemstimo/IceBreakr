@@ -40,8 +40,8 @@ model Game {
   name               String
   duration           String
   numberOfPlayers    String
-  rules              String
-  description        String?
+  rules              String @db.Text
+  description        String @db.Text
   user               User               @relation(fields: [userId], references: [userId])
   categories         Category[]
   playlists          Playlist[]
