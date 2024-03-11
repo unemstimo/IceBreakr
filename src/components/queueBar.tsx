@@ -33,7 +33,7 @@ const QueueBar = () => {
   };
 
   return (
-    <Card>
+    <Card className="min-w-72">
       <CardHeader>Min kø</CardHeader>
       <SignedOut>
         <CardContent className="flex flex-col gap-2">

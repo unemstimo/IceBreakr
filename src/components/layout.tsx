@@ -28,7 +28,7 @@ const Layout = ({ children, navbarChildren }: ChildrenType) => {
         <NavigationBar>{navbarChildren}</NavigationBar>
         {children}
         <div className="flex flex-col gap-4">
-          <MyFriendsBar />
+          {/* <MyFriendsBar /> */}
           <QueueBar />
         </div>
       </PageWrapper>
