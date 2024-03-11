@@ -87,7 +87,7 @@ const MyPlaylists = () => {
                 showMorePopupPlaylist?.playlistId === list.playlistId && (
                   <div className="absolute z-10 -ml-4 flex h-full w-full items-center justify-between rounded-xl bg-background px-4 align-middle text-rg">
                     {/* Popup content here */}
-                    <p>{list.name}</p>
+                    <p className="truncate max-w-[45%]">{list.name}</p>
                     <button
                       onClick={() => handleDeletePlaylist(list.playlistId)}
                       className="h-12 rounded-lg bg-red-500 px-4 py-1 hover:bg-red-400 active:bg-red-600"
