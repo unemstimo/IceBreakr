@@ -12,7 +12,9 @@ import { Input } from "~/components/ui/input";
 import { useToast } from "~/components/ui/use-toast";
 import Layout from "~/components/layout";
 
-import ballspill  from "~/assets/images/Categories/Ballspill.jpg";
+//Import photo category assets
+const categoryThumbnails = [];
+
 
 
 export default function Browse() {
@@ -79,6 +81,8 @@ export default function Browse() {
     setDuration("");
   };
 
+
+
   const handlePlayersSelection = (players: string) => {
     if (numberOfPlayers === players) {
       setNumberOfPlayers("");
@@ -86,6 +90,13 @@ export default function Browse() {
       setNumberOfPlayers(players);
     }
   };
+
+  let categoryPhoto 
+  const setCategoryPhoto = (category: Category) => {
+    if (category.name == "Kortspill") {
+
+    }
+  }
 
   const handleDurationSelection = (selectedDuration: string) => {
     if (selectedDuration === duration) {
@@ -236,7 +247,7 @@ export default function Browse() {
                   rating={game.averageRating}
                   gameId={game.gameId}
                   userId={game.userId}
-                  photo = {ballspill}
+                  photo = {ballspill} //photo from category function
                 />
               ))}
             </div>
