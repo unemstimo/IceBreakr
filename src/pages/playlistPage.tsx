@@ -4,6 +4,7 @@ import Image from "next/image";
 import ArrowBackRounded from "@mui/icons-material/ArrowBackRounded";
 import Advertisement from "~/components/advertisement";
 import GameCardHorizontal from "~/components/GameCardHorizontal";
+import QueueBar from "~/components/queueBar";
 import PageWrapper from "~/components/pageWrapper";
 import NavigationBar from "~/components/navigationBar";
 import { api } from "~/utils/api";
@@ -13,6 +14,7 @@ import PitBull from "~/assets/images/pitbull.jpeg";
 import Link from "next/link";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { useUser } from "@clerk/nextjs";
+import Layout from "~/components/layout";
 
 type ListPageProps = {
   pageName?: string;
@@ -55,33 +57,10 @@ export default function ListPage({ pageName }: ListPageProps) {
   };
 
   return (
-    <div>
-      <Head>
-        <title>{pageName ?? "Playlist"} | IceBreakr</title>
-        <meta
-          name="dashboard"
-          content="Learn more about what IceBreakr offers."
-        />
-      </Head>
+    <Layout>
+      
 
-      <PageWrapper>
-        {/* Left section */}
-        <NavigationBar>
-          <button
-            // onClick={handleCreateGameShow}
-            className="flex h-12 w-12 items-center justify-center gap-2 rounded-xl p-2 align-middle hover:bg-neutral-600 active:bg-violet-500 md:hidden"
-          >
-            <FilterAltRoundedIcon />
-          </button>
-
-          {/* Ad space */}
-          <p className="font-normal text-neutral-500">Annonse</p>
-          <div className="flex h-auto w-full items-center justify-center overflow-hidden rounded-xl bg-neutral-800">
-            <div className="h-full w-full">
-              <Advertisement />
-            </div>
-          </div>
-        </NavigationBar>
+        
 
         {/* Middle section */}
         <section className="flex h-full w-full flex-col">
@@ -183,11 +162,10 @@ export default function ListPage({ pageName }: ListPageProps) {
             </div>
           </section>
         </section>
-        <MyFriendsBar />
+        {/* <MyFriendsBar /> */}
 
         {/* </div>
       </main> */}
-      </PageWrapper>
-    </div>
+    </Layout>
   );
 }

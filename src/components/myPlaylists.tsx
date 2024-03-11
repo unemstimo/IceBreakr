@@ -69,7 +69,7 @@ const MyPlaylists = () => {
               >
                 <div className="flex h-full w-full items-center justify-start gap-4 align-middle">
                   <PlayCircleOutlineRoundedIcon />
-                  <div className="flex flex-col items-start justify-start text-nowrap align-middle  text-md">
+                  <div className="flex flex-col items-start justify-start text-ellipsis align-middle  text-md">
                     <p className="-mb-2">{list.name}</p>
                     <p className="font-normal text-neutral-400">
                       {list.GameInPlaylist.length} leker

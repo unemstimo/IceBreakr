@@ -24,7 +24,7 @@ const GameCard = ({ gameId, name, description, rating }: Game) => {
   return (
     <Link href={`/gamePage?gameId=${gameId}`} passHref>
       <div className="relative flex h-full max-h-80 w-full min-w-36 max-w-full cursor-pointer flex-col rounded-xl bg-neutral-800 p-4 text-rg md:max-w-full xl:min-h-60">
-        <div className="relative flex h-full w-full flex-col overflow-clip align-top">
+        <div className="relative flex h-full w-full flex-col align-top">
           <Image
             className="hidden h-auto w-full rounded-lg xl:flex"
             src={Placeholder}
@@ -32,8 +32,8 @@ const GameCard = ({ gameId, name, description, rating }: Game) => {
             width={200}
             height={200}
           />
-          <h2 className="xl:mt-2">{name}</h2>
-          <p className="font-normal leading-tight text-neutral-500">
+          <h2 className="xl:mt-2 truncate overflow-hidden">{name}</h2>
+          <p className="font-normal leading-tight text-neutral-500 line-clamp-3 overflow-hidden ...">
             {description}
           </p>
         </div>

@@ -93,22 +93,22 @@ const GameCardHorizontal = ({
   return (
     <Link href={`/gamePage?gameId=${gameId}`} passHref>
       <div className="relative text-rg flex w-full cursor-pointer flex-row rounded-lg hover:bg-neutral-800 p-2">
-      <div className="relative h-10 align-top flex w-full flex-row overflow-clip">
+      <div className="relative h-10 align-top flex w-full flex-row max-w-[740px]">
         <Image
           className="h-auto rounded-lg xl:flex hidden"
           src={Placeholder}
           alt="Game Image"
           width={40}
         />
-        <div className="w-2/6 justify-normal min-w-2/6 pr-4">
+        <div className="w-2/6 justify-normal min-w-2/6 pr-4 h-10">
           <h2 className="ml-10 pt-1 overflow-hidden whitespace-nowrap text-overflow-ellipsis">{name}</h2>
         </div>
-        <div className="flex flex-col justify-center w-3/6 -ml-10">
-          <p className="font-normal ml-10 leading-tight text-neutral-500">
+        <div className="flex flex-col justify-center w-3/6 -ml-10 h-10">
+          <p className="font-normal ml-10 leading-tight text-neutral-500 h-10 truncate overflow-hidden ...">
             {description}
           </p>
         </div>
-        <div className="flex flex-col justify-center w-1/6">
+        <div className="flex flex-col justify-center w-1/6 h-10">
           <p className="text-right">{duration}</p>
         </div>
       </div>
