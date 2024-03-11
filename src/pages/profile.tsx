@@ -12,11 +12,9 @@ import PageWrapper from "~/components/pageWrapper";
 import NavigationBar from "~/components/navigationBar";
 import MyPlaylists from "~/components/myPlaylists";
 import MyFriendsBar from "~/components/myFriendsBar";
-import { api } from '~/utils/api';
-import GameCard from '~/components/gameCard';
-import { useToast } from '~/components/ui/use-toast';
+import { api } from "~/utils/api";
+import GameCard from "~/components/gameCard";
 import { type FetchGames } from "~/server/api/routers/game";
-
 
 export default function Profile() {
   const gameQuery = api.gameRouter.getAll.useQuery();
@@ -25,7 +23,9 @@ export default function Profile() {
 
   // Filter games to only show favorited games
   const filterFavoritedGames = () => {
-    const favoritedGames = games.filter((game) => game.UserFavouritedGame.length > 0);
+    const favoritedGames = games.filter(
+      (game) => game.UserFavouritedGame.length > 0,
+    );
     setFilteredGames(favoritedGames);
   };
 
@@ -33,6 +33,7 @@ export default function Profile() {
     if (gameQuery.isSuccess) {
       filterFavoritedGames();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameQuery.isSuccess]);
 
   const [showManageAccount, setShowManageAccount] = useState({
@@ -81,7 +82,7 @@ export default function Profile() {
               <p>Mine leker</p>
             </div>
             {/* My Favourites section */}
-            <div className="mt-4 flex h-full w-full items-center flex-col p-4 justify-center rounded-xl bg-[#1b1a1a]">
+            <div className="mt-4 flex h-full w-full flex-col items-center justify-center rounded-xl bg-[#1b1a1a] p-4">
               <p className="pb-2">Mine favoritter</p>
               <div className="grid h-full w-full gap-4 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-4">
                 {filteredGames.map((game) => (

@@ -15,12 +15,13 @@ const QueueBar = () => {
   const firstInQueue = queueQuery.data?.[0];
   const { toast } = useToast();
   const { game, time, isPlaying } = useTimerState();
-  const { setGame, start, reset } = useTimerActions();
+  const { setGame, reset } = useTimerActions();
 
   useEffect(() => {
     if (game?.duration === time) {
       void playNextInQueue();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [game, time, isPlaying]);
 
   // exemple på hvordan oppdatere timeplayed i backend
@@ -117,7 +118,7 @@ const QueueGameCard = ({
   const useReQueueMutation = api.queue.reQueue.useMutation();
 
   const { setGame, start, reset } = useTimerActions();
-  const { game, time, isPlaying } = useTimerState();
+  const { isPlaying } = useTimerState();
 
   const { toast } = useToast();
 
