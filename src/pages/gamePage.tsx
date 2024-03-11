@@ -12,15 +12,12 @@ import {
 import MoreHorizRoundedIcon from "@mui/icons-material/MoreHorizRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import ManageAccountsRoundedIcon from "@mui/icons-material/ManageAccountsRounded";
-import PageWrapper from "~/components/pageWrapper";
-import NavigationBar from "~/components/navigationBar";
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
 import { useRouter } from "next/router";
 import StarRoundedIcon from "@mui/icons-material/StarRounded";
 import { api } from "~/utils/api";
 import { Badge } from "~/components/ui/badge";
 import PlaylistPicker from "~/components/playlistPicker";
-import MyFriendsBar from "~/components/myFriendsBar";
 import { Input } from "~/components/ui/input";
 import {
   Select,
@@ -35,14 +32,16 @@ import { Button } from "~/components/ui/button";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import Layout from "~/components/layout";
 import { useToast } from "~/components/ui/use-toast";
 
 export default function GamePage() {
   const router = useRouter();
-  const { gameId } = router.query;
+  const { gameId: gameIdQuery } = router.query;
+  const gameId = Number(gameIdQuery ?? 1);
   const userId = useUser().user?.id;
   const gameQuery = api.gameRouter.getGameById.useQuery(
-    { id: Number(gameId ?? 1) },
+    { id: gameId },
     { enabled: gameId !== undefined },
   );
   const [isFavorite, setIsFavorite] = useState(false);
@@ -59,10 +58,6 @@ export default function GamePage() {
     commentID: number | null;
   }>({ visible: false, commentID: null });
 
-  const [showManageAccount, setShowManageAccount] = useState({
-    visible: false,
-  });
-
   useEffect(() => {
     if (favoriteQuery.data && gameId) {
       const isGameFavorite = favoriteQuery.data.find(game => game.gameId === Number(gameId));
@@ -72,9 +67,7 @@ export default function GamePage() {
   
   
 
-  const handleManageAccount = () => {
-    setShowManageAccount({ visible: !showManageAccount.visible });
-  };
+
 
   const handleMoreCommentButton = (commentID: number | null) => {
     setShowMorePopupComment({
@@ -111,10 +104,18 @@ export default function GamePage() {
     },
   );
 
-  const ratingRandom = !!ratingQuery.data?.length
+  const ratingCalculated = !!ratingQuery.data?.length
     ? ratingQuery.data?.reduce((acc, curr) => acc + curr.starRating, 0) /
       (ratingQuery.data?.length ?? 1)
     : 0;
+
+  const [showManageAccount, setShowManageAccount] = useState({
+    visible: false,
+  });
+
+  const handleManageAccount = () => {
+    setShowManageAccount({ visible: !showManageAccount.visible });
+  };
 
   const handleCommentSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -142,6 +143,22 @@ export default function GamePage() {
       await ratingQuery.refetch();
     } catch (e) {
       console.error("Error deleting rating: ", e);
+    }
+  };
+
+  const useQueueMutation = api.queue.create.useMutation();
+  const utils = api.useUtils();
+
+  const handleAddToQueue = async () => {
+    if (!gameId) return;
+    try {
+      await useQueueMutation.mutateAsync({ gameId });
+      await utils.queue.getQueue.invalidate();
+    } catch {
+      toast({
+        title: "Obs!",
+        description: "kunne ikke legge til i kø",
+      });
     }
   };
 
@@ -177,20 +194,8 @@ export default function GamePage() {
   
 
   return (
-    <div>
-      <Head>
-        <title>Dashboard | IceBreakr</title>
-        <meta
-          name="dashboard"
-          content="Learn more about what IceBreakr offers."
-        />
-      </Head>
-
-      <PageWrapper>
-        <NavigationBar>
-          <MyPlaylists />
-        </NavigationBar>
-        {/* Middle section */}
+    <>
+      <Layout navbarChildren={<MyPlaylists />}>
         <section className="flex h-full max-h-screen w-full min-w-[420px] flex-col justify-start overflow-y-auto rounded-2xl bg-neutral-900 p-4 align-middle">
           <div className="flex justify-between">
             <div className="flex items-center justify-start gap-2 align-middle">
@@ -231,7 +236,7 @@ export default function GamePage() {
                   <div>
                     <h1 className="text-xxl">{name}</h1>
                     <h2 className="font-normal text-neutral-400">
-                      {numberOfPlayers} spillere • {duration}
+                      {numberOfPlayers} spillere • {duration} minutter
                     </h2>
                     <p className="mt-6 text-md font-normal text-neutral-200">
                       {description}
@@ -250,19 +255,36 @@ export default function GamePage() {
             </div>
             <button className="absolute right-4 top-4 flex min-w-16 justify-center rounded-full bg-violet-500 align-middle">
               <StarRoundedIcon />
-              {ratingRandom}
+              {ratingCalculated}
             </button>
-            <div className="relative flex-row w-full">
-              <div className="flex flex-grow w-full p-2">
-                <button
-                  onClick={handleShowPlaylistPicker}
-                  className="mt-4 flex min-w-16 items-center justify-center rounded-full bg-violet-500 px-4 py-2 align-middle text-rg"
-                >
+            <div className="flex gap-4 pt-4">
+              <div className="relative">
+                <Button onClick={handleShowPlaylistPicker}>
                   Legg til i lekeliste
-                </button>
-                <button
+                </Button>
+                {showPlaylistPicker.visible && (
+                  <div className="absolute z-10 flex items-center justify-center rounded-3xl border-8 bg-neutral-800 p-4">
+                    <div className="flex-col items-center justify-center align-middle">
+                      <PlaylistPicker
+                        gameid={gameQuery.data?.gameId ?? 0}
+                        setShowPlaylistPicker={setShowPlaylistPicker}
+                      />
+                      <button
+                        className="-mt-4 w-full align-middle text-rg text-neutral-500 hover:text-neutral-400 hover:underline"
+                        onClick={() => {
+                          setShowPlaylistPicker({ visible: false });
+                        }}
+                      >
+                        Avbryt
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+              <Button onClick={handleAddToQueue}>Legg til i kø</Button>
+              <button
                   onClick={handleFavoritePressed}
-                  className="mb-1 ml-[500px] flex min-w-16 items-end px-4 align-middle text-rg hover:underline"
+                  className="mb-1 ml-[350px] flex min-w-16 items-end px-4 align-middle text-rg hover:underline"
                 >
                   {isFavorite ? (
                     <>
@@ -274,25 +296,6 @@ export default function GamePage() {
                     </>
                   )}
                 </button>
-              </div>
-              {showPlaylistPicker.visible && (
-                <div className="absolute z-10 flex items-center justify-center rounded-3xl border-8 bg-neutral-800 p-4">
-                  <div className="flex-col items-center justify-center align-middle">
-                    <PlaylistPicker
-                      gameid={gameQuery.data?.gameId ?? 0}
-                      setShowPlaylistPicker={setShowPlaylistPicker}
-                    />
-                    <button
-                      className="-mt-4 w-full align-middle text-rg text-neutral-500 hover:text-neutral-400 hover:underline"
-                      onClick={() => {
-                        setShowPlaylistPicker({ visible: false });
-                      }}
-                    >
-                      Avbryt
-                    </button>
-                  </div>
-                </div>
-              )}
             </div>
           </div>
           {/* Rules */}
@@ -404,21 +407,19 @@ export default function GamePage() {
             </div>
           </div>
         </section>
+      </Layout>
 
-        <MyFriendsBar />
-
-        {showManageAccount.visible && (
-          <div className="absolute left-0 top-0 flex h-full w-full flex-col items-center justify-center bg-neutral-900 bg-opacity-90 p-24 align-middle">
-            <UserProfile />
-            <button
-              className="text-l mt-2 text-neutral-300 hover:underline"
-              onClick={handleManageAccount}
-            >
-              Lukk
-            </button>
-          </div>
-        )}
-      </PageWrapper>
-    </div>
+      {showManageAccount.visible && (
+        <div className="absolute left-0 top-0 flex h-full w-full flex-col items-center justify-center bg-neutral-900 bg-opacity-90 p-24 align-middle">
+          <UserProfile />
+          <button
+            className="text-l mt-2 text-neutral-300 hover:underline"
+            onClick={handleManageAccount}
+          >
+            Lukk
+          </button>
+        </div>
+      )}
+    </>
   );
 }
