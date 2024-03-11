@@ -1,80 +1,66 @@
 import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  setTimeLeft,
-  decrementTimeLeft,
-  toggleRunning,
-} from "../redux/countdownSlice";
-import { store, type RootState } from "../redux/store";
+import { useDispatch } from "react-redux";
+import { startTimer, stopTimer, updateTime } from "../redux/store";
 import PlayCircleFilledRoundedIcon from "@mui/icons-material/PlayCircleFilledRounded";
 import PauseCircleFilledRoundedIcon from "@mui/icons-material/PauseCircleFilledRounded";
 import SkipNextRoundedIcon from "@mui/icons-material/SkipNextRounded";
 import SkipPreviousRoundedIcon from "@mui/icons-material/SkipPreviousRounded";
+import { useTimerState } from "~/redux/hooks";
 
 interface CountdownComponentProps {
   playtime?: number;
 }
 
-const CountdownComponent: React.FC<CountdownComponentProps> = ({
-  playtime = 69,
-}) => {
+const CountdownComponent: React.FC<CountdownComponentProps> = ({}) => {
   const dispatch = useDispatch();
-  const { timeLeft, isRunning } = useSelector(
-    (state: RootState) => state.countdown,
-  );
-  const [isPlaying, setIsPlaying] = React.useState(false);
+  const { isPlaying, time, game } = useTimerState();
 
   useEffect(() => {
     const storedTimeLeft = localStorage.getItem("timeLeft");
-    const storedRunState = localStorage.getItem("isRunning");
-    console.log("Timeleft: " + storedTimeLeft);
-    console.log("Run state: " + storedRunState);
-    if (storedTimeLeft) {
-      dispatch(setTimeLeft(Number(storedTimeLeft)));
+    if (storedTimeLeft !== null) {
+      dispatch(updateTime(Number(storedTimeLeft)));
     }
-    if (storedRunState) {
-      setIsPlaying(storedRunState === "true" ? true : false);
-    }
-
-    const interval = setInterval(() => {
-      dispatch(decrementTimeLeft());
-    }, 1000);
-
-    return () => clearInterval(interval);
   }, [dispatch]);
 
   useEffect(() => {
-    localStorage.setItem("timeLeft", timeLeft.toString());
-    localStorage.setItem("isRunning", isRunning.toString());
-  }, [timeLeft, isRunning]);
+    if (isPlaying) {
+      const interval = setInterval(() => {
+        dispatch(updateTime(time + 1));
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [isPlaying, time, dispatch]);
 
-  const handleSetCountdown = (time: number) => {
-    dispatch(setTimeLeft(time));
-  };
-
-  const handleToggleRunning = () => {
-    dispatch(toggleRunning());
-    setIsPlaying(!isPlaying);
+  const handleTogglePlaying = () => {
+    if (isPlaying) {
+      dispatch(stopTimer());
+    } else {
+      dispatch(startTimer());
+    }
   };
 
   return (
     <div className="flex flex-col justify-center gap-4 rounded-xl bg-background p-4 align-middle">
-      <h1 suppressHydrationWarning={true}>Countdown: {timeLeft}</h1>
-      <button
-        className="rounded-lg bg-primary p-4 text-rg text-white"
-        onClick={() => handleSetCountdown(60)}
-      >
-        DEV ONLY set timer to 60 Seconds
-      </button>
+      <h1>
+        {game?.name} {Math.floor((game?.duration ?? 0) / 60)}m
+        {(game?.duration ?? 0) % 60}s
+      </h1>
+      <h1 suppressHydrationWarning={true}>
+        Tid spilt: {""}
+        {time > 60 ? (
+          <>
+            {Math.floor(time / 60)}m {time % 60}s
+          </>
+        ) : (
+          <>{time}s</>
+        )}
+      </h1>
+
       <span
-        suppressHydrationWarning={true}
+        // suppressHydrationWarning={true}
         className="flex w-full justify-center align-middle"
       >
-        {isRunning ? (
-          <h1 suppressHydrationWarning={true}>Running</h1>
-        ) : (
-          <h1 suppressHydrationWarning={true}>Paused</h1>
-        )}
+        {isPlaying ? <h1>Running</h1> : <h1>Paused</h1>}
       </span>
       <span className="flex w-full justify-center align-middle">
         <button className="flex items-center justify-center rounded-full align-middle text-neutral-500 hover:text-white">
@@ -83,14 +69,14 @@ const CountdownComponent: React.FC<CountdownComponentProps> = ({
         {isPlaying ? (
           <button
             className="flex h-12 items-center justify-center rounded-full align-middle text-white active:scale-90"
-            onClick={handleToggleRunning}
+            onClick={handleTogglePlaying}
           >
             <PauseCircleFilledRoundedIcon sx={{ fontSize: 50 }} />
           </button>
         ) : (
           <button
             className="flex h-12 items-center justify-center rounded-full align-middle text-white active:scale-90"
-            onClick={handleToggleRunning}
+            onClick={handleTogglePlaying}
           >
             <PlayCircleFilledRoundedIcon sx={{ fontSize: 50 }} />
           </button>

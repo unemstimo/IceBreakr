@@ -7,6 +7,10 @@ export type Queue = inferProcedureOutput<AppRouter["queue"]["getQueue"]>;
 export type QueueItem = inferProcedureOutput<
   AppRouter["queue"]["getQueueItem"]
 >;
+export type UpdateQueue = inferProcedureOutput<
+  AppRouter["queue"]["updateTimePlayed"]
+>;
+
 export const queueRouter = createTRPCRouter({
   create: privateProcedure
     .input(
@@ -28,9 +32,15 @@ export const queueRouter = createTRPCRouter({
       where: {
         userId: ctx.userId,
       },
-      orderBy: {
-        queuedAt: "desc",
-      },
+      orderBy: [
+        {
+          queuedAt: "asc",
+        },
+        // you you requeue, the updatedAt will be set to now and it will be first in queue.
+        {
+          updatedAt: "desc",
+        },
+      ],
       include: {
         game: true,
       },
@@ -89,12 +99,25 @@ export const queueRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      // get time for frist in queue
+      const firstInQueue = await ctx.db.gameInUserQueue.findFirst({
+        where: {
+          userId: ctx.userId,
+        },
+        orderBy: {
+          queuedAt: "asc",
+        },
+      });
+
+      const earliestTime = firstInQueue?.queuedAt;
+
       return ctx.db.gameInUserQueue.update({
         where: {
           queuedId: input.queuedId,
         },
         data: {
-          queuedAt: new Date(),
+          queuedAt: earliestTime,
+          updatedAt: new Date(),
         },
       });
     }),

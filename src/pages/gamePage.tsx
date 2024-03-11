@@ -1,4 +1,3 @@
-import Head from "next/head";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Placeholder from "~/assets/images/placeholder.png";
@@ -29,9 +28,8 @@ import {
 import MyPlaylists from "~/components/myPlaylists";
 import StarIcon from "@mui/icons-material/Star";
 import { Button } from "~/components/ui/button";
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import Layout from "~/components/layout";
 import { useToast } from "~/components/ui/use-toast";
 
@@ -60,14 +58,12 @@ export default function GamePage() {
 
   useEffect(() => {
     if (favoriteQuery.data && gameId) {
-      const isGameFavorite = favoriteQuery.data.find(game => game.gameId === Number(gameId));
+      const isGameFavorite = favoriteQuery.data.find(
+        (game) => game.gameId === Number(gameId),
+      );
       setIsFavorite(!!isGameFavorite);
     }
   }, [favoriteQuery.data, gameId]);
-  
-  
-
-
 
   const handleMoreCommentButton = (commentID: number | null) => {
     setShowMorePopupComment({
@@ -103,6 +99,13 @@ export default function GamePage() {
       enabled: gameQuery.data?.gameId !== undefined,
     },
   );
+
+  // if the game query does not return a game, rerout to dashboard
+  useEffect(() => {
+    if (!gameQuery.data) {
+      void router.push("/browse");
+    }
+  }, [gameQuery.data, router]);
 
   const ratingCalculated = !!ratingQuery.data?.length
     ? ratingQuery.data?.reduce((acc, curr) => acc + curr.starRating, 0) /
@@ -150,7 +153,7 @@ export default function GamePage() {
   const utils = api.useUtils();
 
   const handleAddToQueue = async () => {
-    if (!gameId) return;
+    if (!gameId || !gameQuery.data) return;
     try {
       await useQueueMutation.mutateAsync({ gameId });
       await utils.queue.getQueue.invalidate();
@@ -162,14 +165,16 @@ export default function GamePage() {
     }
   };
 
-  const handleFavoritePressed = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleFavoritePressed = async (
+    e: React.MouseEvent<HTMLButtonElement>,
+  ) => {
     e.preventDefault();
     e.stopPropagation();
-  
+
     try {
       if (!isFavorite) {
         await AddToFavoriteMutation.mutateAsync({
-          gameId: Number(gameId)
+          gameId: Number(gameId),
         });
         toast({
           title: "Lagt til i favoritter",
@@ -177,21 +182,19 @@ export default function GamePage() {
         });
       } else {
         await RemoveFromFavoriteMutation.mutateAsync({
-          gameId: Number(gameId)
+          gameId: Number(gameId),
         });
         toast({
           title: "Fjernet fra favoritter",
           description: "Lek er nå fjernet fra dine favoritter",
         });
       }
-      gameQuery.refetch();
-      favoriteQuery.refetch();
+      void gameQuery.refetch();
+      void favoriteQuery.refetch();
     } catch (error) {
       console.log("Error:", error);
     }
   };
-  
-  
 
   return (
     <>
@@ -283,19 +286,23 @@ export default function GamePage() {
               </div>
               <Button onClick={handleAddToQueue}>Legg til i kø</Button>
               <button
-                  onClick={handleFavoritePressed}
-                  className="mb-1 ml-[350px] flex min-w-16 items-end px-4 align-middle text-rg hover:underline"
-                >
-                  {isFavorite ? (
-                    <>
-                      <h1><CheckCircleIcon style={{ color: '#51ed42', fontSize: 32 }} /></h1>
-                    </>
-                  ) : (
-                    <>
-                      <AddCircleOutlineIcon style={{ fontSize: 32 }} />
-                    </>
-                  )}
-                </button>
+                onClick={handleFavoritePressed}
+                className="mb-1 ml-[350px] flex min-w-16 items-end px-4 align-middle text-rg hover:underline"
+              >
+                {isFavorite ? (
+                  <>
+                    <h1>
+                      <CheckCircleIcon
+                        style={{ color: "#51ed42", fontSize: 32 }}
+                      />
+                    </h1>
+                  </>
+                ) : (
+                  <>
+                    <AddCircleOutlineIcon style={{ fontSize: 32 }} />
+                  </>
+                )}
+              </button>
             </div>
           </div>
           {/* Rules */}
