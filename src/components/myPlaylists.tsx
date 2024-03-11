@@ -78,7 +78,7 @@ const MyPlaylists = () => {
                 </div>
               </button>
               <button
-                  className="-mt-2 h-full align-middle "
+                  className="-mt-2 h-full align-middle -ml-10"
                   onClick={() => handleShowMorePopupPlaylist(list.playlistId)}
                 >
                   <MoreHorizRoundedIcon />
