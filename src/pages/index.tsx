@@ -20,15 +20,10 @@ export default function Home() {
   );
 
   useEffect(() => {
-    if (isLoading) return;
-
     if (!user.isSignedIn) {
       router.push("/dashboard");
-    } else if (
-      user.isSignedIn &&
-      userDb?.userId !== user.user?.id &&
-      isSuccess
-    ) {
+    } else if (isLoading) return;
+    else if (user.isSignedIn && userDb?.userId !== user.user?.id && isSuccess) {
       const input = {
         mail: user?.user?.primaryEmailAddress?.emailAddress ?? "11",
         username: user?.user?.fullName ?? "11",
