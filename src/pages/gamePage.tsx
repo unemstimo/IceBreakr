@@ -33,12 +33,6 @@ export default function GamePage() {
   const duration = gameQuery.data?.duration ?? "";
   const description = gameQuery.data?.description ?? "";
   const rules = gameQuery.data?.rules ?? "";
-
-  const [showMorePopupComment, setShowMorePopupComment] = useState<{
-    visible: boolean;
-    commentID: number | null;
-  }>({ visible: false, commentID: null });
-
   const [showPlaylistPicker, setShowPlaylistPicker] = useState({
     visible: false,
   });
