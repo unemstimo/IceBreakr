@@ -47,7 +47,7 @@ const QueueBar = () => {
           {queueQuery.data?.map((game) => (
             <QueueGameCard
               firstInQueue={firstInQueue}
-              key={game.gameId}
+              key={game.queuedId}
               queueItem={game}
               refetch={() => queueQuery.refetch()}
             />

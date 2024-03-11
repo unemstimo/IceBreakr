@@ -5,7 +5,7 @@ import {
   decrementTimeLeft,
   toggleRunning,
 } from "../redux/countdownSlice";
-import { store, type RootState } from "../redux/store";
+import { type RootState } from "../redux/store";
 import PlayCircleFilledRoundedIcon from "@mui/icons-material/PlayCircleFilledRounded";
 import PauseCircleFilledRoundedIcon from "@mui/icons-material/PauseCircleFilledRounded";
 import SkipNextRoundedIcon from "@mui/icons-material/SkipNextRounded";
