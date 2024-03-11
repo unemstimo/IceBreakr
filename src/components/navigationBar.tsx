@@ -10,6 +10,7 @@ import CountdownComponent from "./countdownComponent";
 import { useDispatch } from "react-redux";
 import { useEffect } from "react";
 import { setTimeLeft } from "~/redux/countdownSlice";
+import React from "react";
 
 type NavigationBarProps = {
   children: React.ReactNode | React.ReactElement[];
@@ -122,3 +123,7 @@ const NavigationBar = ({ children }: NavigationBarProps) => {
 };
 
 export default NavigationBar;
+function useState(arg0: boolean): [any, any] {
+  throw new Error("Function not implemented.");
+}
+

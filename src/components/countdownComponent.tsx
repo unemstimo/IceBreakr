@@ -7,7 +7,12 @@ import PauseCircleFilledRoundedIcon from '@mui/icons-material/PauseCircleFilledR
 import SkipNextRoundedIcon from '@mui/icons-material/SkipNextRounded';
 import SkipPreviousRoundedIcon from '@mui/icons-material/SkipPreviousRounded';
 
-const CountdownComponent: React.FC = () => {
+interface CountdownComponentProps {
+    playtime?: number;
+  }
+  
+
+const CountdownComponent: React.FC<CountdownComponentProps> = ({ playtime = 69 }) => {
   const dispatch = useDispatch();
   const { timeLeft, isRunning} = useSelector((state: RootState) => state.countdown);
   const [isPlaying, setIsPlaying] = React.useState(false);
