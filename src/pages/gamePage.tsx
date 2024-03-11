@@ -1,4 +1,5 @@
-import { useState } from "react";
+import Head from "next/head";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Placeholder from "~/assets/images/placeholder.png";
 import {
@@ -28,6 +29,9 @@ import {
 import MyPlaylists from "~/components/myPlaylists";
 import StarIcon from "@mui/icons-material/Star";
 import { Button } from "~/components/ui/button";
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import Layout from "~/components/layout";
 import { useToast } from "~/components/ui/use-toast";
 
@@ -40,6 +44,8 @@ export default function GamePage() {
     { id: gameId },
     { enabled: gameId !== undefined },
   );
+  const [isFavorite, setIsFavorite] = useState(false);
+  const favoriteQuery = api.favorite.getUserFavoriteGames.useQuery();
 
   const name = gameQuery.data?.name ?? "";
   const numberOfPlayers = gameQuery.data?.numberOfPlayers ?? "";
@@ -51,6 +57,17 @@ export default function GamePage() {
     visible: boolean;
     commentID: number | null;
   }>({ visible: false, commentID: null });
+
+  useEffect(() => {
+    if (favoriteQuery.data && gameId) {
+      const isGameFavorite = favoriteQuery.data.find(game => game.gameId === Number(gameId));
+      setIsFavorite(!!isGameFavorite);
+    }
+  }, [favoriteQuery.data, gameId]);
+  
+  
+
+
 
   const handleMoreCommentButton = (commentID: number | null) => {
     setShowMorePopupComment({
@@ -74,6 +91,9 @@ export default function GamePage() {
   const [rating, setRating] = useState<number>();
   const useRating = api.rating.create.useMutation();
   const useDeleteRating = api.rating.delete.useMutation();
+  const AddToFavoriteMutation = api.favorite.addGame.useMutation();
+  const RemoveFromFavoriteMutation = api.favorite.removeGame.useMutation();
+  const { toast } = useToast();
 
   const ratingQuery = api.rating.getRatingsByGameId.useQuery(
     {
@@ -127,7 +147,6 @@ export default function GamePage() {
   };
 
   const useQueueMutation = api.queue.create.useMutation();
-  const { toast } = useToast();
   const utils = api.useUtils();
 
   const handleAddToQueue = async () => {
@@ -142,6 +161,37 @@ export default function GamePage() {
       });
     }
   };
+
+  const handleFavoritePressed = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+  
+    try {
+      if (!isFavorite) {
+        await AddToFavoriteMutation.mutateAsync({
+          gameId: Number(gameId)
+        });
+        toast({
+          title: "Lagt til i favoritter",
+          description: "Lek er nå lagt til i dine favoritter",
+        });
+      } else {
+        await RemoveFromFavoriteMutation.mutateAsync({
+          gameId: Number(gameId)
+        });
+        toast({
+          title: "Fjernet fra favoritter",
+          description: "Lek er nå fjernet fra dine favoritter",
+        });
+      }
+      gameQuery.refetch();
+      favoriteQuery.refetch();
+    } catch (error) {
+      console.log("Error:", error);
+    }
+  };
+  
+  
 
   return (
     <>
@@ -203,7 +253,7 @@ export default function GamePage() {
                 </div>
               </div>
             </div>
-            <button className="absolute right-4 top-4 flex min-w-16 items-center justify-center rounded-full bg-violet-500 align-middle">
+            <button className="absolute right-4 top-4 flex min-w-16 justify-center rounded-full bg-violet-500 align-middle">
               <StarRoundedIcon />
               {parseFloat(ratingCalculated.toFixed(1))}
             </button>
@@ -232,6 +282,20 @@ export default function GamePage() {
                 )}
               </div>
               <Button onClick={handleAddToQueue}>Legg til i kø</Button>
+              <button
+                  onClick={handleFavoritePressed}
+                  className="mb-1 ml-[350px] flex min-w-16 items-end px-4 align-middle text-rg hover:underline"
+                >
+                  {isFavorite ? (
+                    <>
+                      <h1><CheckCircleIcon style={{ color: '#51ed42', fontSize: 32 }} /></h1>
+                    </>
+                  ) : (
+                    <>
+                      <AddCircleOutlineIcon style={{ fontSize: 32 }} />
+                    </>
+                  )}
+                </button>
             </div>
           </div>
           {/* Rules */}

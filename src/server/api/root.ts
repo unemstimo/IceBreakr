@@ -5,6 +5,7 @@ import { gameRouter } from "./routers/game";
 import { categoryRouter } from "./routers/category";
 import { playlistRouter } from "./routers/playlist";
 import { ratingRouter } from "./routers/rating";
+import { favoriteRouter } from "./routers/favorite";
 import { queueRouter } from "./routers/queue";
 
 /**
@@ -18,7 +19,8 @@ export const appRouter = createTRPCRouter({
   category: categoryRouter,
   playlist: playlistRouter,
   rating: ratingRouter,
-  queue: queueRouter,
+  favorite: favoriteRouter,
+  queue: queueRouter
 });
 
 // export type definition of API

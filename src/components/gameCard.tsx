@@ -1,10 +1,16 @@
 import Image from "next/image";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Placeholder from "~/assets/images/placeholder.png";
 import StarRoundedIcon from "@mui/icons-material/StarRounded";
 import Link from "next/link";
+import StarBorderIcon from '@mui/icons-material/StarBorder'; 
+import StarIcon from '@mui/icons-material/Star';
+import { api } from "~/utils/api";
+import { useRouter } from "next/router";
+import { getQueryKey } from "@trpc/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 
-// export type Game = inferProcedureOutput<AppRouter["gameRouter"]["getGameById"]>;
+
 export type Game = {
   gameId: number;
   userId: string;
@@ -14,12 +20,50 @@ export type Game = {
   rules: string;
   description: string;
   rating: number;
+  isFavorite: boolean;
+  refetchGames: VoidFunction;
 };
 
-const GameCard = ({ gameId, name, description, rating }: Game) => {
-  // Prepare the game object from props
+const GameCard = ({ gameId, name, description, rating, isFavorite, refetchGames}: Game) => {
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  const postListKey = getQueryKey(api.gameRouter.getAll, undefined, "query");
 
-  // Generate query string
+  const AddToFavoriteMutation = api.favorite.addGame.useMutation();
+  const RemoveFromFavoriteMutation = api.favorite.removeGame.useMutation();
+
+  function handleFavoritePressed(e: React.MouseEvent<HTMLButtonElement>) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    // Call TRPC mutation function to add or remove game from favorites
+    if (!isFavorite) {
+      handleAddToFavorite();
+    } else {
+      handleDeleteFromFavorite();
+    }
+    refetchGames()
+  }
+
+  const handleAddToFavorite = async () => {
+    try {
+      await AddToFavoriteMutation.mutateAsync({
+        gameId: gameId
+      })
+    } catch (error) {
+      console.log("Error");
+    }
+  };
+
+  const handleDeleteFromFavorite = async () => {
+    try {
+      await RemoveFromFavoriteMutation.mutateAsync({
+        gameId: gameId
+      })    
+    } catch (error) {
+      console.log("Error");
+    }
+  };
 
   return (
     <Link href={`/gamePage?gameId=${gameId}`} passHref>
@@ -43,6 +87,15 @@ const GameCard = ({ gameId, name, description, rating }: Game) => {
             {parseFloat(rating.toFixed(1))}
           </div>
         )}
+        <button onClick={handleFavoritePressed} className="">
+        <div className="absolute right-4 top-[185px] flex items-center justify-center align-middle">
+          {isFavorite ? (
+              <StarIcon style={{ color: '#d9b907' }} />
+            ) : (
+                <StarBorderIcon />
+              )}
+        </div>
+        </button>
       </div>
     </Link>
   );
