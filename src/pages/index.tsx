@@ -20,15 +20,10 @@ export default function Home() {
   );
 
   useEffect(() => {
-    if (!user.isSignedIn) router.push("/dashboard");
-    if (isLoading) return;
     if (!user.isSignedIn) {
       router.push("/dashboard");
-    } else if (
-      user.isSignedIn &&
-      userDb?.userId !== user.user?.id &&
-      isSuccess
-    ) {
+    } else if (isLoading) return;
+    else if (user.isSignedIn && userDb?.userId !== user.user?.id && isSuccess) {
       const input = {
         mail: user?.user?.primaryEmailAddress?.emailAddress ?? "11",
         username: user?.user?.fullName ?? "11",
@@ -36,13 +31,12 @@ export default function Home() {
       };
       useUserMuation.mutate(input);
     } else {
-      console.log("redirect else");
       router.push("/dashboard");
     }
   }, [isLoading, isSuccess, router, useUserMuation, user, userDb]);
 
   return (
-    <div className="flex h-full w-full items-center justify-center">
+    <div className="flex h-screen w-full items-center justify-center">
       <h1 className=" text-white">Loading</h1>
     </div>
   );

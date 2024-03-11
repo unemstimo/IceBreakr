@@ -1,20 +1,16 @@
-import Head from "next/head";
 import { useState, useEffect } from "react";
 import ArrowBackRounded from "@mui/icons-material/ArrowBackRounded";
-
 import Advertisement from "~/components/advertisement";
 import GameCard from "~/components/gameCard";
-import PageWrapper from "~/components/pageWrapper";
-import NavigationBar from "~/components/navigationBar";
 import { api } from "~/utils/api";
 import { type FetchGames } from "~/server/api/routers/game";
 import { Checkbox } from "~/components/ui/checkbox";
 import { type Category } from "~/server/api/routers/category";
 import router from "next/router";
-import MyFriendsBar from "~/components/myFriendsBar";
 import FilterAltRoundedIcon from "@mui/icons-material/FilterAltRounded";
 import { Input } from "~/components/ui/input";
 import { useToast } from "~/components/ui/use-toast";
+import Layout from "~/components/layout";
 
 export default function Browse() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -31,20 +27,25 @@ export default function Browse() {
 
   const filterGames = () => {
     const filtered = games.filter((game) => {
-      if (numberOfPlayers && game.numberOfPlayers !== numberOfPlayers) {
+      if (numberOfPlayers && parseInt(game.numberOfPlayers) > parseInt(numberOfPlayers)) {
         return false;
       }
-      //Duration
-      if (Object.values(gameCategories).some((value) => value)) {
-        const categories = Object.keys(gameCategories).filter(
-          (category) => gameCategories[category],
-        );
-        if (
-          !game.GameInCategory.some((g) => categories.includes(g.category.name))
-        ) {
-          return false;
-        }
+      if (duration && parseInt(game.duration) > parseInt(duration)) {
+        return false;
       }
+      
+      if (Object.values(gameCategories).some((value) => value)) {
+      const categories = Object.keys(gameCategories).filter(
+        (category) => gameCategories[category],
+      );
+      if (
+        !categories.every(category => game.GameInCategory.some((g) => g.category.name === category))
+      ) {
+        return false;
+      }
+
+    }
+
 
       if (searchTerm) {
         const searchTermLower = searchTerm.toLowerCase();
@@ -99,24 +100,12 @@ export default function Browse() {
     console.log(gameCategories);
   };
 
-  const playerButtons = ["2", "3", "4", "5", "6", "7+"];
-  const durationButtons = ["10 min", "20 min", "30 min", "40 min+"];
-
   const { toast } = useToast();
 
   return (
-    <div>
-      <Head>
-        <title>Dashboard | IceBreakr</title>
-        <meta
-          name="dashboard"
-          content="Learn more about what IceBreakr offers."
-        />
-      </Head>
-
-      <PageWrapper>
-        {/* Left section */}
-        <NavigationBar>
+    <Layout
+      navbarChildren={
+        <>
           <button
             onClick={() => {
               console.log("toast");
@@ -149,20 +138,18 @@ export default function Browse() {
 
               {/* Number of player buttons */}
               <div className="-m-2 mb-2 mt-2 rounded-xl bg-neutral-800 p-2">
-                <p className="-mt-1 mb-1">Antall Spillere:</p>
-                {playerButtons.map((players) => (
-                  <button
-                    key={players}
-                    className={`ml-1 mr-0 rounded-full px-3 py-1 text-sm text-white shadow-lg hover:bg-violet-500 active:bg-violet-800 ${
-                      numberOfPlayers === players
-                        ? "bg-violet-600"
-                        : "bg-neutral-700"
-                    }`}
-                    onClick={() => handlePlayersSelection(players)}
-                  >
-                    {players}
-                  </button>
-                ))}
+              <label htmlFor="time">Max antall spillere: {numberOfPlayers} </label>
+                <input
+                  type="range"
+                  value={numberOfPlayers}
+                  id="time"
+                  name="time"
+                  min="1"
+                  max="40"
+                  step="1"
+                  onChange={e => handlePlayersSelection(e.target.value)}
+                  className="w-full rounded-lg bg-neutral-800 py-2 pl-2 pr-2 text-white focus:outline-none"
+                />
               </div>
               {/* Category checkboxes */}
               <div className="-m-2 mb-2 mt-2 rounded-xl bg-neutral-800 p-2">
@@ -177,6 +164,7 @@ export default function Browse() {
                         console.log(checked);
                         handleCategorySelection22(category);
                       }}
+                      
                       name={category.name}
                       checked={gameCategories[category.name] ?? false}
                     />
@@ -186,21 +174,20 @@ export default function Browse() {
 
               {/* Duration buttons */}
               <div className="-m-2 mt-2 rounded-xl bg-neutral-800 p-2">
-                <p className="-mt-1 mb-1">Varighet:</p>
-                {durationButtons.map((durationOption) => (
-                  <button
-                    key={durationOption}
-                    className={`ml-0 mr-1 rounded-full px-2 py-1 text-sm text-white shadow-lg hover:bg-violet-500 active:bg-violet-800 ${
-                      durationOption === duration
-                        ? "bg-violet-600"
-                        : "bg-neutral-700"
-                    }`}
-                    onClick={() => handleDurationSelection(durationOption)}
-                  >
-                    {durationOption}
-                  </button>
-                ))}
+              <label htmlFor="time">Max varighet: {duration} min </label>
+                <input
+                  type="range"
+                  value={duration}
+                  id="time"
+                  name="time"
+                  min="1"
+                  max="59"
+                  step="1"
+                  onChange={e => handleDurationSelection(e.target.value)}
+                  className="w-full rounded-lg bg-neutral-800 py-2 pl-2 pr-2 text-white focus:outline-none"
+                />
               </div>
+              
             </div>
             {/* Ad space */}
             <p className="font-normal text-neutral-500">Annonse</p>
@@ -210,52 +197,48 @@ export default function Browse() {
               </div>
             </div>
           </div>
-        </NavigationBar>
-        {/* Middle section */}
-        <section className="flex h-full w-full">
-          <section className="flex h-full w-full flex-col justify-start rounded-2xl bg-neutral-900 p-4 align-middle">
-            <div className="flex flex-col justify-center gap-6">
-              <div className="flex w-full items-center justify-start gap-2 align-middle">
-                <button onClick={() => router.back()}>
-                  <ArrowBackRounded />
-                </button>{" "}
-                Utforsk alle leker
-              </div>
-              <div className="w-1/3">
-                <Input
-                  className="w-full bg-neutral-800 text-md text-white focus:outline-none"
-                  type="search" // Changed to search to improve semantics
-                  placeholder="Søk..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div>
-              {/* make the div 4 columns wide */}
-              <div className="grid h-full w-full gap-4 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-4">
-                {/* Map through the filteredGames array to render GameCard components */}
-                {filteredGames.map((game) => (
-                  <GameCard
-                    key={game.gameId}
-                    name={game.name}
-                    duration={game.duration}
-                    // category={"kategori"}
-                    numberOfPlayers={game.numberOfPlayers}
-                    rules={game.rules}
-                    description={game.description ?? ""}
-                    rating={game.averageRating}
-                    gameId={game.gameId}
-                    userId={game.userId}
-                  />
-                ))}
-              </div>
+        </>
+      }
+    >
+      <section className="flex h-full w-full">
+        <section className="flex h-full w-full flex-col justify-start rounded-2xl bg-neutral-900 p-4 align-middle">
+          <div className="flex flex-col justify-center gap-6">
+            <div className="flex w-full items-center justify-start gap-2 align-middle">
+              <button onClick={() => router.back()}>
+                <ArrowBackRounded />
+              </button>{" "}
+              Utforsk alle leker
             </div>
-          </section>
+            <div className="w-1/3">
+              <Input
+                className="w-full bg-neutral-800 text-md text-white focus:outline-none"
+                type="search" // Changed to search to improve semantics
+                placeholder="Søk..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            {/* make the div 4 columns wide */}
+            <div className="grid h-full w-full gap-4 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-4">
+              {/* Map through the filteredGames array to render GameCard components */}
+              {filteredGames.map((game) => (
+                <GameCard
+                  key={game.gameId}
+                  name={game.name}
+                  duration={game.duration}
+                  // category={"kategori"}
+                  numberOfPlayers={game.numberOfPlayers}
+                  rules={game.rules}
+                  description={game.description ?? ""}
+                  rating={game.averageRating}
+                  gameId={game.gameId}
+                  userId={game.userId}
+                />
+              ))}
+            </div>
+          </div>
         </section>
-        <MyFriendsBar />
-
-        {/* </div>
-      </main> */}
-      </PageWrapper>
-    </div>
+      </section>
+    </Layout>
   );
 }
