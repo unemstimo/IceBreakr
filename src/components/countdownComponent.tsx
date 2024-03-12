@@ -67,6 +67,10 @@ const CountdownComponent: React.FC<CountdownComponentProps> = ({
     localStorage.setItem("timeLeft", timeLeft.toString());
     localStorage.setItem("isRunning", isRunning.toString());
     localStorage.setItem("lastPlayedGameTime", lastGameTime.toString());
+    if (lastGameTime <= 0 || timeLeft <= 0){
+      dispatch(setRunState(false));
+      setIsPlaying(false);
+    }
   }, [timeLeft, isRunning, lastGameTime, dispatch]);
 
   const handlePlay = () => {
@@ -94,6 +98,12 @@ const CountdownComponent: React.FC<CountdownComponentProps> = ({
     dispatch(setTimeLeft(playtime));
     dispatch(setRunState(true));
     setIsPlaying(true);
+  }
+
+  const handleReset = () => {
+    dispatch(setTimeLeft(playtime));
+    dispatch(setRunState(false));
+    setIsPlaying(false);
   }
 
   const toggleShuffle = () => {
@@ -183,7 +193,7 @@ const CountdownComponent: React.FC<CountdownComponentProps> = ({
         <Tooltip className="bg-background rounded-full border-primary border text-neutral-300" content="Reset timer">
           <Button
             className="flex items-center justify-center rounded-full active:text-primary align-middle h-auto text-neutral-500 hover:text-white"
-            onClick={handleReplay}
+            onClick={handleReset}
           >
             <RestartAltRoundedIcon sx={{ fontSize: 25 }} />
           </Button>
