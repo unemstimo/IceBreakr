@@ -1,12 +1,10 @@
 import PlayCircleOutlineRoundedIcon from "@mui/icons-material/PlayCircleOutlineRounded";
-import MoreHorizRoundedIcon from "@mui/icons-material/MoreHorizRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
-
 import { api } from "~/utils/api";
-import { Dispatch, SetStateAction, useState } from "react";
+import { type Dispatch, type SetStateAction, useState } from "react";
 import Link from "next/link";
 import { useToast } from "./ui/use-toast";
-import { SignedIn, SignedOut, SignInButton } from "@clerk/nextjs"
+import { SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
 
 type PlaylistPickerProps = {
   gameid: number;
@@ -68,15 +66,14 @@ const PlaylistPicker = ({
         <h2 className="text-2xl font-bold ">Mine Lekelister</h2>
         <SignedIn>
           <Link href="/createPlaylist">
-          <button
-            className="text-md text-neutral-500 hover:underline"
-            onClick={() => "TODO: handleAddPlaylist"}
-          >
-            Lag ny
-          </button>
-        </Link>
+            <button
+              className="text-md text-neutral-500 hover:underline"
+              onClick={() => "TODO: handleAddPlaylist"}
+            >
+              Lag ny
+            </button>
+          </Link>
         </SignedIn>
-
       </div>
       <ul className="relative mt-5 w-full">
         {myPlaylists?.map((list) => (
@@ -129,22 +126,19 @@ const PlaylistPicker = ({
             <p>Fiks det ved å</p>
             <SignedIn>
               <button
-              onClick={() => console.log("TODO: handleAddPlaylist")}
-              className="font-bold text-violet-400 hover:text-violet-300"
+                onClick={() => console.log("TODO: handleAddPlaylist")}
+                className="font-bold text-violet-400 hover:text-violet-300"
               >
                 lage en lekeliste
               </button>
             </SignedIn>
             <SignedOut>
-            <SignInButton>
-              <button
-                className="font-bold text-violet-400 hover:text-violet-300"
-              >
-                logge inn
-              </button>
-            </SignInButton>
+              <SignInButton>
+                <button className="font-bold text-violet-400 hover:text-violet-300">
+                  logge inn
+                </button>
+              </SignInButton>
             </SignedOut>
-            
           </div>
         </div>
       )}

@@ -1,23 +1,21 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Layout from "~/components/layout";
 import { api } from "~/utils/api";
 import { useRouter } from "next/router";
-import { Button } from "~/components/ui/button";
 import { type CreatePlaylist } from "~/server/api/routers/playlist";
-import Link from "next/link";
-import { Input } from "@nextui-org/react";
 import { ArrowBackRounded } from "@mui/icons-material";
 
 const CreatePlaylistPage = () => {
   const [playlistName, setPlaylistName] = useState("");
   const [showError, setShowError] = useState(false);
 
-  const myPlaylistsQuery = api.playlist.getPlaylistsByUserId.useQuery();
   const useCreatePlaylistMutation = api.playlist.create.useMutation();
 
   const router = useRouter();
 
-  const handlePlaylistNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePlaylistNameChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     setPlaylistName(event.target.value);
   };
 
@@ -54,14 +52,16 @@ const CreatePlaylistPage = () => {
 
   return (
     <Layout>
-      <div className="flex flex-col w-full justify-start p-4 bg-neutral-900 rounded-2xl">
-        <div className="flex align-middle items-center gap-2">
-            <button><ArrowBackRounded onClick={() => router.back()} /></button>
-            <p className="text-xxl font-bold">Lag ny lekeliste</p>
+      <div className="flex w-full flex-col justify-start rounded-2xl bg-neutral-900 p-4">
+        <div className="flex items-center gap-2 align-middle">
+          <button>
+            <ArrowBackRounded onClick={() => router.back()} />
+          </button>
+          <p className="text-xxl font-bold">Lag ny lekeliste</p>
         </div>
         <form
           onSubmit={handleSubmit}
-          className="flex text-rg font-normal mt-4 w-full flex-col items-start justify-start gap-4 align-middle"
+          className="mt-4 flex w-full flex-col items-start justify-start gap-4 align-middle text-rg font-normal"
         >
           <input
             type="text"
@@ -71,15 +71,19 @@ const CreatePlaylistPage = () => {
             className="w-full rounded-lg bg-neutral-800 py-2 pl-2 pr-2 text-white focus:outline-none"
           />
           <div className="flex gap-4">
-          <button
-            className="rounded-full font-bold bg-violet-600 px-4 py-2 text-white shadow-lg hover:bg-violet-500 active:bg-violet-800"
-            type="submit"
-          >
-            Opprett
-          </button>
-          <button className="text-neutral-500 hover:underline" type="button" onClick={() => router.back()}>
-            Avbryt
-          </button>
+            <button
+              className="rounded-full bg-violet-600 px-4 py-2 font-bold text-white shadow-lg hover:bg-violet-500 active:bg-violet-800"
+              type="submit"
+            >
+              Opprett
+            </button>
+            <button
+              className="text-neutral-500 hover:underline"
+              type="button"
+              onClick={() => router.back()}
+            >
+              Avbryt
+            </button>
           </div>
           {showError && <p className="text-red-500">Du må ha en tittel!</p>}
         </form>

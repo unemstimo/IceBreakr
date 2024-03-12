@@ -70,3 +70,4 @@ export const countdownSlice = createSlice({
 export const { setTimeLeft, decrementTimeLeft, setLastGameTime, setRunState } = countdownSlice.actions;
 
 export default countdownSlice.reducer;
+

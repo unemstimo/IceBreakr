@@ -1,14 +1,11 @@
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Placeholder from "~/assets/images/placeholder.png";
 import StarRoundedIcon from "@mui/icons-material/StarRounded";
 import Link from "next/link";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import StarIcon from "@mui/icons-material/Star";
 import { api } from "~/utils/api";
-import { useRouter } from "next/router";
-import { getQueryKey } from "@trpc/react-query";
-import { useQueryClient } from "@tanstack/react-query";
 
 export type Game = {
   gameId: number;
@@ -31,10 +28,6 @@ const GameCard = ({
   isFavorite,
   refetchGames,
 }: Game) => {
-  const router = useRouter();
-  const queryClient = useQueryClient();
-  const postListKey = getQueryKey(api.gameRouter.getAll, undefined, "query");
-
   const AddToFavoriteMutation = api.favorite.addGame.useMutation();
   const RemoveFromFavoriteMutation = api.favorite.removeGame.useMutation();
 
