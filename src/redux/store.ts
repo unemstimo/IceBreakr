@@ -42,6 +42,8 @@ const timerSlice = createSlice({
       state.time = action.payload;
     },
     setGame(state, action: PayloadAction<GameSate>) {
+      localStorage.setItem("gameName", action.payload.name.toString());
+      localStorage.setItem("gameDuration", action.payload.duration.toString());
       state.game = action.payload;
     },
   },

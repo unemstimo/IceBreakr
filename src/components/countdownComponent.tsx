@@ -5,7 +5,7 @@ import PlayCircleFilledRoundedIcon from "@mui/icons-material/PlayCircleFilledRou
 import PauseCircleFilledRoundedIcon from "@mui/icons-material/PauseCircleFilledRounded";
 import SkipNextRoundedIcon from "@mui/icons-material/SkipNextRounded";
 import SkipPreviousRoundedIcon from "@mui/icons-material/SkipPreviousRounded";
-import { useTimerState } from "~/redux/hooks";
+import { useTimerActions, useTimerState } from "~/redux/hooks";
 
 interface CountdownComponentProps {
   playtime?: number;
@@ -15,12 +15,22 @@ const CountdownComponent: React.FC<CountdownComponentProps> = ({}) => {
   const dispatch = useDispatch();
   const { isPlaying, time, game } = useTimerState();
 
+  const { setGame } = useTimerActions();
+
   useEffect(() => {
     const storedTimeLeft = localStorage.getItem("timeLeft");
     if (storedTimeLeft !== null) {
       dispatch(updateTime(Number(storedTimeLeft)));
     }
   }, [dispatch]);
+
+  useEffect(() => {
+    const storedGameName = localStorage.getItem("gameName");
+    const storedGameDuration = localStorage.getItem("gameDuration");
+    if (storedGameName !== null && storedGameDuration !== null) {
+      setGame({ name: storedGameName, duration: Number(storedGameDuration) });
+    }
+  }, [setGame]);
 
   useEffect(() => {
     if (isPlaying) {

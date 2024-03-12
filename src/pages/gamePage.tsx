@@ -102,10 +102,10 @@ export default function GamePage() {
 
   // if the game query does not return a game, rerout to dashboard
   useEffect(() => {
-    if (!gameQuery.data) {
+    if (!gameQuery.data && !gameQuery.isLoading) {
       void router.push("/browse");
     }
-  }, [gameQuery.data, router]);
+  }, [gameQuery.data, gameQuery.isLoading, router]);
 
   const ratingCalculated = !!ratingQuery.data?.length
     ? ratingQuery.data?.reduce((acc, curr) => acc + curr.starRating, 0) /

@@ -37,13 +37,25 @@ export const ratingRouter = createTRPCRouter({
     return ctx.db.gameRating.findMany();
   }),
 
+  // do not include if it has a report with userId
   getRatingsByGameId: publicProcedure
     .input(z.object({ gameId: z.number() }))
     .query(async ({ ctx, input }) => {
-      return ctx.db.gameRating.findMany({
-        where: { gameId: input.gameId },
-        include: { user: true },
-      });
+      return ctx.db.gameRating
+        .findMany({
+          where: { gameId: input.gameId },
+          include: {
+            user: true,
+            UserReportedRating: {
+              where: { userId: ctx.session?.userId ?? "" },
+            },
+          },
+        })
+        .then((ratings) => {
+          return ratings.filter(
+            (rating) => rating.UserReportedRating.length === 0,
+          );
+        });
     }),
 
   delete: privateProcedure
