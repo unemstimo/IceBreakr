@@ -1,11 +1,13 @@
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { startTimer, stopTimer, updateTime } from "../redux/store";
+import { startTimer, stopTimer, updateTime, setGame } from "../redux/store";
 import PlayCircleFilledRoundedIcon from "@mui/icons-material/PlayCircleFilledRounded";
 import PauseCircleFilledRoundedIcon from "@mui/icons-material/PauseCircleFilledRounded";
 import SkipNextRoundedIcon from "@mui/icons-material/SkipNextRounded";
 import SkipPreviousRoundedIcon from "@mui/icons-material/SkipPreviousRounded";
-import { useTimerActions, useTimerState } from "~/redux/hooks";
+import { useTimerState } from "~/redux/hooks";
+import { api } from "~/utils/api";
+import { useToast } from "./ui/use-toast";
 
 interface CountdownComponentProps {
   playtime?: number;
@@ -13,24 +15,34 @@ interface CountdownComponentProps {
 
 const CountdownComponent: React.FC<CountdownComponentProps> = ({}) => {
   const dispatch = useDispatch();
+  const { toast } = useToast();
   const { isPlaying, time, game } = useTimerState();
-
-  const { setGame } = useTimerActions();
-
-  useEffect(() => {
-    const storedTimeLeft = localStorage.getItem("timeLeft");
-    if (storedTimeLeft !== null) {
-      dispatch(updateTime(Number(storedTimeLeft)));
-    }
-  }, [dispatch]);
+  const queueQuery = api.queue.getQueue.useQuery();
+  const useDeQueueMutation = api.queue.dequeue.useMutation();
 
   useEffect(() => {
     const storedGameName = localStorage.getItem("gameName");
     const storedGameDuration = localStorage.getItem("gameDuration");
-    if (storedGameName !== null && storedGameDuration !== null) {
-      setGame({ name: storedGameName, duration: Number(storedGameDuration) });
+    console.log(storedGameName, storedGameDuration);
+    if (storedGameName !== null && Number(storedGameDuration) !== null) {
+      console.log("is here");
+      console.log("innsiden ", storedGameName, storedGameDuration);
+      dispatch(
+        setGame({
+          name: storedGameName,
+          duration: Number(storedGameDuration),
+        }),
+      );
     }
-  }, [setGame]);
+    const storedTimeLeft = localStorage.getItem("timeLeft");
+    if (
+      storedTimeLeft !== null &&
+      storedGameName !== null &&
+      Number(storedGameDuration) !== null
+    ) {
+      dispatch(updateTime(Number(storedTimeLeft)));
+    }
+  }, [dispatch]);
 
   useEffect(() => {
     if (isPlaying) {
@@ -41,10 +53,45 @@ const CountdownComponent: React.FC<CountdownComponentProps> = ({}) => {
     }
   }, [isPlaying, time, dispatch]);
 
-  const handleTogglePlaying = () => {
+  const deQueue = async (id: number) => {
+    try {
+      await useDeQueueMutation.mutateAsync({ queuedId: id });
+      await queueQuery.refetch();
+    } catch (e) {
+      toast({
+        title: "Obs! Noget gik galt",
+        description: "Kunne ikke fjerne spil fra køen",
+      });
+    }
+  };
+
+  const popQueue = async () => {
+    const hasNext = queueQuery.data?.[0];
+    if (!hasNext) {
+      return null;
+    } else {
+      const queuedId = hasNext.queuedId;
+      await deQueue(queuedId);
+      await queueQuery.refetch();
+      return hasNext;
+    }
+  };
+
+  const handleTogglePlaying = async () => {
     if (isPlaying) {
       dispatch(stopTimer());
     } else {
+      if (!game) {
+        const next = await popQueue();
+        if (next) {
+          dispatch(
+            setGame({
+              name: next.game.name,
+              duration: Number(next.game.duration) * 60,
+            }),
+          );
+        }
+      }
       dispatch(startTimer());
     }
   };

@@ -11,13 +11,12 @@ import {
 
 export const useTimerActions = () => {
   const dispatch = useDispatch();
-
   return {
     start: () => dispatch(startTimer()),
     stop: () => dispatch(stopTimer()),
     reset: () => dispatch(resetTimer()),
     update: (time: number) => dispatch(updateTime(time)),
-    setGame: (gameState: GameSate) => dispatch(setGame(gameState)),
+    setGame: (gameState: GameSate | null) => dispatch(setGame(gameState)),
   };
 };
 

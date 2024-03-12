@@ -6,6 +6,10 @@ import Link from "next/link";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import StarIcon from "@mui/icons-material/Star";
 import { api } from "~/utils/api";
+import { Button } from "./ui/button";
+import QueueMusicIcon from "@mui/icons-material/QueueMusic";
+import { useTimerActions } from "~/redux/hooks";
+import PlayCircleOutlineRoundedIcon from "@mui/icons-material/PlayCircleOutlineRounded";
 
 export type Game = {
   gameId: number;
@@ -24,12 +28,14 @@ const GameCard = ({
   gameId,
   name,
   description,
+  duration,
   rating,
   isFavorite,
   refetchGames,
 }: Game) => {
   const AddToFavoriteMutation = api.favorite.addGame.useMutation();
   const RemoveFromFavoriteMutation = api.favorite.removeGame.useMutation();
+  const useQueueMutation = api.queue.create.useMutation();
 
   function handleFavoritePressed(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
@@ -64,9 +70,30 @@ const GameCard = ({
     }
   };
 
+  const utils = api.useUtils();
+  const handleAddToQueue = async () => {
+    try {
+      await useQueueMutation.mutateAsync({ gameId: gameId });
+      await utils.queue.getQueue.invalidate();
+    } catch (error) {
+      console.log("Error");
+    }
+  };
+
+  const { setGame, start: startTimer } = useTimerActions();
+  const setGameAndPlay = async () => {
+    const durationNumber = Number(duration) * 60;
+    if (!durationNumber || !name) return;
+    setGame({
+      duration: durationNumber,
+      name: name,
+    });
+    startTimer();
+  };
+
   return (
-    <Link href={`/gamePage?gameId=${gameId}`} passHref>
-      <div className="relative flex h-full max-h-80 w-full min-w-36 max-w-full cursor-pointer flex-col rounded-xl bg-neutral-800 p-4 text-rg md:max-w-full xl:min-h-60">
+    <div className="relative flex h-full max-h-80 w-full min-w-36 max-w-full cursor-pointer flex-col rounded-xl bg-neutral-800 p-4 text-rg md:max-w-full xl:min-h-60">
+      <Link href={`/gamePage?gameId=${gameId}`} passHref>
         <div className="relative flex h-full w-full flex-col align-top">
           <Image
             className="hidden h-auto w-full rounded-lg xl:flex"
@@ -75,28 +102,37 @@ const GameCard = ({
             width={200}
             height={200}
           />
-          <h2 className="xl:mt-2 truncate overflow-hidden">{name}</h2>
-          <p className="font-normal leading-tight text-neutral-500 line-clamp-3 overflow-hidden ...">
+          <h2 className="overflow-hidden truncate xl:mt-2">{name}</h2>
+          <p className="... line-clamp-3 overflow-hidden font-normal leading-tight text-neutral-500">
             {description}
           </p>
         </div>
-        {rating > 0 && (
-          <div className="absolute right-3 top-3 flex w-14 items-center justify-center rounded-full bg-violet-500 align-middle xl:min-w-16">
-            <StarRoundedIcon />
-            {parseFloat(rating.toFixed(1))}
-          </div>
-        )}
-        <button onClick={handleFavoritePressed} className="">
-          <div className="absolute right-4 top-[185px] flex items-center justify-center align-middle">
-            {isFavorite ? (
-              <StarIcon style={{ color: "#d9b907" }} />
-            ) : (
-              <StarBorderIcon />
-            )}
-          </div>
-        </button>
+      </Link>
+
+      {rating > 0 && (
+        <div className="absolute right-3 top-3 flex w-14 items-center justify-center rounded-full bg-violet-500 align-middle xl:min-w-16">
+          <StarRoundedIcon />
+          {parseFloat(rating.toFixed(1))}
+        </div>
+      )}
+      <button onClick={handleFavoritePressed} className="">
+        <div className="absolute right-4 top-[185px] flex items-center justify-center align-middle">
+          {isFavorite ? (
+            <StarIcon style={{ color: "#d9b907" }} />
+          ) : (
+            <StarBorderIcon />
+          )}
+        </div>
+      </button>
+      <div>
+        <Button onClick={setGameAndPlay} size={"icon"} variant={"ghost"}>
+          <PlayCircleOutlineRoundedIcon />
+        </Button>
+        <Button onClick={handleAddToQueue} size={"icon"} variant={"ghost"}>
+          <QueueMusicIcon />
+        </Button>
       </div>
-    </Link>
+    </div>
   );
 };
 
