@@ -115,21 +115,19 @@ const GameCard = ({
           {parseFloat(rating.toFixed(1))}
         </div>
       )}
-      <button onClick={handleFavoritePressed} className="">
-        <div className="absolute right-4 top-[185px] flex items-center justify-center align-middle">
-          {isFavorite ? (
-            <StarIcon style={{ color: "#d9b907" }} />
-          ) : (
-            <StarBorderIcon />
-          )}
-        </div>
-      </button>
       <div>
         <Button onClick={setGameAndPlay} size={"icon"} variant={"ghost"}>
           <PlayCircleOutlineRoundedIcon />
         </Button>
         <Button onClick={handleAddToQueue} size={"icon"} variant={"ghost"}>
           <QueueMusicIcon />
+        </Button>
+        <Button onClick={handleFavoritePressed} size={"icon"} variant={"ghost"}>
+          {isFavorite ? (
+            <StarIcon style={{ color: "#d9b907" }} />
+          ) : (
+            <StarBorderIcon />
+          )}
         </Button>
       </div>
     </div>
