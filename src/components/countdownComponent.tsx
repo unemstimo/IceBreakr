@@ -10,6 +10,7 @@ import ShuffleRoundedIcon from "@mui/icons-material/ShuffleRounded";
 import HourglassTopRoundedIcon from "@mui/icons-material/HourglassTopRounded";
 import HourglassBottomRoundedIcon from "@mui/icons-material/HourglassBottomRounded";
 import TimerRoundedIcon from '@mui/icons-material/TimerRounded';
+import {Switch} from "@nextui-org/react";
 
 import { Line } from "rc-progress";
 import { useTimerState, useTimerActions } from "~/redux/hooks";
@@ -41,6 +42,10 @@ const CountdownComponent: React.FC<CountdownComponentProps> = ({}) => {
     if (firstInQueue == undefined) {
       dispatch(resetTimer());
     }
+    if (time >= Number(firstInQueue?.game.duration)*60) {
+      dispatch(stopTimer());
+      dispatch(resetTimer());
+    }
     if (isPlaying && game) {
       const interval = setInterval(() => {
         dispatch(updateTime(time + 1));
@@ -63,6 +68,10 @@ const CountdownComponent: React.FC<CountdownComponentProps> = ({}) => {
       dispatch(startTimer());
     }
   };
+
+  const [timerFunction, setTimerFunction] = React.useState(true);
+
+
 
   return (
     <div className="flex flex-col justify-center gap-4 rounded-xl bg-background p-4 align-middle">

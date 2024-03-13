@@ -21,7 +21,8 @@ const QueueBar = () => {
   const { setGame, reset } = useTimerActions();
 
   useEffect(() => {
-    if (Number(firstInQueue?.game.duration)*60 === time) {
+    console.log(firstInQueue?.game.name, time, Number(firstInQueue?.game.duration)*60);
+    if (Number(firstInQueue?.game.duration)*60 <= time) {
       void playNextInQueue();
     }
 
