@@ -1,11 +1,15 @@
 import Image from "next/image";
 import React from "react";
-import Placeholder from "~/assets/images/placeholder.png";
+import Placeholder from "~/assets/images/gameplaceholder.png";
+import AltPlaceholder from "~/assets/images/gameplaceholder2.png";
 import StarRoundedIcon from "@mui/icons-material/StarRounded";
 import Link from "next/link";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import StarIcon from "@mui/icons-material/Star";
 import { api } from "~/utils/api";
+import { FavoriteRounded } from "@mui/icons-material";
+import { duration } from "@mui/material";
+import { Badge } from "./ui/badge";
 
 export type Game = {
   gameId: number;
@@ -67,34 +71,50 @@ const GameCard = ({
   return (
     <Link href={`/gamePage?gameId=${gameId}`} passHref>
       <div className="relative flex h-full max-h-80 w-full min-w-36 max-w-full cursor-pointer flex-col rounded-xl bg-neutral-800 p-4 text-rg md:max-w-full xl:min-h-60">
+      <button onClick={handleFavoritePressed} className="z-10 absolute right-2 md:top-4 md:right-5 flex items-center justify-center align-middle">
+                <div className="">
+                  {isFavorite ? (
+                    <FavoriteRounded style={{ color: "#8b5cf6", fontSize: 30 }} />
+                  ) : (
+                    <FavoriteRounded style={{color: "#444",opacity: 0.5, fontSize: 30 }} />
+                  )}
+                </div>
+              </button>
         <div className="relative flex h-full w-full flex-col align-top">
-          <Image
-            className="hidden h-auto w-full rounded-lg xl:flex"
-            src={Placeholder}
-            alt="Game Image"
-            width={200}
-            height={200}
-          />
-          <h2 className="overflow-hidden truncate xl:mt-2">{name}</h2>
+          {gameId%2 > 0 ? (
+            <div className="relative">
+              <Image
+              className="hidden h-auto w-full rounded-lg xl:flex"
+              src={Placeholder}
+              alt="Game Image"
+              width={200}
+              height={200}
+              />
+              
+            </div>
+            
+          ):(
+            <Image
+              className="hidden h-auto w-full rounded-lg xl:flex"
+              src={AltPlaceholder}
+              alt="Game Image"
+              width={200}
+              height={200}
+            />
+          )}
+          <h2 className="overflow-hidden flex gap-2 w-full align-middle items-center truncate text-rg xl:mt-2">
+            {name}
+            {rating > 0 && (
+              <Badge className="h-5">
+                <StarRoundedIcon className="flex" sx={{fontSize: 18}}/>
+                {parseFloat(rating.toFixed(1))}
+              </Badge>
+            )}
+          </h2>
           <p className="... line-clamp-3 overflow-hidden font-normal leading-tight text-neutral-500">
             {description}
           </p>
         </div>
-        {rating > 0 && (
-          <div className="absolute right-3 top-3 flex w-14 items-center justify-center rounded-full bg-violet-500 align-middle xl:min-w-16">
-            <StarRoundedIcon />
-            {parseFloat(rating.toFixed(1))}
-          </div>
-        )}
-        <button onClick={handleFavoritePressed} className="">
-          <div className="absolute right-4 top-[185px] flex items-center justify-center align-middle">
-            {isFavorite ? (
-              <StarIcon style={{ color: "#d9b907" }} />
-            ) : (
-              <StarBorderIcon />
-            )}
-          </div>
-        </button>
       </div>
     </Link>
   );

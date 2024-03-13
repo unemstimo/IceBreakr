@@ -127,8 +127,10 @@ const config = {
     md: "960",
     // => @media (min-width: 768px) { ... }
 
-    lg: "1440",
+    lg: "1080",
     // => @media (min-width: 1024px) { ... }
+
+    xl: "1260",
   },
   plugins: [require("tailwindcss-animate")],
 } satisfies Config;

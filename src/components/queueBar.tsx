@@ -1,4 +1,5 @@
 import PlayCircleOutlineRoundedIcon from "@mui/icons-material/PlayCircleOutlineRounded";
+import PauseCircleOutlineRoundedIcon from '@mui/icons-material/PauseCircleOutlineRounded';
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import { Card, CardContent, CardHeader } from "./ui/card";
 import { api } from "~/utils/api";
@@ -10,17 +11,20 @@ import { useTimerActions, useTimerState } from "~/redux/hooks";
 import Link from "next/link";
 import { useEffect } from "react";
 
+
 const QueueBar = () => {
   const queueQuery = api.queue.getQueue.useQuery();
   const firstInQueue = queueQuery.data?.[0];
+  const queueLength = queueQuery.data?.length ?? 0;
   const { toast } = useToast();
   const { game, time, isPlaying } = useTimerState();
   const { setGame, reset } = useTimerActions();
 
   useEffect(() => {
-    if (game?.duration === time) {
+    if (Number(firstInQueue?.game.duration)*60 === time) {
       void playNextInQueue();
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [game, time, isPlaying]);
 
@@ -66,8 +70,7 @@ const QueueBar = () => {
 
   const setGameAndPlay = (queue: QueueItem) => {
     if (!queue) return;
-    // const duration = Number(queue.game.duration) * 60;
-    const duration = 10;
+    const duration = Number(queue.game.duration) * 60;
     if (!duration) return;
     console.log("setting game and starting");
     reset();
@@ -79,7 +82,15 @@ const QueueBar = () => {
 
   return (
     <Card className="min-w-72">
-      <CardHeader>Min kø</CardHeader>
+      <CardHeader>
+        <span className="flex w-full justify-between">
+          <div>
+            <h2>Min kø</h2>
+            <p className="text-rg font-normal text-neutral-500">{queueLength > 1 || queueLength < 1 ? queueLength + " leker i køen" : queueLength+" lek i køen"} </p>
+            <p className="text-sm font-normal text-neutral-500">Spilles nå: {firstInQueue?.game.name}</p>
+          </div>
+        </span>
+      </CardHeader>
       <SignedOut>
         <CardContent className="flex flex-col gap-2">
           <Button>
@@ -117,7 +128,7 @@ const QueueGameCard = ({
   const useDeQueueMutation = api.queue.dequeue.useMutation();
   const useReQueueMutation = api.queue.reQueue.useMutation();
 
-  const { setGame, start, reset } = useTimerActions();
+  const { setGame, start, reset, stop} = useTimerActions();
   const { isPlaying } = useTimerState();
 
   const { toast } = useToast();
@@ -176,26 +187,37 @@ const QueueGameCard = ({
   };
 
   if (!queueItem) return null;
+  
   return (
-    <Card className="!border-neutral-800 !pt-6">
+    <Card className="!border-neutral-800">
       <CardContent>
         <div className="flex flex-row items-center  justify-between align-middle">
           <Link href={`/gamePage?gameId=${queueItem.game.gameId}`} passHref>
-            <h3 className="text-2xl font-semibold leading-none tracking-tight">
+            <h3 className="text-rg font-semibold leading-none tracking-tight">
               {queueItem.game.name}
             </h3>
           </Link>
           <div className="flex flex-row items-center justify-between gap-2 align-middle">
-            <Button
-              onClick={() => handlePlayQueue(queueItem)}
-              variant={"ghost"}
-              size={"icon"}
-            >
-              <PlayCircleOutlineRoundedIcon />
-            </Button>
-
+            {isPlaying && firstInQueue?.queuedId === queueItem.queuedId ? (
+              <Button
+                onClick={() => stop()}
+                variant={"ghost"}
+                size={"icon"}
+              >
+                <PauseCircleOutlineRoundedIcon />
+              </Button>
+            ) : (
+              <Button
+                onClick={() => handlePlayQueue(queueItem)}
+                variant={"ghost"}
+                size={"icon"}
+              >
+                <PlayCircleOutlineRoundedIcon />
+              </Button>
+            )}
             <Button variant={"ghost"} size={"icon"}>
               <CloseRoundedIcon
+                sx={{ color: "#888", fontSize: "1.25rem"}}
                 onClick={() => handleDequeue(queueItem.queuedId)}
               />
             </Button>

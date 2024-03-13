@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import Placeholder from "~/assets/images/placeholder.png";
+import Placeholder from "~/assets/images/gameplaceholder.png";
 import Link from "next/link";
 import MoreHorizRoundedIcon from "@mui/icons-material/MoreHorizRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";

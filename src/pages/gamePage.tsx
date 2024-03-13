@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import Placeholder from "~/assets/images/placeholder.png";
+import Placeholder from "~/assets/images/gameplaceholder.png";
 import {
   SignOutButton,
   SignedIn as SignedIn,
@@ -9,7 +9,6 @@ import {
   useUser,
 } from "@clerk/nextjs";
 import MoreHorizRoundedIcon from "@mui/icons-material/MoreHorizRounded";
-import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import ManageAccountsRoundedIcon from "@mui/icons-material/ManageAccountsRounded";
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
 import { useRouter } from "next/router";
@@ -32,11 +31,21 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import Layout from "~/components/layout";
 import { useToast } from "~/components/ui/use-toast";
+import FavoriteBorderRoundedIcon from '@mui/icons-material/FavoriteBorderRounded';
+import FavoriteRoundedIcon from '@mui/icons-material/FavoriteRounded';
+import QueueRoundedIcon from '@mui/icons-material/QueueRounded';
+import PlaylistAddRoundedIcon from '@mui/icons-material/PlaylistAddRounded';
+import PlaylistAddCheckRoundedIcon from '@mui/icons-material/PlaylistAddCheckRounded';
+import CollectionsBookmarkRoundedIcon from '@mui/icons-material/CollectionsBookmarkRounded';
+import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
+import { Tooltip } from "@nextui-org/react";
 
 export default function GamePage() {
   const router = useRouter();
   const { gameId: gameIdQuery } = router.query;
   const gameId = Number(gameIdQuery ?? 1);
+  const queueQuery = api.queue.getQueue.useQuery();
+  const queue = queueQuery.data;
   const userId = useUser().user?.id;
   const gameQuery = api.gameRouter.getGameById.useQuery(
     { id: gameId },
@@ -157,6 +166,7 @@ export default function GamePage() {
     try {
       await useQueueMutation.mutateAsync({ gameId });
       await utils.queue.getQueue.invalidate();
+      handleAddToQueueToast(name);
     } catch {
       toast({
         title: "Obs!",
@@ -195,6 +205,15 @@ export default function GamePage() {
       console.log("Error:", error);
     }
   };
+  
+  const handleAddToQueueToast = (
+    name: string,
+  ) => {
+    toast({
+      title: "Lagt til i kø",
+      description: name+" er nå lagt til i kø",
+    });
+  }
 
   return (
     <>
@@ -221,8 +240,10 @@ export default function GamePage() {
               </div>
             </SignedIn>
           </div>
+          
           {/* Title, image section */}
           <div className="relative mt-4 flex h-full w-full flex-col items-start justify-start rounded-xl bg-neutral-800 p-4">
+            
             <div className=" flex h-full min-h-48 w-full items-start">
               <div className="h-full w-full max-w-60">
                 <Image
@@ -238,72 +259,79 @@ export default function GamePage() {
                 <div className="mb-4 ml-4 flex h-full flex-col justify-between">
                   <div>
                     <h1 className="text-xxl">{name}</h1>
-                    <h2 className="font-normal text-neutral-400">
-                      {numberOfPlayers} spillere • {duration} minutter
+                    <h2 className="font-normal flex align-middle items-center text-neutral-400">
+                      {numberOfPlayers} spillere • {duration} min • {Number(ratingQuery.data?.length) > 0 ? <p className="ml-1 flex align-middle items-center"><StarRoundedIcon sx={{fontSize: 24, marginTop: 0.4}}/> {parseFloat(ratingCalculated.toFixed(1))}</p>:"Ingen vurderinger"}
                     </h2>
-                    <p className="mt-6 text-md font-normal text-neutral-200">
-                      {description}
-                    </p>
-                  </div>
-
-                  <div className="mt-4 flex gap-2">
                     {gameQuery.data?.GameInCategory.map((category) => (
                       <Badge key={category.categoryId}>
                         {category.category.name}
                       </Badge>
                     ))}
+                    <h2 className="mt-4 text-rg text-neutral-500 font-bold">Beskrivelse</h2>
+                    <p className="text-rg leading-4 font-normal text-neutral-300">
+                      {description}
+                    </p>
+                  </div>
+
+                  <div className="mt-4 flex gap-2">
                   </div>
                 </div>
               </div>
             </div>
-            <button className="absolute right-4 top-4 flex min-w-16 justify-center rounded-full bg-violet-500 align-middle">
-              <StarRoundedIcon />
-              {parseFloat(ratingCalculated.toFixed(1))}
-            </button>
             <div className="flex gap-4 pt-4">
-              <div className="relative">
-                <Button onClick={handleShowPlaylistPicker}>
-                  Legg til i lekeliste
+              <div>
+              <Tooltip className="bg-neutral-900 text-sm rounded-full border-neutral-700 border text-neutral-300" content="Legg til i lekeliste">
+                <Button onClick={handleShowPlaylistPicker} className="bg-neutral-600 hover:bg-neutral-500">
+                  {showPlaylistPicker.visible ? <CloseRoundedIcon sx={{fontsize: 28}} /> : 
+                  <CollectionsBookmarkRoundedIcon sx={{ fontSize: 26 }}/>}
                 </Button>
-                {showPlaylistPicker.visible && (
-                  <div className="absolute z-10 flex items-center justify-center rounded-3xl border-8 bg-neutral-800 p-4">
-                    <div className="flex-col items-center justify-center align-middle">
+              </Tooltip>
+              </div>
+              <Tooltip className="bg-neutral-900 text-sm rounded-full border-neutral-700 border text-neutral-300" content="Legg til i kø">
+              { queue?.find((queueItem) => queueItem.game.gameId === gameId) ? (
+                  
+                  <Button
+                    className="bg-primary hover:bg-violet-500"
+                    onClick={handleAddToQueue}>
+                      <PlaylistAddCheckRoundedIcon sx={{ fontSize: 28 }}/>
+                  </Button>
+                ):(
+                  <Button
+                  className="bg-neutral-600 hover:bg-neutral-500"
+                  onClick={handleAddToQueue}>
+                      <PlaylistAddRoundedIcon sx={{ fontSize: 28 }}/>
+                  </Button>
+                )}
+                </Tooltip>
+              <Tooltip className="bg-neutral-900 text-sm rounded-full border-neutral-700 border text-neutral-300" content="Legg til i favoritter">
+
+              {isFavorite ? (
+                <Button
+                onClick={handleFavoritePressed}
+              >
+                <FavoriteRoundedIcon sx={{ fontSize: 28 }} />
+              </Button>) : (
+                <Button
+                onClick={handleFavoritePressed}
+                className="bg-neutral-600 hover:bg-neutral-500"
+                >
+                  <FavoriteRoundedIcon sx={{ fontSize: 28 }}  />
+                </Button>
+                )} 
+              </Tooltip>
+              
+            </div>
+            {showPlaylistPicker.visible && (
+                  <div className="relative z-10 h-auto w-full max-w-[400px] mt-2">
+                    <div className="w-full h-full">
                       <PlaylistPicker
                         gameid={gameQuery.data?.gameId ?? 0}
                         setShowPlaylistPicker={setShowPlaylistPicker}
                       />
-                      <button
-                        className="-mt-4 w-full align-middle text-rg text-neutral-500 hover:text-neutral-400 hover:underline"
-                        onClick={() => {
-                          setShowPlaylistPicker({ visible: false });
-                        }}
-                      >
-                        Avbryt
-                      </button>
+                    
                     </div>
                   </div>
                 )}
-              </div>
-              <Button onClick={handleAddToQueue}>Legg til i kø</Button>
-              <button
-                onClick={handleFavoritePressed}
-                className="mb-1 ml-[350px] flex min-w-16 items-end px-4 align-middle text-rg hover:underline"
-              >
-                {isFavorite ? (
-                  <>
-                    <h1>
-                      <CheckCircleIcon
-                        style={{ color: "#51ed42", fontSize: 32 }}
-                      />
-                    </h1>
-                  </>
-                ) : (
-                  <>
-                    <AddCircleOutlineIcon style={{ fontSize: 32 }} />
-                  </>
-                )}
-              </button>
-            </div>
           </div>
           {/* Rules */}
           <div className="mt-4 flex h-full w-full items-center justify-start rounded-xl bg-neutral-800 py-2">
@@ -411,10 +439,15 @@ export default function GamePage() {
                   </li>
                 ))}
               </ul>
+              
             </div>
+            
           </div>
+          
         </section>
+        
       </Layout>
+      
 
       {showManageAccount.visible && (
         <div className="absolute left-0 top-0 flex h-full w-full flex-col items-center justify-center bg-neutral-900 bg-opacity-90 p-24 align-middle">
