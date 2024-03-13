@@ -82,6 +82,16 @@ export default function ListPage() {
                     {description}
                   </p>
                 </div>
+                <div>
+                <Link href="/spinTheWheel">
+                      <div className="flex h-20 w-full flex-row justify-center rounded-lg p-6 hover:bg-neutral-800">
+                        <p className="-mt-1 mr-4 justify-center">
+                          Spin The Wheel
+                        </p>
+                        
+                      </div>
+                    </Link>
+                </div>
               </div>
             </div>
           </div>
