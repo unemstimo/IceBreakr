@@ -1,5 +1,4 @@
 import PlayCircleOutlineRoundedIcon from "@mui/icons-material/PlayCircleOutlineRounded";
-import PauseCircleOutlineRoundedIcon from '@mui/icons-material/PauseCircleOutlineRounded';
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import { Card, CardContent, CardHeader } from "./ui/card";
 import { api } from "~/utils/api";
@@ -10,75 +9,77 @@ import { SignInButton, SignedIn, SignedOut } from "@clerk/nextjs";
 import { useTimerActions, useTimerState } from "~/redux/hooks";
 import Link from "next/link";
 import { useEffect } from "react";
-
+import { ArrowUpIcon } from "lucide-react";
+import { startTimer, stopTimer } from "~/redux/store";
 
 const QueueBar = () => {
   const queueQuery = api.queue.getQueue.useQuery();
-  const firstInQueue = queueQuery.data?.[0];
-  const queueLength = queueQuery.data?.length ?? 0;
   const { toast } = useToast();
-  const { game, time, isPlaying } = useTimerState();
+  const { game, time, isPlaying, isShuffle } = useTimerState();
   const { setGame, reset } = useTimerActions();
 
+  const queueLength = queueQuery.data?.length ?? 0;
+  const firstInQueue = queueQuery.data?.[0];
+
   useEffect(() => {
-    console.log(firstInQueue?.game.name, time, Number(firstInQueue?.game.duration)*60);
-    if (Number(firstInQueue?.game.duration)*60 <= time) {
+    if (game && game?.duration <= time) {
       void playNextInQueue();
     }
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [game, time, isPlaying]);
 
-  // exemple på hvordan oppdatere timeplayed i backend
-  // const useUpdateTimePlayedMutation = api.queue.updateTimePlayed.useMutation();
-  // const handleUpdateTimePlayed = async (
-  //   queuedId: number,
-  //   timePlayed: number,
-  // ) => {
-  //   try {
-  //     await useUpdateTimePlayedMutation.mutateAsync({
-  //       queuedId: queuedId,
-  //       timePlayed: timePlayed,
-  //     });
-  //     await queueQuery.refetch();
-  //   } catch (e) {
-  //     toast({
-  //       title: "Obs! Noget gik galt",
-  //       description: "Kunne ikke oppdatere tidspunktet",
-  //     });
-  //   }
-  // };
-
   const useDeQueueMutation = api.queue.dequeue.useMutation();
 
-  const playNextInQueue = async () => {
-    if (firstInQueue && (queueQuery?.data?.length ?? 0) > 1) {
-      const queuedId = firstInQueue.queuedId;
-      const nextQueuedGame = queueQuery.data?.[1];
-      try {
-        await useDeQueueMutation.mutateAsync({ queuedId: queuedId });
-        if (nextQueuedGame) setGameAndPlay(nextQueuedGame);
-        else reset();
-        await queueQuery.refetch();
-      } catch (e) {
-        toast({
-          title: "Obs! Noget gik galt",
-          description: "Kunne ikke fjerne spil fra køen",
-        });
-      }
+  const deQueue = async (id: number) => {
+    try {
+      await useDeQueueMutation.mutateAsync({ queuedId: id });
+      await queueQuery.refetch();
+    } catch (e) {
+      toast({
+        title: "Obs! Noget gik galt",
+        description: "Kunne ikke fjerne spil fra køen",
+      });
     }
   };
 
-  const setGameAndPlay = (queue: QueueItem) => {
+  const popQueue = async (popRandom = false) => {
+    const index = popRandom
+      ? Math.floor(Math.random() * (queueQuery.data?.length ?? 0))
+      : 0;
+    const hasNext = queueQuery.data?.[index];
+    if (!hasNext) {
+      return null;
+    } else {
+      const queuedId = hasNext.queuedId;
+      await deQueue(queuedId);
+      await queueQuery.refetch();
+      return hasNext;
+    }
+  };
+
+  const playNextInQueue = async () => {
+    stopTimer();
+    const nextInQueue = await popQueue(isShuffle);
+    reset();
+
+    if (nextInQueue) {
+      void setGameAndPlay(nextInQueue);
+    }
+    // else { //TODO: skal vi ha denne eller skal det være mulig å starte å leke igjen.
+    //   setGame(null);
+    // }
+  };
+
+  const setGameAndPlay = async (queue: QueueItem) => {
     if (!queue) return;
     const duration = Number(queue.game.duration) * 60;
     if (!duration) return;
     console.log("setting game and starting");
-    reset();
     setGame({
       duration,
       name: queue.game.name,
     });
+    startTimer();
   };
 
   return (
@@ -87,8 +88,14 @@ const QueueBar = () => {
         <span className="flex w-full justify-between">
           <div>
             <h2>Min kø</h2>
-            <p className="text-rg font-normal text-neutral-500">{queueLength > 1 || queueLength < 1 ? queueLength + " leker i køen" : queueLength+" lek i køen"} </p>
-            <p className="text-sm font-normal text-neutral-500">Spilles nå: {firstInQueue?.game.name}</p>
+            <p className="text-rg font-normal text-neutral-500">
+              {queueLength > 1 || queueLength < 1
+                ? queueLength + " leker i køen"
+                : queueLength + " lek i køen"}{" "}
+            </p>
+            <p className="text-sm font-normal text-neutral-500">
+              Spilles nå: {firstInQueue?.game.name}
+            </p>
           </div>
         </span>
       </CardHeader>
@@ -103,10 +110,10 @@ const QueueBar = () => {
         <CardContent className="flex flex-col gap-2">
           {queueQuery.data?.map((queue) => (
             <QueueGameCard
-              firstInQueue={firstInQueue}
               key={queue.queuedId}
               queueItem={queue}
-              refetch={() => queueQuery.refetch()}
+              refetch={queueQuery.refetch}
+              setGameAndPlay={setGameAndPlay}
             />
           ))}
         </CardContent>
@@ -120,17 +127,14 @@ export default QueueBar;
 const QueueGameCard = ({
   queueItem,
   refetch,
-  firstInQueue,
+  setGameAndPlay,
 }: {
   queueItem: QueueItem;
   refetch: VoidFunction;
-  firstInQueue?: QueueItem;
+  setGameAndPlay: (queue: QueueItem) => void;
 }) => {
   const useDeQueueMutation = api.queue.dequeue.useMutation();
   const useReQueueMutation = api.queue.reQueue.useMutation();
-
-  const { setGame, start, reset, stop} = useTimerActions();
-  const { isPlaying } = useTimerState();
 
   const { toast } = useToast();
 
@@ -146,24 +150,14 @@ const QueueGameCard = ({
     }
   };
 
-  const handlePlayQueue = async (queuedItem: QueueItem) => {
+  const moveToTopOfQueue = async (queuedItem: QueueItem) => {
     const queuedId = queuedItem?.queuedId;
     if (!queuedId) return;
     try {
       const mutations = [
         useReQueueMutation.mutateAsync({ queuedId: queuedId }),
       ];
-
-      // jeg tenker at hvis noe spiller i backgrunnen så skal det fjernes fra køen
-      if (isPlaying && firstInQueue) {
-        mutations.push(
-          useDeQueueMutation.mutateAsync({ queuedId: firstInQueue.queuedId }),
-        );
-      }
-      // run all mutations simultaneously and wait for all to finish
-      const promises = await Promise.all(mutations);
-      const game = promises[0];
-      if (game) setGameAndPlay(queueItem);
+      await Promise.all(mutations);
       refetch();
     } catch (e) {
       toast({
@@ -173,22 +167,16 @@ const QueueGameCard = ({
     }
   };
 
-  const setGameAndPlay = (queue: QueueItem) => {
+  const deQueueAndPlay = async (queue: QueueItem) => {
     if (!queue) return;
-    // const duration = Number(queue.game.duration) * 60;
-    const duration = 10;
+    const duration = Number(queue.game.duration) * 60;
     if (!duration) return;
-    console.log("setting game and starting");
-    reset();
-    setGame({
-      duration,
-      name: queue.game.name,
-    });
-    start();
+    setGameAndPlay(queue);
+    await handleDequeue(queue.queuedId);
   };
 
   if (!queueItem) return null;
-  
+
   return (
     <Card className="!border-neutral-800">
       <CardContent>
@@ -199,26 +187,25 @@ const QueueGameCard = ({
             </h3>
           </Link>
           <div className="flex flex-row items-center justify-between gap-2 align-middle">
-            {isPlaying && firstInQueue?.queuedId === queueItem.queuedId ? (
-              <Button
-                onClick={() => stop()}
-                variant={"ghost"}
-                size={"icon"}
-              >
-                <PauseCircleOutlineRoundedIcon />
-              </Button>
-            ) : (
-              <Button
-                onClick={() => handlePlayQueue(queueItem)}
-                variant={"ghost"}
-                size={"icon"}
-              >
-                <PlayCircleOutlineRoundedIcon />
-              </Button>
-            )}
+            <Button
+              onClick={() => deQueueAndPlay(queueItem)}
+              variant={"ghost"}
+              size={"icon"}
+            >
+              <PlayCircleOutlineRoundedIcon />
+            </Button>
+
+            <Button
+              onClick={() => moveToTopOfQueue(queueItem)}
+              variant={"ghost"}
+              size={"icon"}
+            >
+              <ArrowUpIcon />
+            </Button>
+
             <Button variant={"ghost"} size={"icon"}>
               <CloseRoundedIcon
-                sx={{ color: "#888", fontSize: "1.25rem"}}
+                sx={{ color: "#888", fontSize: "1.25rem" }}
                 onClick={() => handleDequeue(queueItem.queuedId)}
               />
             </Button>

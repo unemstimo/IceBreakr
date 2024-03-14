@@ -91,8 +91,7 @@ const config = {
         popover: {
           // DEFAULT: "hsl(var(--secondary))",
           DEFAULT: colors.neutral["800"],
-
-          foreground: "hsl(var(--popover-foreground))",
+          foreground: colors.neutral["100"],
         },
         card: {
           DEFAULT: colors.neutral["900"],

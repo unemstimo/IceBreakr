@@ -9,6 +9,7 @@ interface TimerState {
   time: number;
   isPlaying: boolean;
   game?: GameSate;
+  isShuffle: boolean;
 }
 
 export interface GameSate {
@@ -20,6 +21,7 @@ export interface GameSate {
 const initialState: TimerState = {
   time: 0,
   isPlaying: false,
+  isShuffle: false,
 };
 
 // Create the timer slice
@@ -28,28 +30,55 @@ const timerSlice = createSlice({
   initialState,
   reducers: {
     startTimer(state) {
-      state.isPlaying = true;
+      if (state.game) {
+        state.isPlaying = true;
+      }
     },
     stopTimer(state) {
       state.isPlaying = false;
     },
     resetTimer(state) {
+      localStorage.setItem("timeLeft", "0");
       state.time = 0;
-      state.isPlaying = false;
     },
     updateTime(state, action: PayloadAction<number>) {
-      localStorage.setItem("timeLeft", action.payload.toString());
-      state.time = action.payload;
+      if (state.game) {
+        localStorage.setItem("timeLeft", action.payload.toString());
+        state.time = action.payload;
+      }
     },
-    setGame(state, action: PayloadAction<GameSate>) {
+    setGame(state, action: PayloadAction<GameSate | null>) {
+      state.time = 0;
+      if (!action.payload) {
+        state.game = undefined;
+        state.isPlaying = false;
+        localStorage.removeItem("gameName");
+        localStorage.removeItem("gameDuration");
+        localStorage.removeItem("timeLeft");
+        console.log("set no game");
+        return;
+      }
+      localStorage.setItem("gameName", action.payload.name.toString());
+      localStorage.setItem("gameDuration", action.payload.duration.toString());
       state.game = action.payload;
+      state.game.duration = 5; // TODO: remove this line
+    },
+
+    toggleShuffle(state) {
+      state.isShuffle = !state.isShuffle;
     },
   },
 });
 
 // Export actions
-export const { startTimer, stopTimer, resetTimer, updateTime, setGame } =
-  timerSlice.actions;
+export const {
+  startTimer,
+  stopTimer,
+  resetTimer,
+  updateTime,
+  setGame,
+  toggleShuffle,
+} = timerSlice.actions;
 
 // Export the reducer
 const timerReducer = timerSlice.reducer;
