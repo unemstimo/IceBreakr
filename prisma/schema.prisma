@@ -40,8 +40,8 @@ model Game {
   name               String
   duration           String
   numberOfPlayers    String
-  rules              String @db.Text
-  description        String @db.Text
+  rules              String             @db.Text
+  description        String             @db.Text
   user               User               @relation(fields: [userId], references: [userId])
   categories         Category[]
   playlists          Playlist[]
@@ -157,15 +157,15 @@ model GameRating {
 }
 
 model UserReportedRating {
-  reporterId String
-  ratingId   Int
-  reason     String?
-  user       User       @relation(fields: [reporterId], references: [userId])
-  rating     GameRating @relation(fields: [ratingId], references: [ratingId])
-  createdAt  DateTime   @default(now())
+  userId    String
+  ratingId  Int
+  reason    String?
+  user      User       @relation(fields: [userId], references: [userId])
+  rating    GameRating @relation(fields: [ratingId], references: [ratingId])
+  createdAt DateTime   @default(now())
 
-  @@id([reporterId, ratingId])
-  @@index([reporterId])
+  @@id([userId, ratingId])
+  @@index([userId])
   @@index([ratingId])
 }
 

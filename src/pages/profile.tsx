@@ -13,9 +13,8 @@ import PageWrapper from "~/components/pageWrapper";
 import NavigationBar from "~/components/navigationBar";
 import MyPlaylists from "~/components/myPlaylists";
 import MyFriendsBar from "~/components/myFriendsBar";
-import { api } from '~/utils/api';
-import GameCard from '~/components/gameCard';
-import { useToast } from '~/components/ui/use-toast';
+import { api } from "~/utils/api";
+import GameCard from "~/components/gameCard";
 import { type FetchGames } from "~/server/api/routers/game";
 import React from "react";
 import Slider from "react-slick";
@@ -26,9 +25,10 @@ import Layout from "~/components/layout";
 
 export default function Profile() {
   const gameQuery = api.gameRouter.getAll.useQuery();
+  const myGamesQuery = api.gameRouter.getGameByUserId.useQuery();
   const games = gameQuery.data ?? [];
+  const myGames = myGamesQuery.data ?? [];
   const [favoritedGames, setFavoritedGames] = useState<FetchGames>([]);
-  const [myGames, setMyGames] = useState<FetchGames>([]);
   const [carouselSettings, setCarouselSettings] = useState({
     slidesToShow: 4,
     slidesToScroll: 4,
@@ -43,44 +43,23 @@ export default function Profile() {
     ),
   });
 
-  useEffect(() => {
-    const updateCarouselSettings = () => {
-      const windowWidth = window.innerWidth;
-      let slidesToShow = 4;
-      setCarouselSettings({
-        ...carouselSettings,
-        slidesToShow,
-      });
-    };
-
-    updateCarouselSettings();
-    window.addEventListener("resize", updateCarouselSettings);
-    return () => {
-      window.removeEventListener("resize", updateCarouselSettings);
-    };
-  }, []);
-
   const filterFavoritedGames = () => {
     const favoritedGames = games.filter((game) => game.UserFavouritedGame.length > 0);
     setFavoritedGames(favoritedGames);
   };
 
-  const filterMyGames = (userId: string) => {
+/*   const filterMyGames = (userId: string) => {
     const myGames = games.filter((game) => game.userId === userId);
     setMyGames(myGames);
-  };
+  }; */
 
   useEffect(() => {
     if (gameQuery.isSuccess) {
       filterFavoritedGames();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameQuery.isSuccess]);
   
-/*   useEffect(() => {
-    if (user) {
-      filterMyGames(user.id);
-    }
-  }, [user]); */
 
   const [showManageAccount, setShowManageAccount] = useState({
     visible: false,
@@ -126,7 +105,7 @@ export default function Profile() {
                         numberOfPlayers={game.numberOfPlayers}
                         rules={game.rules}
                         description={game.description ?? ""}
-                        rating={game.averageRating}
+                        rating={}
                         gameId={game.gameId}
                         userId={game.userId}
                         isFavorite={game.UserFavouritedGame.length > 0}

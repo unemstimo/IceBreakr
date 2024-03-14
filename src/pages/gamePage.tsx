@@ -1,16 +1,11 @@
-import Head from "next/head";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Placeholder from "~/assets/images/placeholder.png";
 import {
   SignOutButton,
   SignedIn as SignedIn,
-  UserButton,
   UserProfile,
-  useUser,
 } from "@clerk/nextjs";
-import MoreHorizRoundedIcon from "@mui/icons-material/MoreHorizRounded";
-import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import ManageAccountsRoundedIcon from "@mui/icons-material/ManageAccountsRounded";
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
 import { useRouter } from "next/router";
@@ -18,28 +13,18 @@ import StarRoundedIcon from "@mui/icons-material/StarRounded";
 import { api } from "~/utils/api";
 import { Badge } from "~/components/ui/badge";
 import PlaylistPicker from "~/components/playlistPicker";
-import { Input } from "~/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "~/components/ui/select";
 import MyPlaylists from "~/components/myPlaylists";
-import StarIcon from "@mui/icons-material/Star";
 import { Button } from "~/components/ui/button";
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import Layout from "~/components/layout";
 import { useToast } from "~/components/ui/use-toast";
+import CommentSection, { CommentForm } from "~/components/commentSection";
 
 export default function GamePage() {
   const router = useRouter();
   const { gameId: gameIdQuery } = router.query;
   const gameId = Number(gameIdQuery ?? 1);
-  const userId = useUser().user?.id;
   const gameQuery = api.gameRouter.getGameById.useQuery(
     { id: gameId },
     { enabled: gameId !== undefined },
@@ -53,28 +38,14 @@ export default function GamePage() {
   const description = gameQuery.data?.description ?? "";
   const rules = gameQuery.data?.rules ?? "";
 
-  const [showMorePopupComment, setShowMorePopupComment] = useState<{
-    visible: boolean;
-    commentID: number | null;
-  }>({ visible: false, commentID: null });
-
   useEffect(() => {
     if (favoriteQuery.data && gameId) {
-      const isGameFavorite = favoriteQuery.data.find(game => game.gameId === Number(gameId));
+      const isGameFavorite = favoriteQuery.data.find(
+        (game) => game.gameId === Number(gameId),
+      );
       setIsFavorite(!!isGameFavorite);
     }
   }, [favoriteQuery.data, gameId]);
-  
-  
-
-
-
-  const handleMoreCommentButton = (commentID: number | null) => {
-    setShowMorePopupComment({
-      commentID,
-      visible: !showMorePopupComment.visible,
-    });
-  };
 
   const [showPlaylistPicker, setShowPlaylistPicker] = useState({
     visible: false,
@@ -87,10 +58,6 @@ export default function GamePage() {
     router.back();
   };
 
-  const [comment, setComment] = useState("");
-  const [rating, setRating] = useState<number>();
-  const useRating = api.rating.create.useMutation();
-  const useDeleteRating = api.rating.delete.useMutation();
   const AddToFavoriteMutation = api.favorite.addGame.useMutation();
   const RemoveFromFavoriteMutation = api.favorite.removeGame.useMutation();
   const { toast } = useToast();
@@ -103,6 +70,13 @@ export default function GamePage() {
       enabled: gameQuery.data?.gameId !== undefined,
     },
   );
+
+  // if the game query does not return a game, rerout to dashboard
+  useEffect(() => {
+    if (!gameQuery.data && !gameQuery.isLoading) {
+      void router.push("/browse");
+    }
+  }, [gameQuery.data, gameQuery.isLoading, router]);
 
   const ratingCalculated = !!ratingQuery.data?.length
     ? ratingQuery.data?.reduce((acc, curr) => acc + curr.starRating, 0) /
@@ -117,40 +91,11 @@ export default function GamePage() {
     setShowManageAccount({ visible: !showManageAccount.visible });
   };
 
-  const handleCommentSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-    if (comment === "" || !rating || !gameQuery.data?.gameId) {
-      return;
-    }
-
-    try {
-      await useRating.mutateAsync({
-        gameId: gameQuery.data?.gameId,
-        starRating: rating,
-        description: comment,
-      });
-      setComment("");
-      setRating(undefined);
-      await ratingQuery.refetch();
-    } catch (e) {
-      console.error("Error submitting rating: ", e);
-    }
-  };
-
-  const handleDeleteComment = async (ratingId: number) => {
-    try {
-      await useDeleteRating.mutateAsync({ ratingId });
-      await ratingQuery.refetch();
-    } catch (e) {
-      console.error("Error deleting rating: ", e);
-    }
-  };
-
   const useQueueMutation = api.queue.create.useMutation();
   const utils = api.useUtils();
 
   const handleAddToQueue = async () => {
-    if (!gameId) return;
+    if (!gameId || !gameQuery.data) return;
     try {
       await useQueueMutation.mutateAsync({ gameId });
       await utils.queue.getQueue.invalidate();
@@ -162,14 +107,16 @@ export default function GamePage() {
     }
   };
 
-  const handleFavoritePressed = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleFavoritePressed = async (
+    e: React.MouseEvent<HTMLButtonElement>,
+  ) => {
     e.preventDefault();
     e.stopPropagation();
-  
+
     try {
       if (!isFavorite) {
         await AddToFavoriteMutation.mutateAsync({
-          gameId: Number(gameId)
+          gameId: Number(gameId),
         });
         toast({
           title: "Lagt til i favoritter",
@@ -177,21 +124,19 @@ export default function GamePage() {
         });
       } else {
         await RemoveFromFavoriteMutation.mutateAsync({
-          gameId: Number(gameId)
+          gameId: Number(gameId),
         });
         toast({
           title: "Fjernet fra favoritter",
           description: "Lek er nå fjernet fra dine favoritter",
         });
       }
-      gameQuery.refetch();
-      favoriteQuery.refetch();
+      void gameQuery.refetch();
+      void favoriteQuery.refetch();
     } catch (error) {
       console.log("Error:", error);
     }
   };
-  
-  
 
   return (
     <>
@@ -283,19 +228,23 @@ export default function GamePage() {
               </div>
               <Button onClick={handleAddToQueue}>Legg til i kø</Button>
               <button
-                  onClick={handleFavoritePressed}
-                  className="mb-1 ml-[350px] flex min-w-16 items-end px-4 align-middle text-rg hover:underline"
-                >
-                  {isFavorite ? (
-                    <>
-                      <h1><CheckCircleIcon style={{ color: '#51ed42', fontSize: 32 }} /></h1>
-                    </>
-                  ) : (
-                    <>
-                      <AddCircleOutlineIcon style={{ fontSize: 32 }} />
-                    </>
-                  )}
-                </button>
+                onClick={handleFavoritePressed}
+                className="mb-1 ml-[350px] flex min-w-16 items-end px-4 align-middle text-rg hover:underline"
+              >
+                {isFavorite ? (
+                  <>
+                    <h1>
+                      <CheckCircleIcon
+                        style={{ color: "#51ed42", fontSize: 32 }}
+                      />
+                    </h1>
+                  </>
+                ) : (
+                  <>
+                    <AddCircleOutlineIcon style={{ fontSize: 32 }} />
+                  </>
+                )}
+              </button>
             </div>
           </div>
           {/* Rules */}
@@ -307,103 +256,12 @@ export default function GamePage() {
           </div>
           {/* Rating section */}
           <div className="mt-4 flex h-full w-full items-center justify-start rounded-xl py-2">
-            <div className="mb-4 ml-0 mr-0 w-full">
+            <div className="mb-4 ml-0 mr-0 flex w-full flex-col gap-4">
               <h1 className="text-4xl mb-2 text-neutral-500">Kommentarer</h1>
-              <div>
-                <form
-                  onSubmit={handleCommentSubmit}
-                  className="mb-4 flex h-full w-full items-center justify-start gap-4 align-middle text-rg font-normal"
-                >
-                  <Input
-                    value={comment}
-                    onChange={(event) => setComment(event.target.value)}
-                  />
-                  <Select
-                    value={rating ? String(rating) : undefined}
-                    onValueChange={(val) => {
-                      setRating(Number(val));
-                    }}
-                  >
-                    <SelectTrigger className="w-[180px]">
-                      <SelectValue placeholder="Rating" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {[1, 2, 3, 4, 5].map((_, i) => (
-                        <SelectItem key={i} value={String(i + 1)}>
-                          <div key={i} className="ietms-center flex gap-2">
-                            <p>{i + 1}</p>
-                            <StarIcon className="text-white" />
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-
-                  <Button type="submit">Post</Button>
-                </form>
-              </div>
-              <ul className="flex w-full flex-col items-center justify-start gap-4 align-middle text-rg">
-                {ratingQuery.data?.map((comment) => (
-                  // eslint-disable-next-line react/jsx-key
-                  <li
-                    key={comment.ratingId}
-                    className="relative flex h-full w-full items-center justify-between gap-4 rounded-lg bg-neutral-800 p-4 align-middle"
-                  >
-                    <div className="flex h-full items-center gap-4">
-                      <UserButton />
-                      <div className="flex items-center justify-center rounded-full bg-violet-500 px-3 py-0">
-                        <StarRoundedIcon />
-                        {comment.starRating}
-                      </div>
-                      <div className="flex flex-col items-start justify-start">
-                        <h2 className="-mb-1">{comment.user.username}</h2>
-                        <p className="-mt-1 font-normal text-neutral-400">
-                          {comment.description}
-                        </p>
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => handleMoreCommentButton(comment.ratingId)}
-                    >
-                      <MoreHorizRoundedIcon />
-                    </button>
-                    {showMorePopupComment.visible &&
-                      showMorePopupComment.commentID === comment.ratingId && (
-                        <div className="absolute right-0 top-0 flex h-full w-full flex-row items-center justify-center gap-4 rounded-xl bg-neutral-700 px-6 py-4 align-middle">
-                          {/* Popup content here */}
-                          <p>{comment.user.username}</p>
-                          <button
-                            onClick={() => 1}
-                            className="rounded-lg bg-red-500 px-4 py-1 hover:bg-red-400 active:bg-red-600"
-                          >
-                            Rapporter
-                          </button>
-                          {userId === comment.user.userId && (
-                            <Button
-                              onClick={() =>
-                                handleDeleteComment(comment.ratingId)
-                              }
-                              variant={"destructive"}
-                            >
-                              Slett
-                            </Button>
-                          )}
-                          <button
-                            onClick={() => {
-                              if (comment.ratingId) {
-                                handleMoreCommentButton(comment.ratingId);
-                              }
-                            }}
-                          >
-                            <p className="absolute right-2 top-1 text-neutral-400 hover:underline">
-                              <CloseRoundedIcon />
-                            </p>
-                          </button>
-                        </div>
-                      )}
-                  </li>
-                ))}
-              </ul>
+              {gameId && (
+                <CommentForm gameId={gameId} refetch={ratingQuery.refetch} />
+              )}
+              {gameId && <CommentSection gameId={gameId} />}
             </div>
           </div>
         </section>

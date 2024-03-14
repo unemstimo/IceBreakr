@@ -6,10 +6,6 @@ import SearchIcon from "@mui/icons-material/Search";
 import { usePathname } from "next/navigation";
 import classNames from "classnames";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
-import CountdownComponent from "./countdownComponent";
-import { useDispatch } from "react-redux";
-import { useEffect } from "react";
-import { setTimeLeft } from "~/redux/countdownSlice";
 import React from "react";
 
 type NavigationBarProps = {
@@ -17,14 +13,6 @@ type NavigationBarProps = {
 };
 const NavigationBar = ({ children }: NavigationBarProps) => {
   const currentPath = usePathname();
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    const storedTimeLeft = localStorage.getItem("timeLeft");
-    if (storedTimeLeft !== null) {
-      dispatch(setTimeLeft(Number(storedTimeLeft)));
-    }
-  }, [dispatch]);
 
   return (
     <>
@@ -87,7 +75,6 @@ const NavigationBar = ({ children }: NavigationBarProps) => {
           </Link>
         </div>
         {/* Countdown component */}
-        <CountdownComponent />
         <SignedIn>
           <Link href={"/createGame"}>
             <button
