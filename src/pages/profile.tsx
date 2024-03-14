@@ -7,6 +7,7 @@ import {
   SignedOut,
   UserProfile,
   currentUser,
+  useUser,
 } from "@clerk/nextjs";
 import ManageAccountsRoundedIcon from "@mui/icons-material/ManageAccountsRounded";
 import PageWrapper from "~/components/pageWrapper";
@@ -25,13 +26,17 @@ import Layout from "~/components/layout";
 
 export default function Profile() {
   const gameQuery = api.gameRouter.getAll.useQuery();
-  const myGamesQuery = api.gameRouter.getGameByUserId.useQuery();
+  /* const myGamesQuery = api.gameRouter.getGameByUserId.useQuery(); */
   const games = gameQuery.data ?? [];
-  const myGames = myGamesQuery.data ?? [];
+  /* const gamesByUserId = myGamesQuery.data ?? []; */
   const [favoritedGames, setFavoritedGames] = useState<FetchGames>([]);
+  const [myGames, setMyGames] = useState<FetchGames>([]);
+  const currentUser = useUser();
+  const userID = currentUser?.user?.id;
+  console.log(userID)
   const [carouselSettings, setCarouselSettings] = useState({
-    slidesToShow: 4,
-    slidesToScroll: 4,
+    slidesToShow: 1,
+    slidesToScroll: 1,
     infinite: false,
     dots: true, // Add dots for page numbers
     appendDots: (dots: JSX.Element[]) => (
@@ -43,9 +48,11 @@ export default function Profile() {
     ),
   });
 
-  const filterFavoritedGames = () => {
+  const filterGames = () => {
     const favoritedGames = games.filter((game) => game.UserFavouritedGame.length > 0);
     setFavoritedGames(favoritedGames);
+    const myGames = games.filter((game) => game.userId == userID)
+    setMyGames(myGames)
   };
 
 /*   const filterMyGames = (userId: string) => {
@@ -55,7 +62,7 @@ export default function Profile() {
 
   useEffect(() => {
     if (gameQuery.isSuccess) {
-      filterFavoritedGames();
+      filterGames();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameQuery.isSuccess]);
@@ -69,6 +76,16 @@ export default function Profile() {
     setShowManageAccount({ visible: !showManageAccount.visible });
   };
 
+    const groupedfavorites = [];
+    for (let i = 0; i < favoritedGames.length; i += 4) {
+      groupedfavorites.push(favoritedGames.slice(i, i + 4));
+    }
+
+    const groupedmyGames = [];
+    for (let i = 0; i < myGames.length; i += 4) {
+      groupedmyGames.push(myGames.slice(i, i + 4));
+    }
+    
   return (
     <Layout navbarChildren={<MyPlaylists />}>
       <SignedOut>
@@ -96,20 +113,25 @@ export default function Profile() {
             <div className="w-full px-2">
               {myGames.length > 0 ? (
                 <Slider {...carouselSettings}>
-                  {myGames.map((game) => (
-                    <div className="p-2" key={game.gameId}>
-                      <GameCard
-                        name={game.name}
-                        refetchGames={gameQuery.refetch}
-                        duration={game.duration}
-                        numberOfPlayers={game.numberOfPlayers}
-                        rules={game.rules}
-                        description={game.description ?? ""}
-                        rating={}
-                        gameId={game.gameId}
-                        userId={game.userId}
-                        isFavorite={game.UserFavouritedGame.length > 0}
-                      />
+                  {groupedmyGames.map((gamesGroup, index) => (
+                    <div key={index} className="p-2">
+                      <div className="grid h-full w-full gap-4 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-4">
+                        {gamesGroup.map((game) => (
+                          <GameCard
+                            key={game.gameId}
+                            name={game.name}
+                            refetchGames={gameQuery.refetch}
+                            duration={game.duration}
+                            numberOfPlayers={game.numberOfPlayers}
+                            rules={game.rules}
+                            description={game.description ?? ""}
+                            rating={game.averageRating}
+                            gameId={game.gameId}
+                            userId={game.userId}
+                            isFavorite={game.UserFavouritedGame.length > 0}
+                          />
+                        ))}
+                      </div>
                     </div>
                   ))}
                 </Slider>
@@ -121,36 +143,35 @@ export default function Profile() {
           {/* My Favourites section */}
           <div className="mt-4 flex h-full w-full flex-col p-4 justify-center rounded-xl">
             <p className="ml-6">Mine favoritter:</p>
-            <div className="w-full px-2">
-              {favoritedGames.length > 0 ? (
+            <div className="w-full x-2">
+              {groupedfavorites.length > 0 ? (
                 <Slider {...carouselSettings}>
-                  {favoritedGames.map((game) => (
-                    <div className="p-2">
-                      <GameCard
-                        key={game.gameId}
-                        name={game.name}
-                        refetchGames={gameQuery.refetch}
-                        duration={game.duration}
-                        numberOfPlayers={game.numberOfPlayers}
-                        rules={game.rules}
-                        description={game.description ?? ""}
-                        rating={game.averageRating}
-                        gameId={game.gameId}
-                        userId={game.userId}
-                        isFavorite={game.UserFavouritedGame.length > 0}
-                      />
+                  {groupedfavorites.map((favoritesGroup, index) => (
+                    <div key={index} className="p-2">
+                      <div className="grid h-full w-full gap-4 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-4">
+                        {favoritesGroup.map((game) => (
+                          <GameCard
+                            key={game.gameId}
+                            name={game.name}
+                            refetchGames={gameQuery.refetch}
+                            duration={game.duration}
+                            numberOfPlayers={game.numberOfPlayers}
+                            rules={game.rules}
+                            description={game.description ?? ""}
+                            rating={game.averageRating}
+                            gameId={game.gameId}
+                            userId={game.userId}
+                            isFavorite={game.UserFavouritedGame.length > 0}
+                          />
+                        ))}
+                      </div>
                     </div>
                   ))}
-                  </Slider>
-                ) : (
-                  <p className="text-center p-4 bg-neutral-800 rounded-xl">Du har ingen favoritter</p>
-                )}
+                </Slider>
+              ) : (
+                <p className="text-center p-4 bg-neutral-800 rounded-xl">Du har ingen favoritter</p>
+              )}
             </div>
-          </div>
-
-          {/* My recent section */}
-          <div className="mt-4 flex h-full w-full items-center justify-center rounded-xl bg-[#1b1a1a]">
-            <p>Nylig lekt</p>
           </div>
         </section>
       </SignedIn>
