@@ -81,7 +81,7 @@ const QueueBar = () => {
       <SignedOut>
         <CardContent className="flex flex-col gap-2">
           <Button>
-            <SignInButton>Log ind for at se din kø</SignInButton>
+            <SignInButton>Log inn for å se din kø</SignInButton>
           </Button>
         </CardContent>
       </SignedOut>

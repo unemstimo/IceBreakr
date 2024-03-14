@@ -1,9 +1,11 @@
+import Link from 'next/link';
 import React, { useState } from 'react';
 import { Wheel } from 'react-custom-roulette';
 import { Button } from "~/components/ui/button";
+import { api } from "~/utils/api";
 
-interface Game {
-  id: number;
+interface Game{
+  gameId: number;
   userId: string;
   name: string;
   duration: string;
@@ -20,16 +22,18 @@ interface Props {
 }
 
 const SpinningWheel: React.FC<Props> = ({ games }) => {
+  const useQueueMutation = api.queue.create.useMutation();
   const [mustSpin, setMustSpin] = React.useState(false);
   const [prizeNumber, setPrizeNumber] = React.useState(0);
   const [revealedPrizeNumber, setRevealedPrizeNumber] = useState<null|number>(null);
   console.log(revealedPrizeNumber)
   const colors = ['#552234', '#a8d3f7', '#89276C', '#f8e8e5', '#123456', '#abcdef', '#987654', '#fedcba', '#13579a', '#2468b'];
 
+  console.log(games)
   const wheelData = games.map((game, index) => ({
     option: game.name,
     style: { backgroundColor: colors[index % colors.length] },
-    key: game.id,
+    key: game.gameId,
   }));
 
   const handleSpinClick = () => {
@@ -38,6 +42,21 @@ const SpinningWheel: React.FC<Props> = ({ games }) => {
       setPrizeNumber(newPrizeNumber);
       console.log(wheelData[newPrizeNumber]?.option);
       setMustSpin(true);
+    }
+  };
+
+  const utils = api.useUtils();
+  const handleAddToQueue = async () => {
+    try {
+      if(revealedPrizeNumber) {
+
+        if (!wheelData[revealedPrizeNumber]?.key === undefined) {
+          await useQueueMutation.mutateAsync({ gameId: wheelData[revealedPrizeNumber].key });
+        }
+      }
+      await utils.queue.getQueue.invalidate();
+    } catch (error) {
+      console.log("Error");
     }
   };
 
@@ -51,12 +70,13 @@ console.log(revealedPrizeNumber)
   React.useEffect(() => {
     if (!mustSpin && prizeNumber != revealedPrizeNumber && prizeNumber) {
       setRevealedPrizeNumber(prizeNumber);
-
+      
       // Cleanup function to cancel the timeout if component unmounts or prize is revealed early
     }
   }, [mustSpin, prizeNumber]);
 
   return (
+    <div>
     <div className="wheel relative w-full justify-center items-center">
       <div className="flex mx-auto justify-center cursor-pointer w-fit rounded-full drop-shadow-xl" onClick={handleSpinClick}>
         <Wheel
@@ -65,7 +85,10 @@ console.log(revealedPrizeNumber)
           data={wheelData}
           onStopSpinning={() => {
             setMustSpin(false);
-            //setRevealedPrize(prizeNumber);
+            if(revealedPrizeNumber) {
+
+              console.log(wheelData[revealedPrizeNumber])
+            }
           }}
           backgroundColors={['#552234', '#a8d3f7', '#89276C', '#f8e8e5']}
           textColors={['#ffffff', '#592839']}
@@ -76,20 +99,28 @@ console.log(revealedPrizeNumber)
           fontSize={16}
         />
       </div>
-      <button onClick={handleSpinClick} className="flex mx-auto -mt-48 shadow-md absolute top-[83%] left-[47%]"><p>SPIN</p></button>
-      <div className='item-center text-center'>
-        <span>Valgt spill: </span>
-        { revealedPrizeNumber && (
-          <div className='flex-col flex '>
-            <span id="selectedGame">{wheelData[revealedPrizeNumber]?.option}</span>
-            <Button className=''>test</Button>
-
-          </div>
-
-        )}
-      </div>
+      <button onClick={handleSpinClick} className="flex mx-auto -mt-48 shadow-md absolute top-[89.5%] left-[46.8%]"><p>SPIN</p></button>
+      
 
     </div>
+    <div className='item-center text-center'>
+    <span>Valgt spill: </span>
+    { !revealedPrizeNumber && (
+      <div className='flex-col flex items-center'>
+      </div>
+
+    )}
+    { revealedPrizeNumber && (
+      <div className='flex-col flex '>
+        <span id="selectedGame">{wheelData[revealedPrizeNumber]?.option}</span>
+        <Button onClick={handleAddToQueue}>Legg til i køen</Button>
+        <Link href={`/gamePage?gameId=${wheelData[revealedPrizeNumber]?.key}`} passHref>Gå til leken</Link>
+
+      </div>
+
+    )}
+  </div>
+  </div>
 
 
   );
