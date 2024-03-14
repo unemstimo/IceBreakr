@@ -24,6 +24,6 @@ export const useTimerState = () => {
   const isPlaying = useSelector((state: RootState) => state.timer.isPlaying);
   const time = useSelector((state: RootState) => state.timer.time);
   const game = useSelector((state: RootState) => state.timer.game);
-
-  return { isPlaying, time, game };
+  const isShuffle = useSelector((state: RootState) => state.timer.isShuffle);
+  return { isPlaying, time, game, isShuffle };
 };

@@ -10,16 +10,19 @@ import { useTimerActions, useTimerState } from "~/redux/hooks";
 import Link from "next/link";
 import { useEffect } from "react";
 import { ArrowUpIcon } from "lucide-react";
-import { startTimer, stopTimer } from "~/redux/store";
+import { startTimer } from "~/redux/store";
 
 const QueueBar = () => {
   const queueQuery = api.queue.getQueue.useQuery();
   const { toast } = useToast();
-  const { game, time, isPlaying } = useTimerState();
+  const { game, time, isPlaying, isShuffle } = useTimerState();
   const { setGame, reset } = useTimerActions();
+  const { stop: stopTimer } = useTimerActions();
+
+  const queueLength = queueQuery.data?.length ?? 0;
 
   useEffect(() => {
-    if (game && game?.duration <= time) {
+    if (game?.duration && game?.duration <= time) {
       void playNextInQueue();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -39,8 +42,11 @@ const QueueBar = () => {
     }
   };
 
-  const popQueue = async () => {
-    const hasNext = queueQuery.data?.[0];
+  const popQueue = async (popRandom = false) => {
+    const index = popRandom
+      ? Math.floor(Math.random() * (queueQuery.data?.length ?? 0))
+      : 0;
+    const hasNext = queueQuery.data?.[index];
     if (!hasNext) {
       return null;
     } else {
@@ -50,17 +56,20 @@ const QueueBar = () => {
       return hasNext;
     }
   };
-
+  console.log("isplaying", isPlaying);
   const playNextInQueue = async () => {
-    reset();
+    console.log("playing next in queue");
     stopTimer();
+    reset();
+    const nextInQueue = await popQueue(isShuffle);
 
-    const nextInQueue = await popQueue();
     if (nextInQueue) {
+      console.log("set gaem abd play");
       void setGameAndPlay(nextInQueue);
-    } else {
-      setGame(null);
     }
+    // else { //TODO: skal vi ha denne eller skal det være mulig å starte å leke igjen.
+    //   setGame(null);
+    // }
   };
 
   const setGameAndPlay = async (queue: QueueItem) => {
@@ -72,12 +81,24 @@ const QueueBar = () => {
       duration,
       name: queue.game.name,
     });
+    console.log("starting timer");
     startTimer();
   };
 
   return (
     <Card className="min-w-72">
-      <CardHeader>Min kø</CardHeader>
+      <CardHeader>
+        <span className="flex w-full justify-between">
+          <div>
+            <h2>Min kø</h2>
+            <p className="text-rg font-normal text-neutral-500">
+              {queueLength > 1 || queueLength < 1
+                ? queueLength + " leker i køen"
+                : queueLength + " lek i køen"}{" "}
+            </p>
+          </div>
+        </span>
+      </CardHeader>
       <SignedOut>
         <CardContent className="flex flex-col gap-2">
           <Button>
@@ -155,12 +176,13 @@ const QueueGameCard = ({
   };
 
   if (!queueItem) return null;
+
   return (
-    <Card className="!border-neutral-800 !pt-6">
+    <Card className="!border-neutral-800">
       <CardContent>
         <div className="flex flex-row items-center  justify-between align-middle">
           <Link href={`/gamePage?gameId=${queueItem.game.gameId}`} passHref>
-            <h3 className="text-2xl font-semibold leading-none tracking-tight">
+            <h3 className="text-rg font-semibold leading-none tracking-tight">
               {queueItem.game.name}
             </h3>
           </Link>
@@ -183,6 +205,7 @@ const QueueGameCard = ({
 
             <Button variant={"ghost"} size={"icon"}>
               <CloseRoundedIcon
+                sx={{ color: "#888", fontSize: "1.25rem" }}
                 onClick={() => handleDequeue(queueItem.queuedId)}
               />
             </Button>

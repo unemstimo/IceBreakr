@@ -1,15 +1,15 @@
 import Image from "next/image";
 import React from "react";
-import Placeholder from "~/assets/images/placeholder.png";
+import Placeholder from "~/assets/images/gameplaceholder.png";
 import StarRoundedIcon from "@mui/icons-material/StarRounded";
 import Link from "next/link";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import StarIcon from "@mui/icons-material/Star";
 import { api } from "~/utils/api";
-import { Button } from "./ui/button";
 import QueueMusicIcon from "@mui/icons-material/QueueMusic";
 import { useTimerActions } from "~/redux/hooks";
 import PlayCircleOutlineRoundedIcon from "@mui/icons-material/PlayCircleOutlineRounded";
+import { Button } from "./ui/button";
 
 export type Game = {
   gameId: number;
