@@ -1,93 +1,98 @@
-import { button, input } from '@nextui-org/react';
-import React, { useState } from 'react'
+import React, { useState } from 'react';
+import { Wheel } from 'react-custom-roulette';
+import { Button } from "~/components/ui/button";
 
-import { Wheel } from 'react-custom-roulette'
+interface Game {
+  id: number;
+  userId: string;
+  name: string;
+  duration: string;
+  numberOfPlayers: string;
+  rules: string;
+  description: string;
+  rating: number;
+  isFavorite: boolean;
+  refetchGames: VoidFunction;
+}
 
-import yesNo from 'src/components/yesNo';
+interface Props {
+  games: Game[];
+}
 
+const SpinningWheel: React.FC<Props> = ({ games }) => {
+  const [mustSpin, setMustSpin] = React.useState(false);
+  const [prizeNumber, setPrizeNumber] = React.useState(0);
+  const [revealedPrizeNumber, setRevealedPrizeNumber] = useState<null|number>(null);
+  console.log(revealedPrizeNumber)
+  const colors = ['#552234', '#a8d3f7', '#89276C', '#f8e8e5', '#123456', '#abcdef', '#987654', '#fedcba', '#13579a', '#2468b'];
 
-const INPUT = `${input} focus:ring-1 focus:outline-none pl-2 border-2 p-2 md:w-96 md:text-lg`; // Utilize CSS modules for styling
-const BTN = `${button} p-3 px-10 text-xl rounded-lg`; // Utilize CSS modules for styling
+  const wheelData = games.map((game, index) => ({
+    option: game.name,
+    style: { backgroundColor: colors[index % colors.length] },
+    key: game.id,
+  }));
 
-
-export default () => {
-  const [mustSpin, setMustSpin] = useState(false);
-  const [prizeNumber, setPrizeNumber] = useState(0);
-  const [data, setData] = useState(yesNo);
-  const [showinput, setShowInput] = useState(false);
-  const [input, setInput] = useState('');
-  const [inputData, setInputData] = useState<any>([]);
   const handleSpinClick = () => {
     if (!mustSpin) {
-      const newPrizeNumber = Math.floor(Math.random() * data.length);
+      const newPrizeNumber = Math.floor(Math.random() * wheelData.length);
       setPrizeNumber(newPrizeNumber);
+      console.log(wheelData[newPrizeNumber]?.option);
       setMustSpin(true);
     }
-  }
-  const customize = () => {
-    setShowInput(!showinput)
-  }
-  const handleKeyDown = (e:any) => {
-    if (e.key === 'Enter') {
-      addtoList(e);
-    }
   };
-  const addtoList = (e:any) => {
-      setInputData([...inputData,{option:input}])
-      setData([...inputData,{option:input}])
-      setInput('')
-  }
+
+console.log(revealedPrizeNumber)
+/*   function setRevealedPrize(prizeNumber: number) {
+    
+    const revealedPrizeNumber = prizeNumber
+    
+  } */
+
+  React.useEffect(() => {
+    if (!mustSpin && prizeNumber != revealedPrizeNumber && prizeNumber) {
+      setRevealedPrizeNumber(prizeNumber);
+
+      // Cleanup function to cancel the timeout if component unmounts or prize is revealed early
+    }
+  }, [mustSpin, prizeNumber]);
 
   return (
-    <>
-    {/* navbar */}
-    <div className='grid grid-cols-4 text-center gap-5  md:text-xl '>
-        <div className='bg-white border-2 rounded-b-2xl p-5 md:p-10 cursor-pointer drop-shadow-md' onClick={()=>{setData(yesNo)}}>YES or No</div>
-        
-        <div className='bg-white border-2 rounded-b-2xl p-5 md:p-10 cursor-pointer drop-shadow-md' onClick={customize}>Customize</div>
+    <div className="wheel relative w-full justify-center items-center">
+      <div className="flex mx-auto justify-center cursor-pointer w-fit rounded-full drop-shadow-xl" onClick={handleSpinClick}>
+        <Wheel
+          mustStartSpinning={mustSpin}
+          prizeNumber={prizeNumber}
+          data={wheelData}
+          onStopSpinning={() => {
+            setMustSpin(false);
+            //setRevealedPrize(prizeNumber);
+          }}
+          backgroundColors={['#552234', '#a8d3f7', '#89276C', '#f8e8e5']}
+          textColors={['#ffffff', '#592839']}
+          outerBorderColor={'#F7F7F7'}
+          radiusLineColor={'#F7F7F7'}
+          radiusLineWidth={0}
+          innerRadius={14}
+          fontSize={16}
+        />
+      </div>
+      <button onClick={handleSpinClick} className="flex mx-auto -mt-48 shadow-md absolute top-[83%] left-[47%]"><p>SPIN</p></button>
+      <div className='item-center text-center'>
+        <span>Valgt spill: </span>
+        { revealedPrizeNumber && (
+          <div className='flex-col flex '>
+            <span id="selectedGame">{wheelData[revealedPrizeNumber]?.option}</span>
+            <Button className=''>test</Button>
+
+          </div>
+
+        )}
+      </div>
+
     </div>
 
-    {showinput && 
-    <div className=' flex mx-auto justify-center w-fit  mt-10 bg-white'>
-      <input
-            type="text"
-            name='option'
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-            autoFocus
-            className={INPUT} // Apply CSS module class
-          />
-          <button type='button' onClick={addtoList} className={`${BTN} btn border border-l-8 border-gray-100 `}>add</button> {/* Apply CSS module class */}
-        </div>
-     } 
 
+  );
+};
 
-    {/* wheel */}
-    <div className="wheel ">
-    <div className='flex mx-auto justify-center cursor-pointer w-fit rounded-full drop-shadow-xl' onClick={handleSpinClick}
-    >
-      <Wheel
-        mustStartSpinning={mustSpin}
-        prizeNumber={prizeNumber}
-        data={data}
-        onStopSpinning={() => {
-          setMustSpin(false);
-        }}
-        backgroundColors={[ '#552234', '#a8d3f7', '#89276C', '#f8e8e5', ]}
-        textColors={['#ffffff','#592839']}
-        outerBorderColor={'#F7F7F7'}
-        radiusLineColor={'#F7F7F7'}
-        radiusLineWidth={0}
-        innerRadius={14}
-        fontSize={16}
-        pointerProps = {
-          {src: 'src/assets/images/pointerGold.png', style:{ width: '100px', height: '100px' ,transform: 'rotate(-130deg)'}}
-        }
-      />
-    </div>
-    <button onClick={handleSpinClick} className={`${BTN} flex mx-auto -mt-48 border-2 bg-white shadow-md`}>SPIN</button> 
-    </div>
-    </>
-  )
-}
+export default SpinningWheel;

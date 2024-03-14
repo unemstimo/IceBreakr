@@ -83,13 +83,13 @@ export default function ListPage() {
                   </p>
                 </div>
                 <div>
-                <Link href="/spinTheWheel"> 
-                      <div className="flex h-20 w-30 flex-row justify-center rounded-lg p-6 text-white shadow-lg hover:bg-violet-500 active:bg-violet-800">
-                        <p className="-mt-1 mr-4 text-md justify-center">
-                          Spin The Wheel
-                        </p>
-                        
-                      </div>
+                  <Link href={`/spinTheWheel?playlistId=${playlistId}`} passHref>
+                    <div className="flex h-20 w-30 flex-row justify-center rounded-lg p-6 text-white shadow-lg hover:bg-violet-500 active:bg-violet-800">
+                      <p className="-mt-1 mr-4 text-md justify-center">
+                        Spin The Wheel
+                      </p>
+                      
+                    </div>
                     </Link>
                 </div>
               </div>
