@@ -91,8 +91,7 @@ const config = {
         popover: {
           // DEFAULT: "hsl(var(--secondary))",
           DEFAULT: colors.neutral["800"],
-
-          foreground: "hsl(var(--popover-foreground))",
+          foreground: colors.neutral["100"],
         },
         card: {
           DEFAULT: colors.neutral["900"],
@@ -127,8 +126,10 @@ const config = {
     md: "960",
     // => @media (min-width: 768px) { ... }
 
-    lg: "1440",
+    lg: "1080",
     // => @media (min-width: 1024px) { ... }
+
+    xl: "1260",
   },
   plugins: [require("tailwindcss-animate")],
 } satisfies Config;

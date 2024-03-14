@@ -1,11 +1,10 @@
 import React from "react";
 import Head from "next/head";
-import Link from "next/link";
 import PageWrapper from "~/components/pageWrapper";
 import NavigationBar from "~/components/navigationBar";
 import { useRouter } from "next/router";
-import MyFriendsBar from "./myFriendsBar";
 import QueueBar from "./queueBar";
+import CountdownComponent from "./countdownComponent";
 type ChildrenType = {
   children: React.ReactNode;
   navbarChildren?: React.ReactNode;
@@ -28,7 +27,8 @@ const Layout = ({ children, navbarChildren }: ChildrenType) => {
         <NavigationBar>{navbarChildren}</NavigationBar>
         {children}
         <div className="flex flex-col gap-4">
-          <MyFriendsBar />
+          {/* <MyFriendsBar /> */}
+          <CountdownComponent />
           <QueueBar />
         </div>
       </PageWrapper>

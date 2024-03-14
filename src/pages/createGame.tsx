@@ -6,8 +6,6 @@ import { Combobox, type ComboxOption } from "~/components/ui/combox";
 import { Button } from "~/components/ui/button";
 import { CreateGame } from "~/server/api/routers/game";
 import ArrowBackRounded from "@mui/icons-material/ArrowBackRounded";
-import { time } from "console";
-
 
 export type Game = {
   name: string;
@@ -24,7 +22,6 @@ const CreateGame = () => {
   const [description, setDescription] = useState("");
   const [rules, setRules] = useState("");
   const [playtime, setPlayTime] = useState("15");
-  const [selectedPlayTime, setSelectedPlayTime] = useState("");
   const [categories, setCategories] = useState<ComboxOption[]>();
   const [selectedCategory, setSelectedCategory] = useState<ComboxOption>();
   const [showError, setShowError] = useState(false);
@@ -72,12 +69,6 @@ const CreateGame = () => {
 
   const handleRulesChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setRules(event.target.value);
-  };
-
-  const handlePlayTimeButtonClick = (playTime: string) => {
-    setPlayTime(playTime);
-    setSelectedPlayTime(playTime);
-    console.log("Play time: " + playTime);
   };
 
   const showErrorMessage = () => {
@@ -138,18 +129,21 @@ const CreateGame = () => {
 
   return (
     <Layout>
-      <div className="flex w-full rounded-2xl justify-start items-start bg-neutral-900 p-4">
+      <div className="flex w-full items-start justify-start rounded-2xl bg-neutral-900 p-4">
         <form
           onSubmit={handleSubmit}
-          className="flex text-md font-normal w-full flex-col items-start justify-center gap-4 align-middle"
+          className="flex w-full flex-col items-start justify-center gap-4 align-middle text-md font-normal"
         >
-          <div className="flex align-middle items-center gap-2">
-            <button><ArrowBackRounded onClick={() => router.back()} /></button>
+          <div className="flex items-center gap-2 align-middle">
+            <button>
+              <ArrowBackRounded onClick={() => router.back()} />
+            </button>
             <p className="text-xxl font-bold">Opprett ny lek</p>
           </div>
           <input
             type="text"
             value={name}
+            maxLength={40}
             onChange={handleNameChange}
             placeholder="Navn på lek..."
             className="w-full rounded-lg bg-neutral-800 py-2 pl-2 pr-2 text-white focus:outline-none"
@@ -164,7 +158,6 @@ const CreateGame = () => {
             className="w-full rounded-lg bg-neutral-800 py-2 pl-2 pr-2 text-white focus:outline-none"
           />
 
-          
           <label htmlFor="time">Estimert varighet: {playtime} </label>
           <input
             type="range"
@@ -172,15 +165,15 @@ const CreateGame = () => {
             name="time"
             min="1"
             max="59"
-
             value={playtime}
-            onChange={e => setPlayTime(e.target.value)}
+            onChange={(e) => setPlayTime(e.target.value)}
             placeholder="Tidsestimat"
             className="w-full rounded-lg bg-neutral-800 py-2 pl-2 pr-2 text-white focus:outline-none"
           />
-          
+
           <input
             type="text"
+            maxLength={191}
             value={description}
             onChange={handleDescriptionChange}
             placeholder="Beskrivelse av spill..."
@@ -222,19 +215,22 @@ const CreateGame = () => {
           </div>
           <div className="flex gap-4">
             <button
-              className=" font-bold rounded-full bg-violet-600 px-4 py-2 text-white shadow-lg hover:bg-violet-500 active:bg-violet-800"
+              className=" rounded-full bg-violet-600 px-4 py-2 font-bold text-white shadow-lg hover:bg-violet-500 active:bg-violet-800"
               type="submit"
             >
               Opprett Lek
             </button>
-            <button className="text-neutral-500 hover:underline" type="button" onClick={() => router.back()}>
+            <button
+              className="text-neutral-500 hover:underline"
+              type="button"
+              onClick={() => router.back()}
+            >
               Avbryt
             </button>
           </div>
-          
+
           {showError && <p className="text-red-500">Fyll ut alle felt!</p>}
         </form>
-        
       </div>
     </Layout>
   );

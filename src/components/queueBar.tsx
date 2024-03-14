@@ -6,35 +6,99 @@ import { type QueueItem } from "~/server/api/routers/queue";
 import { useToast } from "./ui/use-toast";
 import { Button } from "./ui/button";
 import { SignInButton, SignedIn, SignedOut } from "@clerk/nextjs";
+import { useTimerActions, useTimerState } from "~/redux/hooks";
+import Link from "next/link";
+import { useEffect } from "react";
+import { ArrowUpIcon } from "lucide-react";
+import { startTimer } from "~/redux/store";
 
 const QueueBar = () => {
   const queueQuery = api.queue.getQueue.useQuery();
-  const firstInQueue = queueQuery.data?.[0];
   const { toast } = useToast();
+  const { game, time, isPlaying, isShuffle } = useTimerState();
+  const { setGame, reset } = useTimerActions();
+  const { stop: stopTimer } = useTimerActions();
 
-  // exemple på hvordan oppdatere timeplayed i backend
-  const useUpdateTimePlayedMutation = api.queue.updateTimePlayed.useMutation();
-  const handleUpdateTimePlayed = async (
-    queuedId: number,
-    timePlayed: number,
-  ) => {
+  const queueLength = queueQuery.data?.length ?? 0;
+
+  useEffect(() => {
+    if (game?.duration && game?.duration <= time) {
+      void playNextInQueue();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [game, time, isPlaying]);
+
+  const useDeQueueMutation = api.queue.dequeue.useMutation();
+
+  const deQueue = async (id: number) => {
     try {
-      await useUpdateTimePlayedMutation.mutateAsync({
-        queuedId: queuedId,
-        timePlayed: timePlayed,
-      });
+      await useDeQueueMutation.mutateAsync({ queuedId: id });
       await queueQuery.refetch();
     } catch (e) {
       toast({
         title: "Obs! Noget gik galt",
-        description: "Kunne ikke oppdatere tidspunktet",
+        description: "Kunne ikke fjerne spil fra køen",
       });
     }
   };
 
+  const popQueue = async (popRandom = false) => {
+    const index = popRandom
+      ? Math.floor(Math.random() * (queueQuery.data?.length ?? 0))
+      : 0;
+    const hasNext = queueQuery.data?.[index];
+    if (!hasNext) {
+      return null;
+    } else {
+      const queuedId = hasNext.queuedId;
+      await deQueue(queuedId);
+      await queueQuery.refetch();
+      return hasNext;
+    }
+  };
+  console.log("isplaying", isPlaying);
+  const playNextInQueue = async () => {
+    console.log("playing next in queue");
+    stopTimer();
+    reset();
+    const nextInQueue = await popQueue(isShuffle);
+
+    if (nextInQueue) {
+      console.log("set gaem abd play");
+      void setGameAndPlay(nextInQueue);
+    }
+    // else { //TODO: skal vi ha denne eller skal det være mulig å starte å leke igjen.
+    //   setGame(null);
+    // }
+  };
+
+  const setGameAndPlay = async (queue: QueueItem) => {
+    if (!queue) return;
+    const duration = Number(queue.game.duration) * 60;
+    if (!duration) return;
+    console.log("setting game and starting");
+    setGame({
+      duration,
+      name: queue.game.name,
+    });
+    console.log("starting timer");
+    startTimer();
+  };
+
   return (
-    <Card>
-      <CardHeader>Min kø</CardHeader>
+    <Card className="min-w-72">
+      <CardHeader>
+        <span className="flex w-full justify-between">
+          <div>
+            <h2>Min kø</h2>
+            <p className="text-rg font-normal text-neutral-500">
+              {queueLength > 1 || queueLength < 1
+                ? queueLength + " leker i køen"
+                : queueLength + " lek i køen"}{" "}
+            </p>
+          </div>
+        </span>
+      </CardHeader>
       <SignedOut>
         <CardContent className="flex flex-col gap-2">
           <Button>
@@ -44,12 +108,12 @@ const QueueBar = () => {
       </SignedOut>
       <SignedIn>
         <CardContent className="flex flex-col gap-2">
-          {queueQuery.data?.map((game) => (
+          {queueQuery.data?.map((queue) => (
             <QueueGameCard
-              firstInQueue={firstInQueue}
-              key={game.gameId}
-              queueItem={game}
-              refetch={() => queueQuery.refetch()}
+              key={queue.queuedId}
+              queueItem={queue}
+              refetch={queueQuery.refetch}
+              setGameAndPlay={setGameAndPlay}
             />
           ))}
         </CardContent>
@@ -63,11 +127,11 @@ export default QueueBar;
 const QueueGameCard = ({
   queueItem,
   refetch,
-  firstInQueue,
+  setGameAndPlay,
 }: {
   queueItem: QueueItem;
   refetch: VoidFunction;
-  firstInQueue?: QueueItem;
+  setGameAndPlay: (queue: QueueItem) => void;
 }) => {
   const useDeQueueMutation = api.queue.dequeue.useMutation();
   const useReQueueMutation = api.queue.reQueue.useMutation();
@@ -86,19 +150,13 @@ const QueueGameCard = ({
     }
   };
 
-  const handleReQueue = async (queuedId: number) => {
+  const moveToTopOfQueue = async (queuedItem: QueueItem) => {
+    const queuedId = queuedItem?.queuedId;
+    if (!queuedId) return;
     try {
       const mutations = [
         useReQueueMutation.mutateAsync({ queuedId: queuedId }),
       ];
-
-      // jeg tenker at hvis noe spiller i backgrunnen så skal det fjernes fra køen
-      if (firstInQueue?.timePlayed && firstInQueue.timePlayed > 0) {
-        mutations.push(
-          useDeQueueMutation.mutateAsync({ queuedId: firstInQueue.queuedId }),
-        );
-      }
-      // run all mutations simultaneously and wait for all to finish
       await Promise.all(mutations);
       refetch();
     } catch (e) {
@@ -108,25 +166,46 @@ const QueueGameCard = ({
       });
     }
   };
+
+  const deQueueAndPlay = async (queue: QueueItem) => {
+    if (!queue) return;
+    const duration = Number(queue.game.duration) * 60;
+    if (!duration) return;
+    setGameAndPlay(queue);
+    await handleDequeue(queue.queuedId);
+  };
+
   if (!queueItem) return null;
+
   return (
-    <Card className="!border-neutral-800 !pt-6">
+    <Card className="!border-neutral-800">
       <CardContent>
         <div className="flex flex-row items-center  justify-between align-middle">
-          <h3 className="text-2xl font-semibold leading-none tracking-tight">
-            {queueItem.game.name}
-          </h3>
+          <Link href={`/gamePage?gameId=${queueItem.game.gameId}`} passHref>
+            <h3 className="text-rg font-semibold leading-none tracking-tight">
+              {queueItem.game.name}
+            </h3>
+          </Link>
           <div className="flex flex-row items-center justify-between gap-2 align-middle">
             <Button
-              onClick={() => handleReQueue(queueItem.queuedId)}
+              onClick={() => deQueueAndPlay(queueItem)}
               variant={"ghost"}
               size={"icon"}
             >
               <PlayCircleOutlineRoundedIcon />
             </Button>
 
+            <Button
+              onClick={() => moveToTopOfQueue(queueItem)}
+              variant={"ghost"}
+              size={"icon"}
+            >
+              <ArrowUpIcon />
+            </Button>
+
             <Button variant={"ghost"} size={"icon"}>
               <CloseRoundedIcon
+                sx={{ color: "#888", fontSize: "1.25rem" }}
                 onClick={() => handleDequeue(queueItem.queuedId)}
               />
             </Button>
