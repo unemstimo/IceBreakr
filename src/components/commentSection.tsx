@@ -40,7 +40,7 @@ const CommentSection = ({ gameId }: CommentSectionProps) => {
   };
 
   return (
-    <ul className="flex w-full flex-col items-center justify-start gap-4 overflow-scroll align-middle text-rg">
+    <ul className="flex w-full flex-col items-center justify-start gap-4 align-middle text-rg">
       {ratingQuery.data?.map((comment) => (
         // eslint-disable-next-line react/jsx-key
         <li

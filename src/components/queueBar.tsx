@@ -19,10 +19,9 @@ const QueueBar = () => {
   const { setGame, reset } = useTimerActions();
 
   const queueLength = queueQuery.data?.length ?? 0;
-  const firstInQueue = queueQuery.data?.[0];
 
   useEffect(() => {
-    if (game && game?.duration <= time) {
+    if (game?.duration && game?.duration <= time) {
       void playNextInQueue();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -59,8 +58,8 @@ const QueueBar = () => {
 
   const playNextInQueue = async () => {
     stopTimer();
-    const nextInQueue = await popQueue(isShuffle);
     reset();
+    const nextInQueue = await popQueue(isShuffle);
 
     if (nextInQueue) {
       void setGameAndPlay(nextInQueue);
@@ -92,9 +91,6 @@ const QueueBar = () => {
               {queueLength > 1 || queueLength < 1
                 ? queueLength + " leker i køen"
                 : queueLength + " lek i køen"}{" "}
-            </p>
-            <p className="text-sm font-normal text-neutral-500">
-              Spilles nå: {firstInQueue?.game.name}
             </p>
           </div>
         </span>

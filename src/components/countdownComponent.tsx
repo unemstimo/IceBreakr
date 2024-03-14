@@ -113,7 +113,6 @@ const CountdownComponent: React.FC<CountdownComponentProps> = ({}) => {
     }
   };
 
-  console.log(game?.name);
   const durationMinutes = Math.floor((game?.duration ?? 0) / 60);
   const durationSeconds = (game?.duration ?? 0) % 60;
   return (
