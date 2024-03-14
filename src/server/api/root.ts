@@ -7,6 +7,7 @@ import { playlistRouter } from "./routers/playlist";
 import { ratingRouter } from "./routers/rating";
 import { favoriteRouter } from "./routers/favorite";
 import { queueRouter } from "./routers/queue";
+import { reportRouter } from "./routers/report";
 
 /**
  * This is the primary router for your server.
@@ -20,7 +21,8 @@ export const appRouter = createTRPCRouter({
   playlist: playlistRouter,
   rating: ratingRouter,
   favorite: favoriteRouter,
-  queue: queueRouter
+  queue: queueRouter,
+  report: reportRouter,
 });
 
 // export type definition of API
