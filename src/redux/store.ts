@@ -35,6 +35,7 @@ const timerSlice = createSlice({
       }
     },
     stopTimer(state) {
+      console.log("stopping timer");
       state.isPlaying = false;
     },
     resetTimer(state) {

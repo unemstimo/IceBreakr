@@ -10,13 +10,14 @@ import { useTimerActions, useTimerState } from "~/redux/hooks";
 import Link from "next/link";
 import { useEffect } from "react";
 import { ArrowUpIcon } from "lucide-react";
-import { startTimer, stopTimer } from "~/redux/store";
+import { startTimer } from "~/redux/store";
 
 const QueueBar = () => {
   const queueQuery = api.queue.getQueue.useQuery();
   const { toast } = useToast();
   const { game, time, isPlaying, isShuffle } = useTimerState();
   const { setGame, reset } = useTimerActions();
+  const { stop: stopTimer } = useTimerActions();
 
   const queueLength = queueQuery.data?.length ?? 0;
 
@@ -55,13 +56,15 @@ const QueueBar = () => {
       return hasNext;
     }
   };
-
+  console.log("isplaying", isPlaying);
   const playNextInQueue = async () => {
+    console.log("playing next in queue");
     stopTimer();
     reset();
     const nextInQueue = await popQueue(isShuffle);
 
     if (nextInQueue) {
+      console.log("set gaem abd play");
       void setGameAndPlay(nextInQueue);
     }
     // else { //TODO: skal vi ha denne eller skal det være mulig å starte å leke igjen.
@@ -78,6 +81,7 @@ const QueueBar = () => {
       duration,
       name: queue.game.name,
     });
+    console.log("starting timer");
     startTimer();
   };
 

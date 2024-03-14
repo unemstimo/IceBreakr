@@ -135,9 +135,9 @@ const CountdownComponent: React.FC<CountdownComponentProps> = ({}) => {
             {/* <ShuffleRoundedIcon sx={{ fontSize: 25 }} /> */}
           </Button>
         </Tooltip>
-        <Button className="flex h-fit items-center justify-center rounded-full p-0 align-middle text-neutral-500 hover:text-white">
+        {/* <Button className="flex h-fit items-center justify-center rounded-full p-0 align-middle text-neutral-500 hover:text-white">
           <SkipPreviousRoundedIcon sx={{ fontSize: 40 }} />
-        </Button>
+        </Button> */}
 
         {isPlaying ? (
           <Button onClick={handleTogglePlaying} className="rounded-full p-0 ">
@@ -149,9 +149,9 @@ const CountdownComponent: React.FC<CountdownComponentProps> = ({}) => {
           </Button>
         )}
 
-        <Button className="flex h-fit items-center justify-center rounded-full p-0 align-middle text-neutral-500 hover:text-white">
+        {/* <Button className="flex h-fit items-center justify-center rounded-full p-0 align-middle text-neutral-500 hover:text-white">
           <SkipNextRoundedIcon sx={{ fontSize: 40 }} />
-        </Button>
+        </Button> */}
         <Tooltip
           className="rounded-full border border-neutral-700 bg-neutral-900 text-sm text-neutral-300"
           content="Restart timer"
