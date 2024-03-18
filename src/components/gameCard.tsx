@@ -31,6 +31,7 @@ const GameCard = ({
   name,
   description,
   duration,
+  photo,
   rating,
   isFavorite,
   refetchGames,
