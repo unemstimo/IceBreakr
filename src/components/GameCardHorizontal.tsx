@@ -165,7 +165,7 @@ const GameCardHorizontal = ({
   return (
     <Link href={`/gamePage?gameId=${gameId}`} passHref>
       <div className="relative flex w-full cursor-pointer flex-row rounded-lg p-2 text-rg hover:bg-neutral-800">
-        <div className="relative flex h-10 w-full max-w-[740px] flex-row align-top">
+        <div className="relative flex h-10 w-full max-w-[770px] flex-row align-top">
           <Image
             className="hidden h-auto rounded-lg xl:flex"
             src={Placeholder}
@@ -183,7 +183,7 @@ const GameCardHorizontal = ({
             </p>
           </div>
           <div className="flex h-10 w-1/6 flex-col justify-center">
-            <p className="text-right">{duration} min</p>
+            <p className="text-right">  {duration} min</p>
           </div>
           <button
             className="h-full w-10 items-center align-middle"
@@ -194,7 +194,7 @@ const GameCardHorizontal = ({
           {showDeleteButton && (
             <div
               ref={popupRef}
-              className="absolute bottom-12 right-4 flex h-44 w-52 flex-col items-start rounded-xl bg-gradient-to-b  from-neutral-800 to-[#1b181f] px-4 text-right"
+              className="absolute bottom-12 -right-4 flex h-44 w-52 flex-col items-start rounded-xl bg-gradient-to-b  from-neutral-800 to-[#1b181f] px-4 text-right"
             >
               {/* Popup content here */}
               {!isFavorite && (
