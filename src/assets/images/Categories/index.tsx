@@ -9,6 +9,7 @@ import dansImage from "./Dans.jpg";
 import sangImage from "./Sang.jpg";
 import aktivImage from "./Aktiv.jpg";
 import spørrelekImage from "./Spørrelek.jpg";
+import kortspillImage from "./Kortspill.jpg";
 
 const categoryImages = {
     ballspill : ballspillImage,
@@ -22,6 +23,7 @@ const categoryImages = {
     rollespill : rollespillImage,
     aktiv : aktivImage,
     spørrelek : spørrelekImage,
+    kortspill : kortspillImage
   };
   
   export default categoryImages;
