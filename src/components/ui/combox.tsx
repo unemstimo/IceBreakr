@@ -101,6 +101,7 @@ export function Combobox({
                   );
                   setOpen(false);
                 }}
+                className="text-white"
               >
                 <Check
                   className={cn(
