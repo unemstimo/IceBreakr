@@ -1,6 +1,6 @@
 import ballspillImage from "./Ballspill.jpg";
 import brettspillImage from "./Brettspill.jpg";
-import hagelekImage from "./Hagelek.png";
+import hagelekImage from "./Hagelek.jpg";
 import gjettelekImage from "./Gjettelek.jpg";
 import navnelekImage from "./Navnelek.jpg";
 import defaultImage from "./Default.jpg";
