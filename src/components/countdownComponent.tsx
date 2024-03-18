@@ -184,7 +184,7 @@ const CountdownComponent: React.FC<CountdownComponentProps> = ({}) => {
           </div>
         </div>
         <Line
-          percent={(time / (Number(game?.duration ?? 1) * 60)) * 100}
+          percent={(time / (Number(game?.duration ?? 1))) * 100}
           strokeWidth={3}
           strokeColor="#D3D3D3"
           trailWidth={3}

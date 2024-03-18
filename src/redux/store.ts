@@ -62,7 +62,7 @@ const timerSlice = createSlice({
       localStorage.setItem("gameName", action.payload.name.toString());
       localStorage.setItem("gameDuration", action.payload.duration.toString());
       state.game = action.payload;
-      state.game.duration = 5; // TODO: remove this line
+      state.game.duration = action.payload.duration; // TODO: remove this line
     },
 
     toggleShuffle(state) {
