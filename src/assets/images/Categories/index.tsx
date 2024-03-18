@@ -1,5 +1,5 @@
-import ballspillImage from "./ballspill.png";
-import brettspillImage from "./Brettspill.png";
+import ballspillImage from "./Ballspill.jpg";
+import brettspillImage from "./Brettspill.jpg";
 import hagelekImage from "./Hagelek.png";
 import gjettelekImage from "./Gjettelek.jpg";
 import navnelekImage from "./Navnelek.jpg";
