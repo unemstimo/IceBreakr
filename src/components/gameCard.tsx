@@ -3,12 +3,12 @@ import React from "react";
 import Placeholder from "~/assets/images/gameplaceholder.png";
 import StarRoundedIcon from "@mui/icons-material/StarRounded";
 import Link from "next/link";
-import StarBorderIcon from "@mui/icons-material/StarBorder";
-import StarIcon from "@mui/icons-material/Star";
+import FavoriteRoundedIcon from "@mui/icons-material/FavoriteRounded";
 import { api } from "~/utils/api";
 import QueueMusicIcon from "@mui/icons-material/QueueMusic";
 import { useTimerActions } from "~/redux/hooks";
 import PlayCircleOutlineRoundedIcon from "@mui/icons-material/PlayCircleOutlineRounded";
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import { Button } from "./ui/button";
 
 export type Game = {
@@ -127,9 +127,9 @@ const GameCard = ({
         </Button>
         <Button onClick={handleFavoritePressed} size={"icon"} variant={"ghost"}>
           {isFavorite ? (
-            <StarIcon style={{ color: "#d9b907" }} />
+            <FavoriteRoundedIcon style={{ color: "#ff172e" }} />
           ) : (
-            <StarBorderIcon />
+            <FavoriteBorderIcon />
           )}
         </Button>
       </div>
