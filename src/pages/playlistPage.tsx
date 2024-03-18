@@ -8,6 +8,7 @@ import Link from "next/link";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { useUser } from "@clerk/nextjs";
 import Layout from "~/components/layout";
+import AttractionsIcon from '@mui/icons-material/Attractions';
 
 export default function ListPage() {
   const router = useRouter();
@@ -70,28 +71,28 @@ export default function ListPage() {
               </div>
 
               <div className="mb-4 ml-4 flex h-full flex-col justify-between pb-10">
-                <div>
-                  <p className="mt-6 text-md font-normal text-neutral-200">
-                    Spilleliste
+              <div className="flex flex-col">
+                <p className="mt-6 text-md font-normal text-neutral-200">
+                  Spilleliste
+                </p>
+                <h1 className="text-xxl">{name}</h1>
+                <p className="font-normal text-neutral-400">
+                  Laget av: {username} • {amountOfGames} leker
+                </p>
+                <div className="flex items-center mt-6">
+                  <p className="text-md font-normal text-neutral-400">
+                    Sliter du med å velge en lek fra spillelisten:
                   </p>
-                  <h1 className="text-xxl">{name}</h1>
-                  <p className="font-normal text-neutral-400">
-                    Laget av: {username} • {amountOfGames} leker
-                  </p>
-                  <p className="mt-6 text-md font-normal text-neutral-400">
-                    {description}
-                  </p>
-                </div>
-                <div>
                   <Link href={`/spinTheWheel?playlistId=${playlistId}`} passHref>
-                    <div className="flex h-20 w-30 flex-row justify-center rounded-lg p-6 text-white shadow-lg hover:bg-violet-500 active:bg-violet-800">
-                      <p className="-mt-1 mr-4 text-md justify-center">
-                        Spin The Wheel
+                    <div className="ml-14 flex h-10 w-22 flex-col justify-center items-center rounded-lg p-4 pt-3 mt-1 hover:bg-violet-500 shadow-xl bg-violet-600">
+                      <p className="text-md justify-center">
+                          Spin the wheel
                       </p>
-                      
                     </div>
-                    </Link>
+                  </Link>
                 </div>
+              </div>
+
               </div>
             </div>
           </div>
@@ -103,12 +104,12 @@ export default function ListPage() {
               {/* Header for game list */}
               <div className="relative flex h-10 w-full flex-row border-b-2 border-neutral-800 align-top">
                 <div className="mr-10 flex-grow justify-normal">
-                  <p className="ml-10 pt-1">Tittel på lek</p>
+                  <p className="ml-4 pt-1">Tittel på lek</p>
                 </div>
                 <div className="-mr-2 flex w-1/3 flex-col justify-center">
                   <p className="ml-16 leading-tight">Beskrivelse</p>
                 </div>
-                <div className="mr-12 flex w-1/3 flex-col justify-center">
+                <div className="mr-16 flex w-1/3 flex-col justify-center">
                   <p className="text-right">Varighet</p>
                 </div>
               </div>
