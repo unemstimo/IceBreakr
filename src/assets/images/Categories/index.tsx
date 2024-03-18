@@ -1,6 +1,6 @@
-import ballspillImage from "./Ballspill.jpg";
-import brettspillImage from "./Brettspill.jpg";
-import hagelekImage from "./Hagelek.jpg";
+import ballspillImage from "./ballspill.png";
+import brettspillImage from "./Brettspill.png";
+import hagelekImage from "./Hagelek.png";
 import gjettelekImage from "./Gjettelek.jpg";
 import navnelekImage from "./Navnelek.jpg";
 import defaultImage from "./Default.jpg";
@@ -10,6 +10,7 @@ import sangImage from "./Sang.jpg";
 import aktivImage from "./Aktiv.jpg";
 import spørrelekImage from "./Spørrelek.jpg";
 import kortspillImage from "./Kortspill.jpg";
+
 
 const categoryImages = {
     ballspill : ballspillImage,
