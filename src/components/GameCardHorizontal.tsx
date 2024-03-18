@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import Placeholder from "~/assets/images/placeholder.png";
+import Placeholder from "~/assets/images/gameplaceholder.png";
 import Link from "next/link";
 import MoreHorizRoundedIcon from "@mui/icons-material/MoreHorizRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
@@ -92,11 +92,31 @@ const GameCardHorizontal = ({
     console.log("handleAddToPlayist button pressed");
   }
 
-  function handleAddToQueue(e: React.MouseEvent<HTMLButtonElement>) {
+  const useQueueMutation = api.queue.create.useMutation();
+  const utils = api.useUtils();
+
+  const handleAddToQueue = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log("handleAddToQueue button pressed");
-  }
+    if (!gameId) return;
+    try {
+      await useQueueMutation.mutateAsync({ gameId });
+      await utils.queue.getQueue.invalidate();
+      handleAddToQueueToast(name);
+    } catch {
+      toast({
+        title: "Obs!",
+        description: "kunne ikke legge til i kø",
+      });
+    }
+  };
+
+  const handleAddToQueueToast = (name: string) => {
+    toast({
+      title: "Lagt til i kø",
+      description: name + " er nå lagt til i kø",
+    });
+  };
 
   function handleFavoritePressed(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
@@ -166,7 +186,7 @@ const GameCardHorizontal = ({
             <p className="text-right">  {duration} min</p>
           </div>
           <button
-            className="h-full w-12 items-center align-middle"
+            className="h-full w-10 items-center align-middle"
             onClick={handleShowMorePopupPlaylist}
           >
             <MoreHorizRoundedIcon />

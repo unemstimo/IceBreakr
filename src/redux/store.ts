@@ -9,6 +9,7 @@ interface TimerState {
   time: number;
   isPlaying: boolean;
   game?: GameSate;
+  isShuffle: boolean;
 }
 
 export interface GameSate {
@@ -20,6 +21,7 @@ export interface GameSate {
 const initialState: TimerState = {
   time: 0,
   isPlaying: false,
+  isShuffle: false,
 };
 
 // Create the timer slice
@@ -33,6 +35,7 @@ const timerSlice = createSlice({
       }
     },
     stopTimer(state) {
+      console.log("stopping timer");
       state.isPlaying = false;
     },
     resetTimer(state) {
@@ -47,7 +50,6 @@ const timerSlice = createSlice({
     },
     setGame(state, action: PayloadAction<GameSate | null>) {
       state.time = 0;
-      // state.isPlaying = true;
       if (!action.payload) {
         state.game = undefined;
         state.isPlaying = false;
@@ -62,12 +64,22 @@ const timerSlice = createSlice({
       state.game = action.payload;
       state.game.duration = 5; // TODO: remove this line
     },
+
+    toggleShuffle(state) {
+      state.isShuffle = !state.isShuffle;
+    },
   },
 });
 
 // Export actions
-export const { startTimer, stopTimer, resetTimer, updateTime, setGame } =
-  timerSlice.actions;
+export const {
+  startTimer,
+  stopTimer,
+  resetTimer,
+  updateTime,
+  setGame,
+  toggleShuffle,
+} = timerSlice.actions;
 
 // Export the reducer
 const timerReducer = timerSlice.reducer;
