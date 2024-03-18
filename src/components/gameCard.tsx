@@ -92,7 +92,7 @@ const GameCard = ({
   };
 
   return (
-    <div className="relative flex h-full max-h-80 w-full min-w-36 max-w-full cursor-pointer flex-col rounded-xl bg-neutral-800 p-4 text-rg md:max-w-full xl:min-h-60">
+    <div className="relative flex h-full max-h-80 w-full pb-80 min-w-36 max-w-full cursor-pointer flex-col rounded-xl bg-neutral-800 p-4 text-rg md:max-w-full xl:min-h-60">
       <Link href={`/gamePage?gameId=${gameId}`} passHref>
         <div className="relative flex h-full w-full flex-col align-top">
           <Image
@@ -115,7 +115,7 @@ const GameCard = ({
           {parseFloat(rating.toFixed(1))}
         </div>
       )}
-      <div>
+      <div className="absolute bottom-2 left-3">
         <Button onClick={setGameAndPlay} size={"icon"} variant={"ghost"}>
           <PlayCircleOutlineRoundedIcon />
         </Button>

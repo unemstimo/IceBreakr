@@ -31,7 +31,7 @@ const SpinningWheel: React.FC<Props> = ({ games }) => {
   const [prizeNumber, setPrizeNumber] = React.useState(0);
   const [revealedPrizeNumber, setRevealedPrizeNumber] = useState<null|number>(null);
   const [selectedGame, setSelectedGame] = useState<Game | null>(null);
-  const colors = ['#a8d3f7', '#89276C', '#123456', '#abcdef', '#987654', '#fedcba', '#13579a', '#2468b'];
+  const colors = ['#a8d3f7', '#89276C', '#abcdef', '#987654', '#fedcba', '#13579a', '#2468b'];
   const { toast } = useToast();
 
   const wheelData = games.map((game, index) => {

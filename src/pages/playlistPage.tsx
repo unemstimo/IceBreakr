@@ -79,19 +79,21 @@ export default function ListPage() {
                 <p className="font-normal text-neutral-400">
                   Laget av: {username} • {amountOfGames} leker
                 </p>
-                <div className="flex items-center mt-6">
-                  <p className="text-md font-normal text-neutral-400">
+                {games.length > 1 && (
+                  <div className="flex items-center mt-6">
+                    <p className="text-md font-normal text-neutral-400">
                     Sliter du med å velge en lek fra spillelisten:
-                  </p>
-                  <Link href={`/spinTheWheel?playlistId=${playlistId}`} passHref>
-                    <div className="ml-14 flex h-10 w-22 flex-col justify-center items-center rounded-lg p-4 pt-3 mt-1 hover:bg-violet-500 shadow-xl bg-violet-600">
-                      <p className="text-md justify-center">
-                          Spin the wheel
-                      </p>
-                    </div>
-                  </Link>
-                </div>
-              </div>
+                    </p>
+                    <Link href={`/spinTheWheel?playlistId=${playlistId}`} passHref>
+                      <div className="ml-14 flex h-10 w-22 flex-col justify-center items-center rounded-lg p-4 pt-3 mt-1 hover:bg-violet-500 shadow-xl bg-violet-600">
+                        <p className="text-md justify-center">
+                            Spin the wheel
+                        </p>
+                      </div>
+                    </Link>
+                  </div>
+                )}
+              </div>  
 
               </div>
             </div>
