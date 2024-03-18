@@ -1,4 +1,4 @@
-import Image from "next/image";
+import Image, { StaticImageData } from "next/image";
 import React from "react";
 import Placeholder from "~/assets/images/gameplaceholder.png";
 import StarRoundedIcon from "@mui/icons-material/StarRounded";
@@ -20,15 +20,18 @@ export type Game = {
   rules: string;
   description: string;
   rating: number;
+  photo: StaticImageData;
   isFavorite: boolean;
   refetchGames: VoidFunction;
 };
+
 
 const GameCard = ({
   gameId,
   name,
   description,
   duration,
+  photo,
   rating,
   isFavorite,
   refetchGames,
@@ -97,7 +100,7 @@ const GameCard = ({
         <div className="relative flex h-full w-full flex-col align-top">
           <Image
             className="hidden h-auto w-full rounded-lg xl:flex"
-            src={Placeholder}
+            src={photo}
             alt="Game Image"
             width={200}
             height={200}

@@ -11,6 +11,9 @@ import FilterAltRoundedIcon from "@mui/icons-material/FilterAltRounded";
 import { Input } from "~/components/ui/input";
 import { useToast } from "~/components/ui/use-toast";
 import Layout from "~/components/layout";
+import categoryImages from "src/assets/images/Categories"
+
+
 
 export default function Browse() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -79,6 +82,8 @@ export default function Browse() {
     setDuration("");
   };
 
+
+
   const handlePlayersSelection = (players: string) => {
     if (numberOfPlayers === players) {
       setNumberOfPlayers("");
@@ -86,6 +91,35 @@ export default function Browse() {
       setNumberOfPlayers(players);
     }
   };
+
+  const setCategoryPhoto = (category: Category) => {
+    switch (category?.name) {
+      case "Ballspill":
+        return categoryImages.ballspill;
+      case "Brettspill":
+        return categoryImages.brettspill;
+      case "Navnelek":
+        return categoryImages.navnelek;
+      case "Gjettelek":
+        return categoryImages.gjettelek;
+      case "Hagelek":
+        return categoryImages.navnelek;
+      case "Dans":
+        return categoryImages.dans;
+      case "Sang":
+        return categoryImages.sang;
+      case "Aktiv":
+        return categoryImages.aktiv;
+      case "Spørrelek":
+        return categoryImages.spørrelek;
+      case "Kortspill":
+        return categoryImages.kortspill;
+      case "Rollespill":
+        return categoryImages.rollespill;  
+      default:
+        return categoryImages.default;
+    }
+  }
 
   const handleDurationSelection = (selectedDuration: string) => {
     if (selectedDuration === duration) {
@@ -231,13 +265,13 @@ export default function Browse() {
                   name={game.name}
                   refetchGames={() => gameQuery.refetch()}
                   duration={game.duration}
-                  // category={"kategori"}
                   numberOfPlayers={game.numberOfPlayers}
                   rules={game.rules}
                   description={game.description ?? ""}
                   rating={game.averageRating}
                   gameId={game.gameId}
                   userId={game.userId}
+                  photo = {game.GameInCategory.length > 0 ? setCategoryPhoto(game.GameInCategory[0].category) : categoryImages.default}
                   isFavorite={game.UserFavouritedGame.length > 0}
                 />
               ))}
