@@ -63,7 +63,7 @@ const NavigationBar = ({ children }: NavigationBarProps) => {
               <p className="hidden md:block">Utforsk</p>
             </button>
           </Link>
-          <Link href={"/components"}>
+          {/* <Link href={"/components"}>
             <button
               className={classNames(
                 "hidden h-full w-full items-center justify-start gap-4 rounded-xl p-2 align-middle hover:bg-neutral-700 md:flex",
@@ -72,7 +72,7 @@ const NavigationBar = ({ children }: NavigationBarProps) => {
             >
               Components (dev)
             </button>
-          </Link>
+          </Link> */}
         </div>
         {/* Countdown component */}
         <SignedIn>
@@ -92,9 +92,9 @@ const NavigationBar = ({ children }: NavigationBarProps) => {
               // onClick={handleCreateGameShow}
               className="flex h-20 min-h-20 w-full flex-col items-center justify-center gap-1 rounded-2xl bg-violet-600 p-10 align-middle hover:bg-violet-500 active:bg-violet-800"
             >
-              <p className="text-s"> Logg inn for å </p>
+              <p className="text-sm"> Logg inn for å </p>
               <div>
-                <p className="hidden md:block">OPPRETTE LEK</p>
+                <p className="hidden md:block">Opprette en lek!</p>
               </div>
             </button>
           </SignInButton>
