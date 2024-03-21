@@ -122,8 +122,8 @@ const CountdownComponent: React.FC<CountdownComponentProps> = ({}) => {
   const durationSeconds = (game?.duration ?? 0) % 60;
   return (
     <div className="flex flex-col justify-center gap-4 rounded-xl bg-background p-4 align-middle">
-      <span className="w-full flex justify-between">
-        {game ? <h1>{game.name}</h1> : <h1>Ingen lek i kø</h1>} <Button className="text-neutral-700 font-bold hover:underline" onClick={resetGame}>Tøm</Button>
+      <span className="w-full flex justify-between align-baseline items-baseline">
+        {game ? <h1>{game.name}</h1> : <h1>Ingen lek i kø</h1>} <Button className="text-neutral-700 font-bold hover:underline text-md" onClick={resetGame}>Tøm</Button>
       </span>
       <span className="flex w-full items-center justify-center gap-1 rounded-xl p-2 align-middle">
         <Tooltip
