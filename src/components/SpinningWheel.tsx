@@ -104,6 +104,7 @@ const SpinningWheel: React.FC<Props> = ({ games }) => {
           mustStartSpinning={mustSpin}
           prizeNumber={prizeNumber}
           data={wheelData}
+          spinDuration	={0.35}
           onStopSpinning={() => {
             setMustSpin(false);
             if(revealedPrizeNumber) {

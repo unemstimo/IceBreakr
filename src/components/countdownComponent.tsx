@@ -79,6 +79,11 @@ const CountdownComponent: React.FC<CountdownComponentProps> = ({}) => {
     }
   };
 
+  const resetGame = () => {
+    dispatch(setGame(null));
+    dispatch(resetTimer());
+  }
+
   const popQueue = async (popRandom = false) => {
     const index = popRandom
       ? Math.floor(Math.random() * (queueQuery.data?.length ?? 0))
@@ -117,7 +122,9 @@ const CountdownComponent: React.FC<CountdownComponentProps> = ({}) => {
   const durationSeconds = (game?.duration ?? 0) % 60;
   return (
     <div className="flex flex-col justify-center gap-4 rounded-xl bg-background p-4 align-middle">
-      {game ? <h1>{game.name}</h1> : <h1>Ingen lek i kø</h1>}
+      <span className="w-full flex justify-between">
+        {game ? <h1>{game.name}</h1> : <h1>Ingen lek i kø</h1>} <Button className="text-neutral-700 font-bold hover:underline" onClick={resetGame}>Tøm</Button>
+      </span>
       <span className="flex w-full items-center justify-center gap-1 rounded-xl p-2 align-middle">
         <Tooltip
           className="rounded-full border border-neutral-700 bg-neutral-900 text-sm text-neutral-300"
