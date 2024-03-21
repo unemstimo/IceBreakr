@@ -11,7 +11,7 @@ import FilterAltRoundedIcon from "@mui/icons-material/FilterAltRounded";
 import { Input } from "~/components/ui/input";
 import { useToast } from "~/components/ui/use-toast";
 import Layout from "~/components/layout";
-import categoryImages from "src/assets/images/Categories"
+import categoryImages from "src/assets/images/Categories";
 
 
 

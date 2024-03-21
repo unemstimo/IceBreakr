@@ -22,7 +22,36 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Layout from "~/components/layout";
+import categoryImages from "src/assets/images/Categories";
 
+const setCategoryPhoto = (category: Category) => {
+  switch (category?.name) {
+    case "Ballspill":
+      return categoryImages.ballspill;
+    case "Brettspill":
+      return categoryImages.brettspill;
+    case "Navnelek":
+      return categoryImages.navnelek;
+    case "Gjettelek":
+      return categoryImages.gjettelek;
+    case "Hagelek":
+      return categoryImages.navnelek;
+    case "Dans":
+      return categoryImages.dans;
+    case "Sang":
+      return categoryImages.sang;
+    case "Aktiv":
+      return categoryImages.aktiv;
+    case "Spørrelek":
+      return categoryImages.spørrelek;
+    case "Kortspill":
+      return categoryImages.kortspill;
+    case "Rollespill":
+      return categoryImages.rollespill;  
+    default:
+      return categoryImages.default;
+  }
+}
 
 export default function Profile() {
   const gameQuery = api.gameRouter.getAll.useQuery();
@@ -129,6 +158,7 @@ export default function Profile() {
                             gameId={game.gameId}
                             userId={game.userId}
                             isFavorite={game.UserFavouritedGame.length > 0}
+                            photo={game.GameInCategory.length > 0 ? setCategoryPhoto(game.GameInCategory[0].category) : categoryImages.default}
                           />
                         ))}
                       </div>
@@ -161,8 +191,8 @@ export default function Profile() {
                             rating={game.averageRating}
                             gameId={game.gameId}
                             userId={game.userId}
-                            isFavorite={game.UserFavouritedGame.length > 0}
-                          />
+                            isFavorite={game.UserFavouritedGame.length > 0} 
+                            photo={game.GameInCategory.length > 0 ? setCategoryPhoto(game.GameInCategory[0].category) : categoryImages.default}                          />
                         ))}
                       </div>
                     </div>
