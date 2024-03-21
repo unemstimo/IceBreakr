@@ -11,6 +11,9 @@ import FilterAltRoundedIcon from "@mui/icons-material/FilterAltRounded";
 import { Input } from "~/components/ui/input";
 import { useToast } from "~/components/ui/use-toast";
 import Layout from "~/components/layout";
+import categoryImages from "src/assets/images/Categories";
+
+
 
 export default function Browse() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -26,26 +29,29 @@ export default function Browse() {
   const games = gameQuery.data ?? [];
 
   const filterGames = () => {
-    const filtered = games.filter((game) => {
-      if (numberOfPlayers && parseInt(game.numberOfPlayers) > parseInt(numberOfPlayers)) {
+    const filtered = [...games].filter((game) => {
+      if (
+        numberOfPlayers &&
+        parseInt(game.numberOfPlayers) > parseInt(numberOfPlayers)
+      ) {
         return false;
       }
       if (duration && parseInt(game.duration) > parseInt(duration)) {
         return false;
       }
-      
+
       if (Object.values(gameCategories).some((value) => value)) {
-      const categories = Object.keys(gameCategories).filter(
-        (category) => gameCategories[category],
-      );
-      if (
-        !categories.every(category => game.GameInCategory.some((g) => g.category.name === category))
-      ) {
-        return false;
+        const categories = Object.keys(gameCategories).filter(
+          (category) => gameCategories[category],
+        );
+        if (
+          !categories.every((category) =>
+            game.GameInCategory.some((g) => g.category.name === category),
+          )
+        ) {
+          return false;
+        }
       }
-
-    }
-
 
       if (searchTerm) {
         const searchTermLower = searchTerm.toLowerCase();
@@ -67,7 +73,7 @@ export default function Browse() {
   useEffect(() => {
     filterGames();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [numberOfPlayers, gameCategories, duration, games, searchTerm]);
+  }, [numberOfPlayers, gameCategories, duration, searchTerm, gameQuery.data]);
 
   const handleClearFilters = () => {
     setSearchTerm("");
@@ -75,6 +81,8 @@ export default function Browse() {
     setGameCategories({});
     setDuration("");
   };
+
+
 
   const handlePlayersSelection = (players: string) => {
     if (numberOfPlayers === players) {
@@ -84,6 +92,35 @@ export default function Browse() {
     }
   };
 
+  const setCategoryPhoto = (category: Category) => {
+    switch (category?.name) {
+      case "Ballspill":
+        return categoryImages.ballspill;
+      case "Brettspill":
+        return categoryImages.brettspill;
+      case "Navnelek":
+        return categoryImages.navnelek;
+      case "Gjettelek":
+        return categoryImages.gjettelek;
+      case "Hagelek":
+        return categoryImages.navnelek;
+      case "Dans":
+        return categoryImages.dans;
+      case "Sang":
+        return categoryImages.sang;
+      case "Aktiv":
+        return categoryImages.aktiv;
+      case "Spørrelek":
+        return categoryImages.spørrelek;
+      case "Kortspill":
+        return categoryImages.kortspill;
+      case "Rollespill":
+        return categoryImages.rollespill;  
+      default:
+        return categoryImages.default;
+    }
+  }
+
   const handleDurationSelection = (selectedDuration: string) => {
     if (selectedDuration === duration) {
       setDuration("");
@@ -92,7 +129,7 @@ export default function Browse() {
     }
   };
 
-  const handleCategorySelection22 = (category: Category) => {
+  const handleCategorySelection = (category: Category) => {
     setGameCategories({
       ...gameCategories,
       [category.name]: !gameCategories[category.name],
@@ -138,7 +175,9 @@ export default function Browse() {
 
               {/* Number of player buttons */}
               <div className="-m-2 mb-2 mt-2 rounded-xl bg-neutral-800 p-2">
-              <label htmlFor="time">Max antall spillere: {numberOfPlayers} </label>
+                <label htmlFor="time">
+                  Max antall spillere: {numberOfPlayers}{" "}
+                </label>
                 <input
                   type="range"
                   value={numberOfPlayers}
@@ -147,7 +186,7 @@ export default function Browse() {
                   min="1"
                   max="40"
                   step="1"
-                  onChange={e => handlePlayersSelection(e.target.value)}
+                  onChange={(e) => handlePlayersSelection(e.target.value)}
                   className="w-full rounded-lg bg-neutral-800 py-2 pl-2 pr-2 text-white focus:outline-none"
                 />
               </div>
@@ -162,9 +201,8 @@ export default function Browse() {
                       onCheckedChange={(checkedState) => {
                         const checked = checkedState.valueOf();
                         console.log(checked);
-                        handleCategorySelection22(category);
+                        handleCategorySelection(category);
                       }}
-                      
                       name={category.name}
                       checked={gameCategories[category.name] ?? false}
                     />
@@ -174,7 +212,7 @@ export default function Browse() {
 
               {/* Duration buttons */}
               <div className="-m-2 mt-2 rounded-xl bg-neutral-800 p-2">
-              <label htmlFor="time">Max varighet: {duration} min </label>
+                <label htmlFor="time">Max varighet: {duration} min </label>
                 <input
                   type="range"
                   value={duration}
@@ -183,11 +221,10 @@ export default function Browse() {
                   min="1"
                   max="59"
                   step="1"
-                  onChange={e => handleDurationSelection(e.target.value)}
+                  onChange={(e) => handleDurationSelection(e.target.value)}
                   className="w-full rounded-lg bg-neutral-800 py-2 pl-2 pr-2 text-white focus:outline-none"
                 />
               </div>
-              
             </div>
             {/* Ad space */}
             <p className="font-normal text-neutral-500">Annonse</p>
@@ -200,6 +237,7 @@ export default function Browse() {
         </>
       }
     >
+      {/* Middle section */}
       <section className="flex h-full w-full">
         <section className="flex h-full w-full flex-col justify-start rounded-2xl bg-neutral-900 p-4 align-middle">
           <div className="flex flex-col justify-center gap-6">
@@ -225,14 +263,16 @@ export default function Browse() {
                 <GameCard
                   key={game.gameId}
                   name={game.name}
+                  refetchGames={() => gameQuery.refetch()}
                   duration={game.duration}
-                  // category={"kategori"}
                   numberOfPlayers={game.numberOfPlayers}
                   rules={game.rules}
                   description={game.description ?? ""}
                   rating={game.averageRating}
                   gameId={game.gameId}
                   userId={game.userId}
+                  photo = {game.GameInCategory.length > 0 ? setCategoryPhoto(game.GameInCategory[0].category) : categoryImages.default}
+                  isFavorite={game.UserFavouritedGame.length > 0}
                 />
               ))}
             </div>

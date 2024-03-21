@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import NavigationBar from "~/components/navigationBar";
 import PageWrapper from "~/components/pageWrapper";
 import { Button } from "~/components/ui/button";
@@ -13,6 +13,14 @@ import {
 } from "~/components/ui/select";
 import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
 import { Checkbox } from "~/components/ui/checkbox";
+import {
+  type RootState,
+  resetTimer,
+  startTimer,
+  stopTimer,
+  updateTime,
+} from "~/redux/store";
+import { useDispatch, useSelector } from "react-redux";
 
 const ComponentsPage = () => {
   const [input, setInput] = useState("");
@@ -81,8 +89,47 @@ const ComponentsPage = () => {
             <Checkbox label="Click me"></Checkbox>
           </div>
         </div>
+        <div>
+          <h1 className=" pb-2">Redux</h1>
+          <Testredux />
+        </div>
       </div>
     </PageWrapper>
+  );
+};
+
+const Testredux = () => {
+  const { time, isPlaying } = useSelector((state: RootState) => state.timer);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (isPlaying) {
+      const interval = setInterval(() => {
+        dispatch(updateTime(time + 1));
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [isPlaying, time, dispatch]);
+
+  return (
+    <div>
+      <h1>Timer: {time} seconds</h1>
+      <Button
+        color="primary"
+        onClick={() => dispatch(startTimer())}
+        disabled={isPlaying}
+      >
+        Start
+      </Button>
+      <Button
+        color="secondary"
+        onClick={() => dispatch(stopTimer())}
+        disabled={!isPlaying}
+      >
+        Stop
+      </Button>
+      <Button onClick={() => dispatch(resetTimer())}>Reset</Button>
+    </div>
   );
 };
 

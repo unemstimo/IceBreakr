@@ -16,6 +16,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { EditIcon, TrashIcon } from "lucide-react";
 import classNames from "classnames";
 import { useUser } from "@clerk/nextjs";
+import ReportGmailerrorredIcon from "@mui/icons-material/ReportGmailerrorred";
 
 type CommentSectionProps = {
   gameId: number;
@@ -28,6 +29,8 @@ const CommentSection = ({ gameId }: CommentSectionProps) => {
   });
   const useDeleteRating = api.rating.delete.useMutation();
 
+  const useReport = api.report.create.useMutation();
+
   const [editCommentId, setEditCommentId] = useState<number | null>(null);
 
   const handleDeleteComment = async (ratingId: number) => {
@@ -39,8 +42,17 @@ const CommentSection = ({ gameId }: CommentSectionProps) => {
     }
   };
 
+  const handleReport = async (ratingId: number) => {
+    try {
+      await useReport.mutateAsync({ ratingId });
+      await ratingQuery.refetch();
+    } catch (e) {
+      console.error("Error reporting rating: ", e);
+    }
+  };
+
   return (
-    <ul className="flex w-full flex-col items-center justify-start gap-4 overflow-scroll align-middle text-rg">
+    <ul className="flex w-full flex-col items-center justify-start gap-4 align-middle text-rg">
       {ratingQuery.data?.map((comment) => (
         // eslint-disable-next-line react/jsx-key
         <li
@@ -66,36 +78,49 @@ const CommentSection = ({ gameId }: CommentSectionProps) => {
                   </p>
                 </div>
               </div>
-              {comment.userId === user.user?.id && (
-                <Popover>
-                  <PopoverTrigger>
-                    <MoreHorizRoundedIcon />
-                  </PopoverTrigger>
-                  <PopoverContent className="!w-fit !p-2">
-                    <div className="flex flex-col gap-4">
-                      {/* TODO: add report! */}
+
+              <Popover>
+                <PopoverTrigger>
+                  <MoreHorizRoundedIcon />
+                </PopoverTrigger>
+                <PopoverContent className="!w-fit !p-2">
+                  <div className="flex flex-col gap-4">
+                    {comment.userId === user.user?.id && (
+                      <>
+                        <Button
+                          className="gap-4"
+                          variant={"ghost"}
+                          size={"sm"}
+                          onClick={() => setEditCommentId(comment.ratingId)}
+                        >
+                          <p>Rediger</p>
+                          <EditIcon />
+                        </Button>
+                        <Button
+                          className="gap-4"
+                          variant={"destructive"}
+                          size={"sm"}
+                          onClick={() => handleDeleteComment(comment.ratingId)}
+                        >
+                          <p>Slett</p>
+                          <TrashIcon />
+                        </Button>
+                      </>
+                    )}
+                    {comment.userId !== user.user?.id && (
                       <Button
                         className="gap-4"
                         variant={"ghost"}
                         size={"sm"}
-                        onClick={() => setEditCommentId(comment.ratingId)}
+                        onClick={() => handleReport(comment.ratingId)}
                       >
-                        <p>Rediger</p>
-                        <EditIcon />
+                        <p>Rapporter</p>
+                        <ReportGmailerrorredIcon />
                       </Button>
-                      <Button
-                        className="gap-4"
-                        variant={"destructive"}
-                        size={"sm"}
-                        onClick={() => handleDeleteComment(comment.ratingId)}
-                      >
-                        <p>Slett</p>
-                        <TrashIcon />
-                      </Button>
-                    </div>
-                  </PopoverContent>
-                </Popover>
-              )}
+                    )}
+                  </div>
+                </PopoverContent>
+              </Popover>
             </>
           ) : (
             <CommentForm

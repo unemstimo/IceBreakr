@@ -1,12 +1,14 @@
 import PlayCircleOutlineRoundedIcon from "@mui/icons-material/PlayCircleOutlineRounded";
-import MoreHorizRoundedIcon from "@mui/icons-material/MoreHorizRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
-
 import { api } from "~/utils/api";
-import { Dispatch, SetStateAction, useState } from "react";
+import { type Dispatch, type SetStateAction, useState } from "react";
 import Link from "next/link";
 import { useToast } from "./ui/use-toast";
-import { SignedIn, SignedOut, SignInButton } from "@clerk/nextjs"
+import { SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
+import { Card, CardContent, CardHeader } from "./ui/card";
+import { Button } from "./ui/button";
+import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRounded';
+import PlaylistPlayRoundedIcon from '@mui/icons-material/PlaylistPlayRounded';
 
 type PlaylistPickerProps = {
   gameid: number;
@@ -29,6 +31,7 @@ const PlaylistPicker = ({
       playlistId,
     });
   };
+
   const [showMorePopupPlaylist, setShowMorePopupPlaylist] = useState<{
     visible: boolean;
     playlistId: number;
@@ -53,9 +56,12 @@ const PlaylistPicker = ({
       });
       await privatePlaylistQuery.refetch();
       setShowPlaylistPicker({ visible: false });
+      toast({
+        description: "Lek er lagt til i lekeliste"
+      });
     } catch (error) {
       toast({
-        description: "Error adding game to playlist.",
+        description:  + "Lek er allerede i listen!",
       });
     }
 
@@ -63,30 +69,29 @@ const PlaylistPicker = ({
   };
 
   return (
-    <div className="mb-0 flex h-auto w-[400px] flex-col justify-start rounded-2xl bg-neutral-800 p-4  align-middle">
-      <div className="flex flex-row items-baseline justify-between px-6 align-baseline">
+    <Card>
+      <CardHeader className="flex -mb-6 flex-row align-middle items-center justify-start gap-2">
         <h2 className="text-2xl font-bold ">Mine Lekelister</h2>
         <SignedIn>
           <Link href="/createPlaylist">
-          <button
-            className="text-md text-neutral-500 hover:underline"
-            onClick={() => "TODO: handleAddPlaylist"}
-          >
-            Lag ny
-          </button>
-        </Link>
+            <Button className="flex align-middle items-center m-0 p-2 h-auto rounded-full bg-transparent">
+              <p className=" flex font-normal text-rg hover:underline">
+                <AddCircleOutlineRoundedIcon/>
+              </p>
+            </Button>
+          </Link>
         </SignedIn>
-
-      </div>
-      <ul className="relative mt-5 w-full">
+      </CardHeader>
+      <CardContent>
+      <ul className="relative w-full">
         {myPlaylists?.map((list) => (
           <li key={list.playlistId} className="mb-2 flex h-16">
-            <button
-              className="flex h-full w-full items-center justify-between gap-4 rounded-xl border border-neutral-700 p-4 align-middle hover:bg-neutral-700"
+            <Button
+              className="flex h-full bg-neutral-900 w-full items-center justify-between gap-4 rounded-xl border border-neutral-700 p-4 align-middle hover:bg-neutral-700"
               onClick={() => handleAddPlaylist(list.playlistId)}
             >
               <div className="flex h-full w-full items-center justify-start gap-4 align-middle">
-                <PlayCircleOutlineRoundedIcon />
+                <PlaylistPlayRoundedIcon />
                 <div className="flex flex-col items-start justify-start text-nowrap align-middle  text-md">
                   <p className="-mb-2">{list.name}</p>
                   <p className="font-normal text-neutral-400">
@@ -117,10 +122,12 @@ const PlaylistPicker = ({
                     </button>
                   </div>
                 )}
-            </button>
+            </Button>
           </li>
         ))}
       </ul>
+      </CardContent>
+      
 
       {myPlaylists.length === 0 && (
         <div className="font-normal text-neutral-400">
@@ -129,26 +136,23 @@ const PlaylistPicker = ({
             <p>Fiks det ved å</p>
             <SignedIn>
               <button
-              onClick={() => console.log("TODO: handleAddPlaylist")}
-              className="font-bold text-violet-400 hover:text-violet-300"
+                onClick={() => console.log("TODO: handleAddPlaylist")}
+                className="font-bold text-violet-400 hover:text-violet-300"
               >
                 lage en lekeliste
               </button>
             </SignedIn>
             <SignedOut>
-            <SignInButton>
-              <button
-                className="font-bold text-violet-400 hover:text-violet-300"
-              >
-                logge inn
-              </button>
-            </SignInButton>
+              <SignInButton>
+                <button className="font-bold text-violet-400 hover:text-violet-300">
+                  logge inn
+                </button>
+              </SignInButton>
             </SignedOut>
-            
           </div>
         </div>
       )}
-    </div>
+    </Card>
   );
 };
 
